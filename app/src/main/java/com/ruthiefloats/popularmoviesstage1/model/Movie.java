@@ -4,49 +4,66 @@ package com.ruthiefloats.popularmoviesstage1.model;
  * Created on 7/18/16.
  */
 public class Movie {
-    private String mTitle;
-    private int mReleaseYear;
-    private String mPosterLocation;
-    private double mVoteAverage;
-    private String mPlotSynopsis;
+    private String title;
+    private String release_date;
+    private String poster_path;
+    private double vote_average;
+    private String overview;
+
+
+    /**
+     *
+     * @param title Name of the movie
+     * @param release_date year the film was released
+     * @param poster_path the image location postfix?
+     * @param vote_average average score
+     * @param overview summary of the plot
+     */
+    public Movie(String title, String release_date, String poster_path, double vote_average, String overview) {
+        this.title = title;
+        this.release_date = release_date;
+        this.poster_path = poster_path;
+        this.vote_average = vote_average;
+        this.overview = overview;
+    }
 
     public String getTitle() {
-        return mTitle;
+        return title;
     }
 
     public void setTitle(String title) {
-        mTitle = title;
+        this.title = title;
     }
 
-    public int getReleaseYear() {
-        return mReleaseYear;
+    public String getRelease_date() {
+        return release_date;
     }
 
-    public void setReleaseYear(int releaseYear) {
-        mReleaseYear = releaseYear;
+    public void setRelease_date(String release_date) {
+        this.release_date = release_date;
     }
 
-    public String getPosterLocation() {
-        return mPosterLocation;
+    public String getPoster_path() {
+        return poster_path;
     }
 
-    public void setPosterLocation(String posterLocation) {
-        mPosterLocation = posterLocation;
+    public void setPoster_path(String poster_path) {
+        this.poster_path = poster_path;
     }
 
-    public double getVoteAverage() {
-        return mVoteAverage;
+    public double getVote_average() {
+        return vote_average;
     }
 
-    public void setVoteAverage(double voteAverage) {
-        mVoteAverage = voteAverage;
+    public void setVote_average(double vote_average) {
+        this.vote_average = vote_average;
     }
 
-    public String getPlotSynopsis() {
-        return mPlotSynopsis;
+    public String getOverview() {
+        return overview;
     }
 
-    public void setPlotSynopsis(String plotSynopsis) {
-        mPlotSynopsis = plotSynopsis;
+    public void setOverview(String overview) {
+        this.overview = overview;
     }
 }
