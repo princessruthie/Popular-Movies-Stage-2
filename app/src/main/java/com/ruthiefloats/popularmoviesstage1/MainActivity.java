@@ -14,6 +14,7 @@ import com.ruthiefloats.popularmoviesstage1.adapter.MovieImageAdapter;
 import com.ruthiefloats.popularmoviesstage1.model.DummyData;
 import com.ruthiefloats.popularmoviesstage1.model.Movie;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -126,9 +127,15 @@ public class MainActivity extends AppCompatActivity {
     public String readIt(InputStream stream, int len) throws IOException, UnsupportedEncodingException {
         Reader reader = null;
         reader = new InputStreamReader(stream, "UTF-8");
-        char[] buffer = new char[len];
-        reader.read(buffer);
-        Log.d(DEBUG_TAG, "The response is: " + new String(buffer));
-        return new String(buffer);
+        BufferedReader bufferedReader = new BufferedReader(reader);
+        String line = null;
+        StringBuffer stringBuffer = new StringBuffer();
+
+        while ((line = bufferedReader.readLine()) != null){
+            stringBuffer.append(line);
+        }
+
+        Log.d(DEBUG_TAG, "The response is: " + stringBuffer.toString());
+        return stringBuffer.toString();
     }
 }
