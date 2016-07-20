@@ -18,7 +18,8 @@ import java.util.List;
  */
 public class MovieImageAdapter extends BaseAdapter {
 
-    private static final String PHOTOS_BASE_URL = "http://image.tmdb.org/t/p/w185/";
+    private static final String PHOTOS_BASE_URL = "http://image.tmdb.org/t/p/";
+    private static final String PHOTOS_SIZE_URL = "w185/";
     private List<Movie> mMovieList;
     private Context mContext;
 
@@ -53,7 +54,7 @@ public class MovieImageAdapter extends BaseAdapter {
 
         imageView.setAdjustViewBounds(true);
         Picasso.with(mContext).
-                load(PHOTOS_BASE_URL + mMovieList.get(position).getPoster_path())
+                load(PHOTOS_BASE_URL + PHOTOS_SIZE_URL+ mMovieList.get(position).getPoster_path())
                 .error(R.drawable.placeholder)
                 .into(imageView);
         return imageView;

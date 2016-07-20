@@ -48,15 +48,17 @@ public class MainActivity extends AppCompatActivity {
     // When user clicks button, calls AsyncTask.
     // Before attempting to fetch the URL, makes sure that there is a network connection.
     public void getData() {
-        // Gets the URL from the UI's text field.
-        String stringUrl = "http://api.themoviedb.org/3/discover/movie/?api_key="+
-                BuildConfig.DEVELOPER_API_KEY+
-                "&sort_by=vote_average.desc";
+        String baseUrl = "http://api.themoviedb.org/3";
+        String discoverUrl = "/discover/movie";
+        String apiKeyUrl = "/?api_key=" +
+              BuildConfig.DEVELOPER_API_KEY;
+        String sortByVote = "&sort_by=vote_average.desc";
+        String sortByVoteFullUrl =  (new StringBuilder(baseUrl + discoverUrl + apiKeyUrl + sortByVote)).toString();
         ConnectivityManager connMgr = (ConnectivityManager)
                 getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
         if (networkInfo != null && networkInfo.isConnected()) {
-            new DownloadWebpageTask().execute(stringUrl);
+            new DownloadWebpageTask().execute(sortByVoteFullUrl);
         } else {
             Toast.makeText(this, "No network", Toast.LENGTH_SHORT);
         }
