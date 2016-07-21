@@ -7,6 +7,8 @@ import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.GridView;
 import android.widget.Toast;
 
@@ -43,18 +45,44 @@ public class MainActivity extends AppCompatActivity {
 //
 //        GridView gridview = (GridView) findViewById(R.id.gridview);
 //        gridview.setAdapter(adapter);
-        getData();
+
+        // TODO: 7/21/16 refactor so that calling getData doesn't need to
+        //know exact String  maybe a static string in getData when that's
+        //refactored into a class
+        getData("&sort_by=popularity.desc");
     }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+            if (item.getItemId() == R.id.menu_sort_popularity) {
+                getData("&sort_by=popularity.desc");
+            } else if (item.getItemId() == R.id.menu_sort_rating){
+                getData("&sort_by=vote_average.desc");
+            }
+        return false;
+    }
+
 
     // When user clicks button, calls AsyncTask.
     // Before attempting to fetch the URL, makes sure that there is a network connection.
-    public void getData() {
+    public void getData(String sortString) {
         String baseUrl = "http://api.themoviedb.org/3";
         String discoverUrl = "/discover/movie";
         String apiKeyUrl = "/?api_key=" +
-              BuildConfig.DEVELOPER_API_KEY;
+                BuildConfig.DEVELOPER_API_KEY;
+        //change getData to take in the sort String.
+        //then change menu to pass in the sort String
+        //then change full Url.
         String sortByVote = "&sort_by=vote_average.desc";
-        String sortByVoteFullUrl =  (new StringBuilder(baseUrl + discoverUrl + apiKeyUrl + sortByVote)).toString();
+        String sortByPopularity = "&sort_by=popularity.desc";
+        String sortByVoteFullUrl = (new StringBuilder(baseUrl + discoverUrl + apiKeyUrl + sortString)).toString();
         ConnectivityManager connMgr = (ConnectivityManager)
                 getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
@@ -81,6 +109,7 @@ public class MainActivity extends AppCompatActivity {
                 return "Unable to retrieve web page. URL may be invalid.";
             }
         }
+
         // onPostExecute displays the results of the AsyncTask.
         @Override
         protected void onPostExecute(String result) {
@@ -137,11 +166,12 @@ public class MainActivity extends AppCompatActivity {
         String line = null;
         StringBuffer stringBuffer = new StringBuffer();
 
-        while ((line = bufferedReader.readLine()) != null){
+        while ((line = bufferedReader.readLine()) != null) {
             stringBuffer.append(line);
         }
 
         Log.d(DEBUG_TAG, "The response is: " + stringBuffer.toString());
         return stringBuffer.toString();
     }
+
 }
