@@ -11,8 +11,8 @@ import android.widget.GridView;
 import android.widget.Toast;
 
 import com.ruthiefloats.popularmoviesstage1.adapter.MovieImageAdapter;
-import com.ruthiefloats.popularmoviesstage1.model.DummyData;
 import com.ruthiefloats.popularmoviesstage1.model.Movie;
+import com.ruthiefloats.popularmoviesstage1.parser.MovieParser;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -38,11 +38,11 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        List<Movie> movies = DummyData.getDummyData();
-        MovieImageAdapter adapter = new MovieImageAdapter(this, movies);
-
-        GridView gridview = (GridView) findViewById(R.id.gridview);
-        gridview.setAdapter(adapter);
+//        List<Movie> movies = DummyData.getDummyData();
+//        MovieImageAdapter adapter = new MovieImageAdapter(this, movies);
+//
+//        GridView gridview = (GridView) findViewById(R.id.gridview);
+//        gridview.setAdapter(adapter);
         getData();
     }
 
@@ -84,7 +84,13 @@ public class MainActivity extends AppCompatActivity {
         // onPostExecute displays the results of the AsyncTask.
         @Override
         protected void onPostExecute(String result) {
-//            textView.setText(result);
+            List<Movie> movieList = MovieParser.parseFeed(result);
+            Log.i("movielist", movieList != null ? movieList.toString() : null);
+//            List<Movie> movies = DummyData.getDummyData();
+            MovieImageAdapter adapter = new MovieImageAdapter(MainActivity.this, movieList);
+
+            GridView gridview = (GridView) findViewById(R.id.gridview);
+            gridview.setAdapter(adapter);
         }
     }
 
