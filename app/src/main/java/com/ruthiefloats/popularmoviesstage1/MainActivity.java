@@ -35,6 +35,9 @@ public class MainActivity extends AppCompatActivity {
 
     private static final String SORT_BY_VOTE = "&sort_by=vote_average.desc";
     private static final String SORT_BY_POPULARITY = "&sort_by=popularity.desc";
+    private static final String POPULAR_RESOURCE_ROOT = "/movie/popular";
+    private static final String TOP_RATED_RESOURCE_ROOT = "/movie/top_rated";
+
 
     private static final String DEBUG_TAG = "MainActivity";
 
@@ -43,7 +46,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        getData(SORT_BY_POPULARITY);
+        getData(POPULAR_RESOURCE_ROOT);
     }
 
     @Override
@@ -55,26 +58,27 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
-            if (item.getItemId() == R.id.menu_sort_popularity) {
-                getData(SORT_BY_POPULARITY);
-            } else if (item.getItemId() == R.id.menu_sort_rating){
-                getData(SORT_BY_VOTE);
-            }
+        if (item.getItemId() == R.id.menu_sort_popularity) {
+            getData(POPULAR_RESOURCE_ROOT);
+        } else if (item.getItemId() == R.id.menu_sort_rating) {
+            getData(TOP_RATED_RESOURCE_ROOT);
+        }
         return false;
     }
 
 
     // When user clicks button, calls AsyncTask.
     // Before attempting to fetch the URL, makes sure that there is a network connection.
-    public void getData(String sortString) {
+    public void getData(String resourceRoot) {
+
+        //Todo change to the /popular /rating apis
         String baseUrl = "http://api.themoviedb.org/3";
         String discoverUrl = "/discover/movie";
         String apiKeyUrl = "/?api_key=" +
                 BuildConfig.DEVELOPER_API_KEY;
         String sortByVoteFullUrl = (new StringBuilder(baseUrl +
-                discoverUrl +
-                apiKeyUrl +
-                sortString)).
+                resourceRoot +
+                apiKeyUrl)).
                 toString();
         ConnectivityManager connMgr = (ConnectivityManager)
                 getSystemService(Context.CONNECTIVITY_SERVICE);
