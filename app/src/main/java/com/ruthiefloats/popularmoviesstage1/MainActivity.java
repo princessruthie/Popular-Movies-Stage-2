@@ -33,6 +33,9 @@ import java.util.List;
  */
 public class MainActivity extends AppCompatActivity {
 
+    private static final String SORT_BY_VOTE = "&sort_by=vote_average.desc";
+    private static final String SORT_BY_POPULARITY = "&sort_by=popularity.desc";
+
     private static final String DEBUG_TAG = "MainActivity";
 
     @Override
@@ -40,16 +43,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-//        List<Movie> movies = DummyData.getDummyData();
-//        MovieImageAdapter adapter = new MovieImageAdapter(this, movies);
-//
-//        GridView gridview = (GridView) findViewById(R.id.gridview);
-//        gridview.setAdapter(adapter);
-
-        // TODO: 7/21/16 refactor so that calling getData doesn't need to
-        //know exact String  maybe a static string in getData when that's
-        //refactored into a class
-        getData("&sort_by=popularity.desc");
+        getData(SORT_BY_POPULARITY);
     }
 
     @Override
@@ -62,9 +56,9 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
 
             if (item.getItemId() == R.id.menu_sort_popularity) {
-                getData("&sort_by=popularity.desc");
+                getData(SORT_BY_POPULARITY);
             } else if (item.getItemId() == R.id.menu_sort_rating){
-                getData("&sort_by=vote_average.desc");
+                getData(SORT_BY_VOTE);
             }
         return false;
     }
@@ -77,12 +71,11 @@ public class MainActivity extends AppCompatActivity {
         String discoverUrl = "/discover/movie";
         String apiKeyUrl = "/?api_key=" +
                 BuildConfig.DEVELOPER_API_KEY;
-        //change getData to take in the sort String.
-        //then change menu to pass in the sort String
-        //then change full Url.
-        String sortByVote = "&sort_by=vote_average.desc";
-        String sortByPopularity = "&sort_by=popularity.desc";
-        String sortByVoteFullUrl = (new StringBuilder(baseUrl + discoverUrl + apiKeyUrl + sortString)).toString();
+        String sortByVoteFullUrl = (new StringBuilder(baseUrl +
+                discoverUrl +
+                apiKeyUrl +
+                sortString)).
+                toString();
         ConnectivityManager connMgr = (ConnectivityManager)
                 getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
@@ -115,7 +108,6 @@ public class MainActivity extends AppCompatActivity {
         protected void onPostExecute(String result) {
             List<Movie> movieList = MovieParser.parseFeed(result);
             Log.i("movielist", movieList != null ? movieList.toString() : null);
-//            List<Movie> movies = DummyData.getDummyData();
             MovieImageAdapter adapter = new MovieImageAdapter(MainActivity.this, movieList);
 
             GridView gridview = (GridView) findViewById(R.id.gridview);
@@ -173,5 +165,4 @@ public class MainActivity extends AppCompatActivity {
         Log.d(DEBUG_TAG, "The response is: " + stringBuffer.toString());
         return stringBuffer.toString();
     }
-
 }
