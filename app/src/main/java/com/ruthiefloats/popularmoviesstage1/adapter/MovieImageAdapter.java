@@ -1,11 +1,13 @@
 package com.ruthiefloats.popularmoviesstage1.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.ruthiefloats.popularmoviesstage1.R;
 import com.ruthiefloats.popularmoviesstage1.model.Movie;
@@ -57,6 +59,13 @@ public class MovieImageAdapter extends BaseAdapter {
                 load(PHOTOS_BASE_URL + PHOTOS_SIZE_URL+ mMovieList.get(position).getPoster_path())
                 .error(R.drawable.placeholder)
                 .into(imageView);
+
+        imageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(mContext, "Listener listening", Toast.LENGTH_SHORT).show();
+            }
+        });
         return imageView;
     }
 }
