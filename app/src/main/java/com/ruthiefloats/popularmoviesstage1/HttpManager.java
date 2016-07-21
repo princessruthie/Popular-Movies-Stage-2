@@ -2,6 +2,7 @@ package com.ruthiefloats.popularmoviesstage1;
 
 import android.util.Log;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -12,10 +13,13 @@ import java.net.URL;
 
 public class HttpManager {
 
-    private static final String DEBUG_TAG = "dsjfiawoejfpwoifpowie";
+    private static final String DEBUG_TAG = "HttpManager";
 
-    public static String getData(String myurl) throws IOException {
-        InputStream is = null;
+    // Given a URL, establishes an HttpUrlConnection and retrieves
+// the web page content as a InputStream, which it returns as
+// a string.
+    public static String downloadUrl(String myurl) throws IOException {
+        InputStream inputStream = null;
         // Only display the first 500 characters of the retrieved
         // web page content.
         int len = 500;
@@ -23,40 +27,41 @@ public class HttpManager {
         try {
             URL url = new URL(myurl);
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-            String redirect = conn.getHeaderField("Location");
-            if (redirect != null) {
-                conn = (HttpURLConnection) new URL(redirect).openConnection();
-            }
             conn.setReadTimeout(10000 /* milliseconds */);
             conn.setConnectTimeout(15000 /* milliseconds */);
             conn.setRequestMethod("GET");
-//            conn.setDoInput(true);
+            conn.setDoInput(true);
             // Starts the query
             conn.connect();
             int response = conn.getResponseCode();
-            Log.d(DEBUG_TAG, "The response is: " + response);
-            is = conn.getInputStream();
+            Log.d(DEBUG_TAG, "The response code is: " + response);
+            inputStream = conn.getInputStream();
 
-            // Convert the InputStream into a string
-            String contentAsString = readIt(is, len);
-            Log.d(DEBUG_TAG, "The content is: " + contentAsString);
-            return contentAsString;
+            // Return the InputStream converted into a string
+            return readIt(inputStream);
 
             // Makes sure that the InputStream is closed after the app is
             // finished using it.
         } finally {
-            if (is != null) {
-                is.close();
+            if (inputStream != null) {
+                inputStream.close();
             }
         }
     }
 
-    private static String readIt(InputStream stream, int len) throws IOException, UnsupportedEncodingException {
+    // Reads an InputStream and converts it to a String.
+    public static String readIt(InputStream stream) throws IOException, UnsupportedEncodingException {
         Reader reader = null;
         reader = new InputStreamReader(stream, "UTF-8");
-        char[] buffer = new char[len];
-        reader.read(buffer);
-        Log.i(DEBUG_TAG, new String(buffer));
-        return new String(buffer);
+        BufferedReader bufferedReader = new BufferedReader(reader);
+        String line;
+        StringBuffer stringBuffer = new StringBuffer();
+
+        while ((line = bufferedReader.readLine()) != null) {
+            stringBuffer.append(line);
+        }
+
+        Log.d(DEBUG_TAG, "The response is: " + stringBuffer.toString());
+        return stringBuffer.toString();
     }
 }
