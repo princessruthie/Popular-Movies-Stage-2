@@ -2,13 +2,12 @@ package com.ruthiefloats.popularmoviesstage1.adapter;
 
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
-import android.widget.Toast;
 
+import com.ruthiefloats.popularmoviesstage1.MovieDetailActivity;
 import com.ruthiefloats.popularmoviesstage1.R;
 import com.ruthiefloats.popularmoviesstage1.model.Movie;
 import com.squareup.picasso.Picasso;
@@ -22,6 +21,7 @@ public class MovieImageAdapter extends BaseAdapter {
 
     private static final String PHOTOS_BASE_URL = "http://image.tmdb.org/t/p/";
     private static final String PHOTOS_SIZE_URL = "w185/";
+    public static final String CURRENT_MOVIE = "currentMovie";
     private List<Movie> mMovieList;
     private Context mContext;
 
@@ -43,7 +43,7 @@ public class MovieImageAdapter extends BaseAdapter {
     }
 
     // create a new ImageView for each item referenced by the Adapter
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(final int position, View convertView, ViewGroup parent) {
         ImageView imageView;
         if (convertView == null) {
             // if it's not recycled, initialize some attributes
@@ -56,16 +56,25 @@ public class MovieImageAdapter extends BaseAdapter {
 
         imageView.setAdjustViewBounds(true);
         Picasso.with(mContext).
-                load(PHOTOS_BASE_URL + PHOTOS_SIZE_URL+ mMovieList.get(position).getPoster_path())
+                load(getCompletePhotoUrl(mMovieList.get(position).getPoster_path()))
                 .error(R.drawable.placeholder)
                 .into(imageView);
 
         imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(mContext, "Listener listening", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(mContext, MovieDetailActivity.class);
+                intent.putExtra(CURRENT_MOVIE,mMovieList.get(position));
+                mContext.startActivity(intent);
             }
         });
         return imageView;
+    }
+
+    public static String getCompletePhotoUrl(String photoUrl){
+        String completeUrl = PHOTOS_BASE_URL +
+                PHOTOS_SIZE_URL+
+                photoUrl;
+        return completeUrl;
     }
 }
