@@ -17,6 +17,7 @@ import com.ruthiefloats.popularmoviesstage1.model.Movie;
 import com.ruthiefloats.popularmoviesstage1.parser.MovieParser;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -24,7 +25,9 @@ import java.util.List;
  * https://developer.android.com/training/basics/network-ops/connecting.html
  */
 public class MainActivity extends AppCompatActivity {
+    private static final String MOVIE_LIST = "list";
     GridView mGridView;
+    List<Movie> mMovieList;
 
     private static final String POPULAR_RESOURCE_ROOT = "/movie/popular";
     private static final String TOP_RATED_RESOURCE_ROOT = "/movie/top_rated";
@@ -36,7 +39,15 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         mGridView = (GridView) findViewById(R.id.gridview);
-        getData(POPULAR_RESOURCE_ROOT);
+        if (savedInstanceState != null) {
+            mMovieList = savedInstanceState.getParcelableArrayList(MOVIE_LIST);
+            if (mMovieList != null) {
+                MovieImageAdapter adapter = new MovieImageAdapter(MainActivity.this, mMovieList);
+                mGridView.setAdapter(adapter);
+            }
+        } else {
+            getData(POPULAR_RESOURCE_ROOT);
+        }
     }
 
     @Override
@@ -61,11 +72,15 @@ public class MainActivity extends AppCompatActivity {
         super.onSaveInstanceState(outState);
         int currentPosition = mGridView.getFirstVisiblePosition();
         outState.putInt(GRID_VIEW_POSITION, currentPosition);
+        if (mMovieList != null) {
+            outState.putParcelableArrayList(MOVIE_LIST, (ArrayList<Movie>) mMovieList);
+        }
     }
 
     protected void onRestoreInstanceState(final Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
         mGridView.setSelection(savedInstanceState.getInt(GRID_VIEW_POSITION));
+        Log.i(DEBUG_TAG, "restoring location from saved instance state");
     }
 
     // When user clicks button, calls AsyncTask.
@@ -109,12 +124,9 @@ public class MainActivity extends AppCompatActivity {
         // onPostExecute displays the results of the AsyncTask.
         @Override
         protected void onPostExecute(String result) {
-            List<Movie> movieList = MovieParser.parseFeed(result);
-            Log.i("movielist", movieList != null ? movieList.toString() : null);
-            MovieImageAdapter adapter = new MovieImageAdapter(MainActivity.this, movieList);
-
-            GridView gridview = (GridView) findViewById(R.id.gridview);
-            gridview.setAdapter(adapter);
+            mMovieList = MovieParser.parseFeed(result);
+            MovieImageAdapter adapter = new MovieImageAdapter(MainActivity.this, mMovieList);
+            mGridView.setAdapter(adapter);
         }
     }
 }
