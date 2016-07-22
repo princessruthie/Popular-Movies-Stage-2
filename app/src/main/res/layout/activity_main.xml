@@ -12,5 +12,4 @@
     android:gravity="center"
     tools:context="com.ruthiefloats.popularmoviesstage1.MainActivity">
 
-
 </GridView>

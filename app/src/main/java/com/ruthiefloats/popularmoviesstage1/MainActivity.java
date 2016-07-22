@@ -19,22 +19,23 @@ import com.ruthiefloats.popularmoviesstage1.parser.MovieParser;
 import java.io.IOException;
 import java.util.List;
 
-
 /**
  * I based this code off of the official example:
  * https://developer.android.com/training/basics/network-ops/connecting.html
  */
 public class MainActivity extends AppCompatActivity {
+    GridView mGridView;
 
     private static final String POPULAR_RESOURCE_ROOT = "/movie/popular";
     private static final String TOP_RATED_RESOURCE_ROOT = "/movie/top_rated";
+    private static final String GRID_VIEW_POSITION = "grid view position";
     private static final String DEBUG_TAG = "MainActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        mGridView = (GridView) findViewById(R.id.gridview);
         getData(POPULAR_RESOURCE_ROOT);
     }
 
@@ -55,6 +56,17 @@ public class MainActivity extends AppCompatActivity {
         return false;
     }
 
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        int currentPosition = mGridView.getFirstVisiblePosition();
+        outState.putInt(GRID_VIEW_POSITION, currentPosition);
+    }
+
+    protected void onRestoreInstanceState(final Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        mGridView.setSelection(savedInstanceState.getInt(GRID_VIEW_POSITION));
+    }
 
     // When user clicks button, calls AsyncTask.
     // Before attempting to fetch the URL, makes sure that there is a network connection.
