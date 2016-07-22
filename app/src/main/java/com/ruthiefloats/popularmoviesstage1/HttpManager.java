@@ -11,6 +11,10 @@ import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+/**
+ * A class that takes in a URL and returns the server response
+ * as a String.  Adjusted from the official google example.
+ */
 public class HttpManager {
 
     private static final String DEBUG_TAG = "HttpManager";

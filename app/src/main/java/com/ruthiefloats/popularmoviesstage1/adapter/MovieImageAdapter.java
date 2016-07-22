@@ -15,18 +15,21 @@ import com.squareup.picasso.Picasso;
 import java.util.List;
 
 /**
- * Created on 7/18/16.
+ * This is an Adapter class for populating the GridView in the MainActivity
  */
 public class MovieImageAdapter extends BaseAdapter {
 
     private static final String PHOTOS_BASE_URL = "http://image.tmdb.org/t/p/";
     private static final String PHOTOS_SIZE_URL = "w185/";
+    /**
+     * A key String for the Intent extras
+     */
     public static final String CURRENT_MOVIE = "currentMovie";
     private List<Movie> mMovieList;
     private Context mContext;
 
-    public MovieImageAdapter(Context c, List<Movie> movieList) {
-        mContext = c;
+    public MovieImageAdapter(Context context, List<Movie> movieList) {
+        mContext = context;
         mMovieList = movieList;
     }
 
@@ -59,21 +62,26 @@ public class MovieImageAdapter extends BaseAdapter {
                 load(getCompletePhotoUrl(mMovieList.get(position).getPoster_path()))
                 .error(R.drawable.placeholder)
                 .into(imageView);
-
+        /**Clicking on the ImageView starts a MovieDetailActivity based on the current
+         * Movie.
+         */
         imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(mContext, MovieDetailActivity.class);
-                intent.putExtra(CURRENT_MOVIE,mMovieList.get(position));
+                intent.putExtra(CURRENT_MOVIE, mMovieList.get(position));
                 mContext.startActivity(intent);
             }
         });
         return imageView;
     }
 
-    public static String getCompletePhotoUrl(String photoUrl){
+    /**
+     * takes the poster URL provided by the API response and builds the entire valid URL
+     */
+    public static String getCompletePhotoUrl(String photoUrl) {
         String completeUrl = PHOTOS_BASE_URL +
-                PHOTOS_SIZE_URL+
+                PHOTOS_SIZE_URL +
                 photoUrl;
         return completeUrl;
     }

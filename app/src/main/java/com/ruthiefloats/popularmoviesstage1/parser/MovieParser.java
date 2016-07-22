@@ -1,7 +1,5 @@
 package com.ruthiefloats.popularmoviesstage1.parser;
 
-import android.util.Log;
-
 import com.ruthiefloats.popularmoviesstage1.model.Movie;
 
 import org.json.JSONArray;
@@ -12,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created on 7/19/16.
+ * Has one method to take in a String of JSON and return a List<Movie>
  */
 public class MovieParser {
     public static List<Movie> parseFeed(String content) {

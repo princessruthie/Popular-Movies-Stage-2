@@ -4,18 +4,21 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by fieldsru on 7/18/16.
+ * Some placeholder data for when the dev doesn't have internet.
  */
 public class DummyData {
-    public static List<Movie> getDummyData(){
+    /**
+     * Returns a List<Movie> that can be used to make a MovieImageAdapter
+     */
+    public static List<Movie> getDummyData() {
         List<Movie> movies = new ArrayList<>();
 
-        movies.add(new Movie("Blah", "2016", "/5JU9ytZJyR3zmClGmVm9q4Geqbd.jpg",4.7, "Stuff happens"));
-        movies.add(new Movie("Blah", "2016", "/hzjcILBTtVYjVCscmBonnE5wdUX.jpg",4.7, "Stuff happens"));
-        movies.add(new Movie("Blah", "2016", "/5JU9ytZJyR3zmClGmVm9q4Geqbd.jpg",4.7, "Stuff happens"));
-        movies.add(new Movie("Blah", "2016", "/5JU9ytZJyR3zmClGmVm9q4Geqbd.jpg",4.7, "Stuff happens"));
-        movies.add(new Movie("Blah", "2016", "/5JU9ytZJyR3zmClGmVm9q4Geqbd.jpg",4.7, "Stuff happens"));
-        movies.add(new Movie("Blah", "2016", "/5JU9ytZJyR3zmClGmVm9q4Geqbd.jpg",4.7, "Stuff happens"));
+        movies.add(new Movie("Blah", "2016", "/5JU9ytZJyR3zmClGmVm9q4Geqbd.jpg", 4.7, "Stuff happens"));
+        movies.add(new Movie("Blah", "2016", "/hzjcILBTtVYjVCscmBonnE5wdUX.jpg", 4.7, "Stuff happens"));
+        movies.add(new Movie("Blah", "2016", "/5JU9ytZJyR3zmClGmVm9q4Geqbd.jpg", 4.7, "Stuff happens"));
+        movies.add(new Movie("Blah", "2016", "/5JU9ytZJyR3zmClGmVm9q4Geqbd.jpg", 4.7, "Stuff happens"));
+        movies.add(new Movie("Blah", "2016", "/5JU9ytZJyR3zmClGmVm9q4Geqbd.jpg", 4.7, "Stuff happens"));
+        movies.add(new Movie("Blah", "2016", "/5JU9ytZJyR3zmClGmVm9q4Geqbd.jpg", 4.7, "Stuff happens"));
 
         return movies;
     }

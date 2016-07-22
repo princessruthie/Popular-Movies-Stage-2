@@ -4,9 +4,14 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 /**
- * Created on 7/18/16.
+ * Created on 7/18/16.  Movie class models The Movie DB API movie data.
+ * Uses a rote implementation of Parcelable (from parcelabler.com)
  */
 public class Movie implements Parcelable {
+    /**
+     * Member variable names do not reflect Java standards because using this class
+     * with Retrofit requires matching the names to those in the JSON data.
+     */
     private String title;
     private String release_date;
     private String poster_path;
@@ -15,12 +20,11 @@ public class Movie implements Parcelable {
 
 
     /**
-     *
-     * @param title Name of the movie
+     * @param title        Name of the movie
      * @param release_date year the film was released
-     * @param poster_path the image location postfix?
+     * @param poster_path  the image location postfix?
      * @param vote_average average score
-     * @param overview summary of the plot
+     * @param overview     summary of the plot
      */
     public Movie(String title, String release_date, String poster_path, double vote_average, String overview) {
         this.title = title;

@@ -21,24 +21,34 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * I based this code off of the official example:
+ * The MainActivity by default populates with a list of the most popular movies.
+ * <p/>
+ * I based networking code off of the official example:
  * https://developer.android.com/training/basics/network-ops/connecting.html
  */
 public class MainActivity extends AppCompatActivity {
+    /**
+     * Strings for keys in savedInstanceState
+     */
+    private static final String GRID_VIEW_POSITION = "grid view position";
     private static final String MOVIE_LIST = "list";
-    GridView mGridView;
-    List<Movie> mMovieList;
-
+    /**
+     * Roots for the two APIS used
+     */
     private static final String POPULAR_RESOURCE_ROOT = "/movie/popular";
     private static final String TOP_RATED_RESOURCE_ROOT = "/movie/top_rated";
-    private static final String GRID_VIEW_POSITION = "grid view position";
+
     private static final String DEBUG_TAG = "MainActivity";
+
+    private GridView mGridView;
+    private List<Movie> mMovieList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         mGridView = (GridView) findViewById(R.id.gridview);
+        /**If restoring, use the stored data.  Otherwise get data. */
         if (savedInstanceState != null) {
             mMovieList = savedInstanceState.getParcelableArrayList(MOVIE_LIST);
             if (mMovieList != null) {
@@ -56,9 +66,14 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
+    /**
+     * Depending on the option selected, get which set of data
+     *
+     * @param item The menu item selected
+     * @return always false
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-
         if (item.getItemId() == R.id.menu_sort_popularity) {
             getData(POPULAR_RESOURCE_ROOT);
         } else if (item.getItemId() == R.id.menu_sort_rating) {
@@ -70,6 +85,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
+        /**Record both GridView position and the List<Movie> */
         int currentPosition = mGridView.getFirstVisiblePosition();
         outState.putInt(GRID_VIEW_POSITION, currentPosition);
         if (mMovieList != null) {
@@ -79,11 +95,12 @@ public class MainActivity extends AppCompatActivity {
 
     protected void onRestoreInstanceState(final Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
+        /**Restore the scroll position */
         mGridView.setSelection(savedInstanceState.getInt(GRID_VIEW_POSITION));
-        Log.i(DEBUG_TAG, "restoring location from saved instance state");
     }
 
-    // When user clicks button, calls AsyncTask.
+    // When called builds a valid valid URL for The Movie DB API and starts a DownloadWeb
+    // task.
     // Before attempting to fetch the URL, makes sure that there is a network connection.
     public void getData(String resourceRoot) {
 
@@ -108,7 +125,8 @@ public class MainActivity extends AppCompatActivity {
     // URL string and uses it to create an HttpUrlConnection. Once the connection
     // has been established, the AsyncTask downloads the contents of the webpage as
     // an InputStream. Finally, the InputStream is converted into a string, which is
-    // displayed in the UI by the AsyncTask's onPostExecute method.
+    // parsed into a List<Movie> and used to construct/set the GridView's adapter in
+    // the AsyncTask's onPostExecute method.
     private class DownloadWebpageTask extends AsyncTask<String, Void, String> {
         @Override
         protected String doInBackground(String... urls) {
