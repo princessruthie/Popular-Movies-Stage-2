@@ -1,5 +1,5 @@
 # Popular-Movies-Stage-1
-Udacity Project 1: Current progress uses httpurlconnection and a homemade POJO.  The detail view currently does have the movie duration.  I can't tell right now if we're supposed to/allowed to use GSON.
+Udacity Project 1: Current progress uses httpurlconnection and a homemade POJO.  The detail view currently does not have the movie duration.  I can't tell right now if we're supposed to/allowed to use GSON.
 
 
 <p align="center">
