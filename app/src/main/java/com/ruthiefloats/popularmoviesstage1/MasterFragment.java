@@ -33,8 +33,8 @@ public class MasterFragment extends Fragment {
     /**
      * Roots for the two APIS used
      */
-    private static final String POPULAR_RESOURCE_ROOT = "/movie/popular";
-    private static final String TOP_RATED_RESOURCE_ROOT = "/movie/top_rated";
+    public static final String POPULAR_RESOURCE_ROOT = "/movie/popular";
+    public static final String TOP_RATED_RESOURCE_ROOT = "/movie/top_rated";
 
     private static final String DEBUG_TAG = "MainActivity";
 
