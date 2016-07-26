@@ -22,4 +22,8 @@ public class DummyData {
 
         return movies;
     }
+
+    public static Movie getSingleDummyDatum(){
+        return new Movie("Blah", "2016", "/5JU9ytZJyR3zmClGmVm9q4Geqbd.jpg", 4.7, "Stuff happens");
+    }
 }

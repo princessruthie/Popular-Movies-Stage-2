@@ -65,14 +65,14 @@ public class MovieImageAdapter extends BaseAdapter {
         /**Clicking on the ImageView starts a MovieDetailActivity based on the current
          * Movie.
          */
-        imageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(mContext, MovieDetailActivity.class);
-                intent.putExtra(CURRENT_MOVIE, mMovieList.get(position));
-                mContext.startActivity(intent);
-            }
-        });
+//        imageView.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Intent intent = new Intent(mContext, MovieDetailActivity.class);
+//                intent.putExtra(CURRENT_MOVIE, mMovieList.get(position));
+//                mContext.startActivity(intent);
+//            }
+//        });
         return imageView;
     }
 

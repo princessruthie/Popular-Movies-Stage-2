@@ -1,6 +1,7 @@
 package com.ruthiefloats.popularmoviesstage1;
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
@@ -9,6 +10,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.Toast;
 
@@ -37,6 +39,7 @@ public class MasterFragment extends Fragment {
     public static final String TOP_RATED_RESOURCE_ROOT = "/movie/top_rated";
 
     private static final String DEBUG_TAG = "MainActivity";
+    private static final String CURRENT_MOVIE_INTENT_STRING = "movie intent here";
 
     private GridView mGridView;
     private List<Movie> mMovieList;
@@ -49,7 +52,7 @@ public class MasterFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View rootView  = inflater.inflate(R.layout.fragment_master, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_master, container, false);
 
         mGridView = (GridView) rootView.findViewById(R.id.gridview);
         /**If restoring, use the stored data.  Otherwise get data. */
@@ -113,6 +116,15 @@ public class MasterFragment extends Fragment {
             mMovieList = MovieParser.parseFeed(result);
             MovieImageAdapter adapter = new MovieImageAdapter(getContext(), mMovieList);
             mGridView.setAdapter(adapter);
+            mGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    Toast.makeText(getActivity(), "Second catch", Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(getActivity(), MovieDetailActivity.class);
+                    intent.putExtra(CURRENT_MOVIE_INTENT_STRING, mMovieList.get(position));
+                    getActivity().startActivity(intent);
+                }
+            });
         }
     }
 
