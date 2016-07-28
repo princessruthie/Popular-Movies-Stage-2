@@ -15,6 +15,7 @@ import android.widget.GridView;
 import android.widget.Toast;
 
 import com.ruthiefloats.popularmoviesstage1.adapter.MovieImageAdapter;
+import com.ruthiefloats.popularmoviesstage1.model.DummyData;
 import com.ruthiefloats.popularmoviesstage1.model.Movie;
 import com.ruthiefloats.popularmoviesstage1.parser.MovieParser;
 
@@ -44,6 +45,8 @@ public class MasterFragment extends Fragment {
     private GridView mGridView;
     private List<Movie> mMovieList;
 
+    OnPosterSelectedListener mCallback;
+
     public MasterFragment() {
         // Required empty public constructor
     }
@@ -64,6 +67,7 @@ public class MasterFragment extends Fragment {
             }
         } else {
             getData(POPULAR_RESOURCE_ROOT);
+//            useOfflinePlaceholderData();
         }
 
 
@@ -119,17 +123,51 @@ public class MasterFragment extends Fragment {
             mGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    Toast.makeText(getActivity(), "Second catch", Toast.LENGTH_SHORT).show();
-                    Intent intent = new Intent(getActivity(), MovieDetailActivity.class);
-                    intent.putExtra(CURRENT_MOVIE_INTENT_STRING, mMovieList.get(position));
-                    getActivity().startActivity(intent);
+                    //todo right now the method
+//                    Toast.makeText(getActivity(), "Second catch", Toast.LENGTH_SHORT).show();
+//                    Intent intent = new Intent(getActivity(), MovieDetailActivity.class);
+//                    intent.putExtra(CURRENT_MOVIE_INTENT_STRING, mMovieList.get(position));
+//                    getActivity().startActivity(intent);
+                    mCallback.onPosterSelected(mMovieList.get(position));
                 }
             });
         }
     }
 
+    private void useOfflinePlaceholderData(){
+        mMovieList = DummyData.getDummyData();
+        MovieImageAdapter adapter = new MovieImageAdapter(getContext(), mMovieList);
+        mGridView.setAdapter(adapter);
+        mGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+//                    Toast.makeText(getActivity(), "Second catch", Toast.LENGTH_SHORT).show();
+//                    Intent intent = new Intent(getActivity(), MovieDetailActivity.class);
+//                    intent.putExtra(CURRENT_MOVIE_INTENT_STRING, mMovieList.get(position));
+//                    getActivity().startActivity(intent);
+                mCallback.onPosterSelected(mMovieList.get(position));
+            }
+        });
+    }
+
     @Override
     public void onStop() {
         super.onStop();
+    }
+
+    public interface OnPosterSelectedListener{
+        public void onPosterSelected(Movie currentMovie);
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        try {
+            mCallback = (OnPosterSelectedListener) context;
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new ClassCastException(context.toString()
+                    + " must implement OnHeadlineSelectedListener");
+        }
     }
 }
