@@ -3,6 +3,8 @@ package com.ruthiefloats.popularmoviesstage1;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
+import com.ruthiefloats.popularmoviesstage1.model.Movie;
+
 /**
  * An Activity for displaying the details of a single Movie.
  */
@@ -15,11 +17,13 @@ public class MovieDetailActivity extends AppCompatActivity {
         setContentView(R.layout.activity_movie_detail);
 
        if (savedInstanceState == null){
-           Bundle arguments = new Bundle();
-           arguments.putParcelable(MovieDetailFragment.ARG_ITEM_ID,
-                   getIntent().getParcelableExtra(MainActivity.INSTANCE_STATE_TAG));
-           MovieDetailFragment fragment = new MovieDetailFragment();
-           fragment.setArguments(arguments);
+           MovieDetailFragment fragment = MovieDetailFragment
+                   .newInstance((Movie) getIntent().getParcelableExtra(MainActivity.INSTANCE_STATE_TAG));
+//           Bundle arguments = new Bundle();
+//           arguments.putParcelable(MovieDetailFragment.ARG_ITEM_ID,
+//                   getIntent().getParcelableExtra(MainActivity.INSTANCE_STATE_TAG));
+//           MovieDetailFragment fragment = new MovieDetailFragment();
+//           fragment.setArguments(arguments);
            getSupportFragmentManager().beginTransaction()
                    .add(R.id.detail_container, fragment)
                    .commit();

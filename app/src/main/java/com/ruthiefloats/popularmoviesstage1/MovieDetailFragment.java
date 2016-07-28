@@ -1,5 +1,6 @@
 package com.ruthiefloats.popularmoviesstage1;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -22,8 +23,7 @@ import com.squareup.picasso.Picasso;
 public class MovieDetailFragment extends Fragment {
 
     public static final String ARG_ITEM_ID = "item_id";
-    private Movie mMovie;
-
+    private Movie currentMovie;
 
     public MovieDetailFragment() {
         // Required empty public constructor
@@ -33,7 +33,15 @@ public class MovieDetailFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mMovie = getArguments().getParcelable(MainActivity.INSTANCE_STATE_TAG);
+        currentMovie = getArguments().getParcelable(MainActivity.INSTANCE_STATE_TAG);
+    }
+
+    public static MovieDetailFragment newInstance(Movie movie){
+        MovieDetailFragment movieDetailFragment = new MovieDetailFragment();
+        Bundle args = new Bundle();
+        args.putParcelable(MainActivity.INSTANCE_STATE_TAG, movie);
+        movieDetailFragment.setArguments(args);
+        return movieDetailFragment;
     }
 
     @Override
@@ -47,7 +55,6 @@ public class MovieDetailFragment extends Fragment {
 
 //            Movie currentMovie = DummyData.getSingleDummyDatum();
 
-        Movie currentMovie = mMovie;
         /**Populate the Views using the information in the Movie object */
         TextView movieTextView = (TextView) rootView.findViewById(R.id.movieTitle);
         TextView dateTextView = (TextView) rootView.findViewById(R.id.dateTextView);
