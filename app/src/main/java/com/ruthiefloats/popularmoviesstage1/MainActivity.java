@@ -2,6 +2,7 @@ package com.ruthiefloats.popularmoviesstage1;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.PersistableBundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -20,6 +21,7 @@ public class MainActivity extends AppCompatActivity implements MasterFragment.On
     private static final String MASTER_FRAGMENT_TAG = "master frag tag";
     private boolean mTwoPane;
     public static final String INSTANCE_STATE_TAG = "heres the movie";
+    MasterFragment mMasterFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,9 +31,17 @@ public class MainActivity extends AppCompatActivity implements MasterFragment.On
         if (findViewById(R.id.detail_container) != null) {
             mTwoPane = true;
         }
-        //either way, populate the master_container with a MasterFragment
-        getSupportFragmentManager().beginTransaction().replace(R.id.master_container, new MasterFragment(), MASTER_FRAGMENT_TAG)
-                .commit();
+
+        if (savedInstanceState != null){
+            //either way, populate the master_container with a MasterFragment
+            mMasterFragment = (MasterFragment) getSupportFragmentManager()
+                    .getFragment(savedInstanceState, "mFragment");
+//            getSupportFragmentManager().beginTransaction().replace(R.id.master_container, mMasterFragment, MASTER_FRAGMENT_TAG);
+        } else{
+            mMasterFragment = new MasterFragment();
+            getSupportFragmentManager().beginTransaction().replace(R.id.master_container, mMasterFragment, MASTER_FRAGMENT_TAG)
+                    .commit();
+        }
     }
 
     @Override
@@ -74,5 +84,11 @@ public class MainActivity extends AppCompatActivity implements MasterFragment.On
             intent.putExtra(INSTANCE_STATE_TAG, currentMovie);
             startActivity(intent);
         }
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState, PersistableBundle outPersistentState) {
+        super.onSaveInstanceState(outState, outPersistentState);
+        getSupportFragmentManager().putFragment(outState, "mFragment", mMasterFragment);
     }
 }

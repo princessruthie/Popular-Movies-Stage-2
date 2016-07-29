@@ -1,12 +1,13 @@
 package com.ruthiefloats.popularmoviesstage1;
 
 import android.content.Context;
-import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,6 +21,7 @@ import com.ruthiefloats.popularmoviesstage1.model.Movie;
 import com.ruthiefloats.popularmoviesstage1.parser.MovieParser;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -31,16 +33,16 @@ public class MasterFragment extends Fragment {
     /**
      * Strings for keys in savedInstanceState
      */
-    private static final String GRID_VIEW_POSITION = "grid view position";
     private static final String MOVIE_LIST = "list";
+    private static final String INT_PLACEHOLDER = "int placeholder";
+
     /**
-     * Roots for the two APIS used
+     * Roots for the two APIs used
      */
     public static final String POPULAR_RESOURCE_ROOT = "/movie/popular";
     public static final String TOP_RATED_RESOURCE_ROOT = "/movie/top_rated";
 
-    private static final String DEBUG_TAG = "MainActivity";
-    private static final String CURRENT_MOVIE_INTENT_STRING = "movie intent here";
+    private static final String DEBUG_TAG = "MasterFragment";
 
     private GridView mGridView;
     private List<Movie> mMovieList;
@@ -52,24 +54,31 @@ public class MasterFragment extends Fragment {
     }
 
     @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setRetainInstance(true);
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_master, container, false);
-
+        Log.i(DEBUG_TAG, "oncreateview");
         mGridView = (GridView) rootView.findViewById(R.id.gridview);
         /**If restoring, use the stored data.  Otherwise get data. */
         if (savedInstanceState != null) {
+            Log.i(DEBUG_TAG, "using existing data");
             mMovieList = savedInstanceState.getParcelableArrayList(MOVIE_LIST);
             if (mMovieList != null) {
                 MovieImageAdapter adapter = new MovieImageAdapter(getActivity(), mMovieList);
                 mGridView.setAdapter(adapter);
             }
         } else {
+            Log.i(DEBUG_TAG, "getting fresh data");
             getData(POPULAR_RESOURCE_ROOT);
 //            useOfflinePlaceholderData();
         }
-
 
         return rootView;
     }
@@ -78,7 +87,6 @@ public class MasterFragment extends Fragment {
     // task.
     // Before attempting to fetch the URL, makes sure that there is a network connection.
     public void getData(String resourceRoot) {
-
         String baseUrl = "http://api.themoviedb.org/3";
         String apiKeyUrl = "/?api_key=" +
                 BuildConfig.DEVELOPER_API_KEY;
@@ -123,40 +131,30 @@ public class MasterFragment extends Fragment {
             mGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    //todo right now the method
-//                    Toast.makeText(getActivity(), "Second catch", Toast.LENGTH_SHORT).show();
-//                    Intent intent = new Intent(getActivity(), MovieDetailActivity.class);
-//                    intent.putExtra(CURRENT_MOVIE_INTENT_STRING, mMovieList.get(position));
-//                    getActivity().startActivity(intent);
                     mCallback.onPosterSelected(mMovieList.get(position));
                 }
             });
         }
     }
 
-    private void useOfflinePlaceholderData(){
+    /*
+    a method for offline debugging (plane/train)
+     */
+    private void useOfflinePlaceholderData() {
         mMovieList = DummyData.getDummyData();
         MovieImageAdapter adapter = new MovieImageAdapter(getContext(), mMovieList);
         mGridView.setAdapter(adapter);
         mGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-//                    Toast.makeText(getActivity(), "Second catch", Toast.LENGTH_SHORT).show();
-//                    Intent intent = new Intent(getActivity(), MovieDetailActivity.class);
-//                    intent.putExtra(CURRENT_MOVIE_INTENT_STRING, mMovieList.get(position));
-//                    getActivity().startActivity(intent);
                 mCallback.onPosterSelected(mMovieList.get(position));
             }
         });
     }
 
-    @Override
-    public void onStop() {
-        super.onStop();
-    }
 
-    public interface OnPosterSelectedListener{
-        public void onPosterSelected(Movie currentMovie);
+    public interface OnPosterSelectedListener {
+        void onPosterSelected(Movie currentMovie);
     }
 
     @Override
@@ -169,5 +167,30 @@ public class MasterFragment extends Fragment {
             throw new ClassCastException(context.toString()
                     + " must implement OnHeadlineSelectedListener");
         }
+    }
+
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        Log.i(DEBUG_TAG, "onviewcreated");
+        if (savedInstanceState != null) {
+            int position = savedInstanceState.getInt(INT_PLACEHOLDER);
+            Log.i(DEBUG_TAG, "the int was " + position);
+            mGridView.setSelection(position);
+            mGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    mCallback.onPosterSelected(mMovieList.get(position));
+                }
+            });
+        }
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        int position = mGridView.getFirstVisiblePosition();
+        outState.putInt(INT_PLACEHOLDER, position);
+        outState.putParcelableArrayList(MOVIE_LIST, (ArrayList<Movie>) mMovieList);
     }
 }
