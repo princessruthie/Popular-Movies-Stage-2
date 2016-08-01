@@ -10,5 +10,5 @@
     android:horizontalSpacing="10dp"
     android:stretchMode="columnWidth"
     android:gravity="center"
-    tools:context="com.ruthiefloats.popularmoviesstage1.MainActivity">
+    tools:context="com.ruthiefloats.popularmoviesstage2.MainActivity">
 </GridView>

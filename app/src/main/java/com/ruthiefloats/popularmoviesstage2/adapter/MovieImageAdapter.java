@@ -1,15 +1,13 @@
-package com.ruthiefloats.popularmoviesstage1.adapter;
+package com.ruthiefloats.popularmoviesstage2.adapter;
 
 import android.content.Context;
-import android.content.Intent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 
-import com.ruthiefloats.popularmoviesstage1.MovieDetailActivity;
-import com.ruthiefloats.popularmoviesstage1.R;
-import com.ruthiefloats.popularmoviesstage1.model.Movie;
+import com.ruthiefloats.popularmoviesstage2.R;
+import com.ruthiefloats.popularmoviesstage2.model.Movie;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;

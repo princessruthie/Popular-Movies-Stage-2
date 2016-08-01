@@ -1,4 +1,4 @@
-package com.ruthiefloats.popularmoviesstage1;
+package com.ruthiefloats.popularmoviesstage2;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -8,7 +8,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
-import com.ruthiefloats.popularmoviesstage1.model.Movie;
+import com.ruthiefloats.popularmoviesstage2.model.Movie;
 
 /**
  * The MainActivity by default populates with a list of the most popular movies.

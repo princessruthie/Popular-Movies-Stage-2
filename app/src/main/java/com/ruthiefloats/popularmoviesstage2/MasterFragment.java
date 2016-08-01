@@ -1,4 +1,4 @@
-package com.ruthiefloats.popularmoviesstage1;
+package com.ruthiefloats.popularmoviesstage2;
 
 import android.content.Context;
 import android.net.ConnectivityManager;
@@ -15,10 +15,10 @@ import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.Toast;
 
-import com.ruthiefloats.popularmoviesstage1.adapter.MovieImageAdapter;
-import com.ruthiefloats.popularmoviesstage1.model.DummyData;
-import com.ruthiefloats.popularmoviesstage1.model.Movie;
-import com.ruthiefloats.popularmoviesstage1.parser.MovieParser;
+import com.ruthiefloats.popularmoviesstage2.adapter.MovieImageAdapter;
+import com.ruthiefloats.popularmoviesstage2.model.DummyData;
+import com.ruthiefloats.popularmoviesstage2.model.Movie;
+import com.ruthiefloats.popularmoviesstage2.parser.MovieParser;
 
 import java.io.IOException;
 import java.util.ArrayList;

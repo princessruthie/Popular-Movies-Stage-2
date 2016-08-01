@@ -1,4 +1,4 @@
-package com.ruthiefloats.popularmoviesstage1;
+package com.ruthiefloats.popularmoviesstage2;
 
 import org.junit.Test;
 

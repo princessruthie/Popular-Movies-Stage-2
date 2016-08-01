@@ -1,4 +1,4 @@
-package com.ruthiefloats.popularmoviesstage1.model;
+package com.ruthiefloats.popularmoviesstage2.model;
 
 import java.util.ArrayList;
 import java.util.List;

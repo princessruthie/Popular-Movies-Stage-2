@@ -1,6 +1,5 @@
-package com.ruthiefloats.popularmoviesstage1;
+package com.ruthiefloats.popularmoviesstage2;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -10,9 +9,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.ruthiefloats.popularmoviesstage1.adapter.MovieImageAdapter;
-import com.ruthiefloats.popularmoviesstage1.model.DummyData;
-import com.ruthiefloats.popularmoviesstage1.model.Movie;
+import com.ruthiefloats.popularmoviesstage2.adapter.MovieImageAdapter;
+import com.ruthiefloats.popularmoviesstage2.model.Movie;
 import com.squareup.picasso.Picasso;
 
 

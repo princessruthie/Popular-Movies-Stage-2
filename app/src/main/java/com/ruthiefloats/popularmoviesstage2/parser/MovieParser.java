@@ -1,6 +1,6 @@
-package com.ruthiefloats.popularmoviesstage1.parser;
+package com.ruthiefloats.popularmoviesstage2.parser;
 
-import com.ruthiefloats.popularmoviesstage1.model.Movie;
+import com.ruthiefloats.popularmoviesstage2.model.Movie;
 
 import org.json.JSONArray;
 import org.json.JSONException;

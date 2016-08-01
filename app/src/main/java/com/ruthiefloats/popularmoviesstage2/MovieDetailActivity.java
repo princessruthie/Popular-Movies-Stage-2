@@ -1,9 +1,9 @@
-package com.ruthiefloats.popularmoviesstage1;
+package com.ruthiefloats.popularmoviesstage2;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
-import com.ruthiefloats.popularmoviesstage1.model.Movie;
+import com.ruthiefloats.popularmoviesstage2.model.Movie;
 
 /**
  * An Activity for displaying the details of a single Movie.

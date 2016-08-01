@@ -3,9 +3,8 @@ apply plugin: 'com.android.application'
 android {
     compileSdkVersion 23
     buildToolsVersion "23.0.3"
-
     defaultConfig {
-        applicationId "com.ruthiefloats.popularmoviesstage1"
+        applicationId 'com.ruthiefloats.popularmoviesstage2'
         minSdkVersion 15
         targetSdkVersion 23
         versionCode 1
@@ -19,6 +18,8 @@ android {
     }
     buildTypes.each {
         it.buildConfigField 'String', 'DEVELOPER_API_KEY', MyMovieDBApiKey
+    }
+    productFlavors {
     }
 }
 
