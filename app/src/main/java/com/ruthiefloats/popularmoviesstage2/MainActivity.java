@@ -18,26 +18,31 @@ import com.ruthiefloats.popularmoviesstage2.model.Movie;
  */
 public class MainActivity extends AppCompatActivity implements MasterFragment.OnPosterSelectedListener {
 
-    private static final String MASTER_FRAGMENT_TAG = "master frag tag";
-    private boolean mTwoPane;
     public static final String INSTANCE_STATE_TAG = "heres the movie";
+    private static final String MASTER_FRAGMENT_TAG = "master frag tag";
     MasterFragment mMasterFragment;
+    private boolean mTwoPane;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        /*if layout has detail_container then using a tablet and
+        using a two-pane layout.
+         */
         if (findViewById(R.id.detail_container) != null) {
             mTwoPane = true;
         }
 
-        if (savedInstanceState != null){
-            //either way, populate the master_container with a MasterFragment
+        /*
+        restore the reference to the saved fragment otherwise make a new
+        fragment
+         */
+        if (savedInstanceState != null) {
             mMasterFragment = (MasterFragment) getSupportFragmentManager()
                     .getFragment(savedInstanceState, "mFragment");
-//            getSupportFragmentManager().beginTransaction().replace(R.id.master_container, mMasterFragment, MASTER_FRAGMENT_TAG);
-        } else{
+        } else {
             mMasterFragment = new MasterFragment();
             getSupportFragmentManager().beginTransaction().replace(R.id.master_container, mMasterFragment, MASTER_FRAGMENT_TAG)
                     .commit();
@@ -68,10 +73,15 @@ public class MainActivity extends AppCompatActivity implements MasterFragment.On
         return false;
     }
 
+
+    /*onPosterSelect method is required to implement the OnPosterSelectedListener
+    interface.  Depending on whether in a tablet, either replace the detail
+    fragment or launch a detail activity.
+     */
     @Override
     public void onPosterSelected(Movie currentMovie) {
-        Toast.makeText(this, "Movie selected is " + currentMovie.getTitle() , Toast.LENGTH_SHORT).show();
-        if (mTwoPane){
+        Toast.makeText(this, "Movie selected is " + currentMovie.getTitle(), Toast.LENGTH_SHORT).show();
+        if (mTwoPane) {
             Bundle arguments = new Bundle();
             arguments.putParcelable(INSTANCE_STATE_TAG, currentMovie);
             MovieDetailFragment fragment = new MovieDetailFragment();
@@ -79,7 +89,7 @@ public class MainActivity extends AppCompatActivity implements MasterFragment.On
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.detail_container, fragment)
                     .commit();
-        } else{
+        } else {
             Intent intent = new Intent(this, MovieDetailActivity.class);
             intent.putExtra(INSTANCE_STATE_TAG, currentMovie);
             startActivity(intent);
