@@ -17,6 +17,7 @@ public class Movie implements Parcelable {
     private String poster_path;
     private double vote_average;
     private String overview;
+    // TODO: 8/2/16 add an id field for follow-up query on the Movie. 
 
 
     /**

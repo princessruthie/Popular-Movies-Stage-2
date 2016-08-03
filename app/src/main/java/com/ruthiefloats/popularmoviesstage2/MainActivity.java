@@ -81,6 +81,7 @@ public class MainActivity extends AppCompatActivity implements MasterFragment.On
     @Override
     public void onPosterSelected(Movie currentMovie) {
         Toast.makeText(this, "Movie selected is " + currentMovie.getTitle(), Toast.LENGTH_SHORT).show();
+        // TODO: query movies api for the trailer location  
         if (mTwoPane) {
             Bundle arguments = new Bundle();
             arguments.putParcelable(INSTANCE_STATE_TAG, currentMovie);

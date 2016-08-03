@@ -59,6 +59,8 @@ public class MovieDetailFragment extends Fragment {
         TextView summaryTextView = (TextView) rootView.findViewById(R.id.synopsisTextView);
         TextView ratingTextView = (TextView) rootView.findViewById(R.id.voteAverageTextView);
         ImageView imageView = (ImageView) rootView.findViewById(R.id.imageView);
+        // TODO: 8/2/16 add Views for trailer and listener to launch intent
+        // TODO: 8/2/16 add Views for reviews
         //for part 2 we'll populate the lengthTextView TextView
         //from the looks of it, I'll need a separate call to the server for the
         //duration portion because it's not exposed in  /popular or /top_rated
