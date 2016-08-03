@@ -3,6 +3,4 @@
     <string name="sort_by_popularity">Sort By Popularity</string>
     <string name="sort_by_rating">Sort By Rating</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

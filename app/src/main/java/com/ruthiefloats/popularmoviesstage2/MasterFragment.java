@@ -69,7 +69,6 @@ public class MasterFragment extends Fragment {
         /**If restoring, use the stored data.  Otherwise get data. */
         if (savedInstanceState != null) {
             Log.i(DEBUG_TAG, "using existing data");
-            mMovieList = savedInstanceState.getParcelableArrayList(MOVIE_LIST);
             if (mMovieList != null) {
                 MovieImageAdapter adapter = new MovieImageAdapter(getActivity(), mMovieList);
                 mGridView.setAdapter(adapter);
@@ -174,9 +173,6 @@ public class MasterFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         Log.i(DEBUG_TAG, "onviewcreated");
         if (savedInstanceState != null) {
-            int position = savedInstanceState.getInt(INT_PLACEHOLDER);
-            Log.i(DEBUG_TAG, "the int was " + position);
-            mGridView.setSelection(position);
             mGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -184,13 +180,5 @@ public class MasterFragment extends Fragment {
                 }
             });
         }
-    }
-
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        int position = mGridView.getFirstVisiblePosition();
-        outState.putInt(INT_PLACEHOLDER, position);
-        outState.putParcelableArrayList(MOVIE_LIST, (ArrayList<Movie>) mMovieList);
     }
 }
