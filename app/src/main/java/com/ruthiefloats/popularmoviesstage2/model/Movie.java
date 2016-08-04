@@ -28,18 +28,20 @@ public class Movie implements Parcelable {
     }
 
     /**
-     * @param title        Name of the movie
+     * @param title        name of the movie
      * @param release_date year the film was released
      * @param poster_path  the image location postfix?
      * @param vote_average average score
      * @param overview     summary of the plot
+     * @param id           api id of the movie
      */
-    public Movie(String title, String release_date, String poster_path, double vote_average, String overview) {
+    public Movie(String title, String release_date, String poster_path, double vote_average, String overview, int id) {
         this.title = title;
         this.release_date = release_date;
         this.poster_path = poster_path;
         this.vote_average = vote_average;
         this.overview = overview;
+        this.id = id;
     }
 
     public String getTitle() {

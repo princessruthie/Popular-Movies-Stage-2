@@ -46,11 +46,12 @@ public class MovieParser {
                 String release_date = currentResult.optString("release_date", "No date available");
                 String title = currentResult.optString("original_title", "No title info");
                 double vote_average = currentResult.optDouble("vote_average");
+                int id = currentResult.optInt("id");
 
                 /*
                 Create a new movie List<>.
                  */
-                movieList.add(new Movie(title, release_date, poster_path, vote_average, overview));
+                movieList.add(new Movie(title, release_date, poster_path, vote_average, overview, id));
             }
             return movieList;
         } catch (JSONException e) {
