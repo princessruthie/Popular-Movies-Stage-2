@@ -2,5 +2,6 @@
     <string name="app_name">Popular Movies Stage 2</string>
     <string name="sort_by_popularity">Sort By Popularity</string>
     <string name="sort_by_rating">Sort By Rating</string>
+    <string name="reviews">Reviews</string>
 
 </resources>
