@@ -17,8 +17,15 @@ public class Movie implements Parcelable {
     private String poster_path;
     private double vote_average;
     private String overview;
-    // TODO: 8/2/16 add an id field for follow-up query on the Movie. 
+    private int id;
 
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
 
     /**
      * @param title        Name of the movie
@@ -81,6 +88,7 @@ public class Movie implements Parcelable {
         poster_path = in.readString();
         vote_average = in.readDouble();
         overview = in.readString();
+        id = in.readInt();
     }
 
     @Override
@@ -95,6 +103,7 @@ public class Movie implements Parcelable {
         dest.writeString(poster_path);
         dest.writeDouble(vote_average);
         dest.writeString(overview);
+        dest.writeInt(id);
     }
 
     @SuppressWarnings("unused")
