@@ -17,22 +17,22 @@ import com.squareup.picasso.Picasso;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class MovieDetailFragment extends Fragment {
+public class DetailFragment extends Fragment {
 
     public static final String ARG_ITEM_ID = "item_id";
     private Movie currentMovie;
     // TODO: 8/3/16 find a maintainable to have distinct tablet/phone detail layouts.
     // TODO: 8/3/16 remove hardcoded review
-    public MovieDetailFragment() {
+    public DetailFragment() {
         // Required empty public constructor
     }
 
-    public static MovieDetailFragment newInstance(Movie movie) {
-        MovieDetailFragment movieDetailFragment = new MovieDetailFragment();
+    public static DetailFragment newInstance(Movie movie) {
+        DetailFragment detailFragment = new DetailFragment();
         Bundle args = new Bundle();
         args.putParcelable(MainActivity.INSTANCE_STATE_TAG, movie);
-        movieDetailFragment.setArguments(args);
-        return movieDetailFragment;
+        detailFragment.setArguments(args);
+        return detailFragment;
     }
 
     @Override

@@ -85,13 +85,13 @@ public class MainActivity extends AppCompatActivity implements MasterFragment.On
         if (mTwoPane) {
             Bundle arguments = new Bundle();
             arguments.putParcelable(INSTANCE_STATE_TAG, currentMovie);
-            MovieDetailFragment fragment = new MovieDetailFragment();
+            DetailFragment fragment = new DetailFragment();
             fragment.setArguments(arguments);
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.detail_container, fragment)
                     .commit();
         } else {
-            Intent intent = new Intent(this, MovieDetailActivity.class);
+            Intent intent = new Intent(this, DetailActivity.class);
             intent.putExtra(INSTANCE_STATE_TAG, currentMovie);
             startActivity(intent);
         }

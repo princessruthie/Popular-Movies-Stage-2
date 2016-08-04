@@ -60,13 +60,13 @@ public class MovieImageAdapter extends BaseAdapter {
                 load(getCompletePhotoUrl(mMovieList.get(position).getPoster_path()))
                 .error(R.drawable.placeholder)
                 .into(imageView);
-        /**Clicking on the ImageView starts a MovieDetailActivity based on the current
+        /**Clicking on the ImageView starts a DetailActivity based on the current
          * Movie.
          */
 //        imageView.setOnClickListener(new View.OnClickListener() {
 //            @Override
 //            public void onClick(View v) {
-//                Intent intent = new Intent(mContext, MovieDetailActivity.class);
+//                Intent intent = new Intent(mContext, DetailActivity.class);
 //                intent.putExtra(CURRENT_MOVIE, mMovieList.get(position));
 //                mContext.startActivity(intent);
 //            }

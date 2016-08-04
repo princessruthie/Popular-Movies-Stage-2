@@ -9,7 +9,7 @@ import com.ruthiefloats.popularmoviesstage2.model.Movie;
  * An Activity for displaying the details of a single Movie.
  */
 
-public class MovieDetailActivity extends AppCompatActivity {
+public class DetailActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -17,12 +17,12 @@ public class MovieDetailActivity extends AppCompatActivity {
         setContentView(R.layout.activity_movie_detail);
 
        if (savedInstanceState == null){
-           MovieDetailFragment fragment = MovieDetailFragment
+           DetailFragment fragment = DetailFragment
                    .newInstance((Movie) getIntent().getParcelableExtra(MainActivity.INSTANCE_STATE_TAG));
 //           Bundle arguments = new Bundle();
-//           arguments.putParcelable(MovieDetailFragment.ARG_ITEM_ID,
+//           arguments.putParcelable(DetailFragment.ARG_ITEM_ID,
 //                   getIntent().getParcelableExtra(MainActivity.INSTANCE_STATE_TAG));
-//           MovieDetailFragment fragment = new MovieDetailFragment();
+//           DetailFragment fragment = new DetailFragment();
 //           fragment.setArguments(arguments);
            getSupportFragmentManager().beginTransaction()
                    .add(R.id.detail_container, fragment)
@@ -30,7 +30,7 @@ public class MovieDetailActivity extends AppCompatActivity {
        }
 
 //        getSupportFragmentManager().beginTransaction().
-//                replace(R.id.detail_container, new MovieDetailFragment())
+//                replace(R.id.detail_container, new DetailFragment())
 //                .commit();
 
     }
