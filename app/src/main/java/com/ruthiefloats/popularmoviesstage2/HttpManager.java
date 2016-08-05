@@ -74,7 +74,7 @@ public class HttpManager {
 
     static String BuildUrl(String resourceRoot) {
         String baseUrl = "http://api.themoviedb.org/3";
-        String apiKeyUrl = "/?api_key=" +
+        String apiKeyUrl = "?api_key=" +
                 BuildConfig.DEVELOPER_API_KEY;
         String fullUrl = (new StringBuilder(baseUrl +
                 resourceRoot +

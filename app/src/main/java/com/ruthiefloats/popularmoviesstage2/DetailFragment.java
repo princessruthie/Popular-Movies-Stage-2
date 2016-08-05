@@ -1,17 +1,22 @@
 package com.ruthiefloats.popularmoviesstage2;
 
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.ruthiefloats.popularmoviesstage2.adapter.MovieImageAdapter;
 import com.ruthiefloats.popularmoviesstage2.model.Movie;
 import com.squareup.picasso.Picasso;
+
+import java.io.IOException;
 
 
 /**
@@ -20,7 +25,13 @@ import com.squareup.picasso.Picasso;
 public class DetailFragment extends Fragment {
 
     public static final String ARG_ITEM_ID = "item_id";
+    private static final String LOG_TAG = "DetailFragment AsyncRes";
     private Movie currentMovie;
+    //    private String REVIEW_ROOT_PREFIX = "/movie/209112/reviews";
+    private String REVIEW_ROOT_PREFIX = "/movie/";
+
+    private String REVIEW_ROOT_POSTFIX = "/reviews";
+
     // TODO: 8/3/16 find a maintainable to have distinct tablet/phone detail layouts.
     // TODO: 8/3/16 remove hardcoded review
     public DetailFragment() {
@@ -45,8 +56,13 @@ public class DetailFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        // When called builds a valid valid URL for The Movie DB API and starts a DownloadWeb
+        // task.
+        // Before attempting to fetch the URL, makes sure that there is a network connection.
+
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_detail, container, false);
+        getData(REVIEW_ROOT_PREFIX + currentMovie.getId() + REVIEW_ROOT_POSTFIX);
 
         /**Set the current movie by getting an Extra from the calling intent */
 //        Movie currentMovie = getActivity().getIntent().getExtras().getParcelable(MovieImageAdapter.CURRENT_MOVIE);
@@ -78,5 +94,43 @@ public class DetailFragment extends Fragment {
                 .into(imageView);
 
         return rootView;
+    }
+
+    // Uses AsyncTask to create a task away from the main UI thread. This task takes a
+    // URL string and uses it to create an HttpUrlConnection. Once the connection
+    // has been established, the AsyncTask downloads the contents of the webpage as
+    // an InputStream. Finally, the InputStream is converted into a string, which is
+    // parsed into a List<Movie> and used to construct/set the GridView's adapter in
+    // the AsyncTask's onPostExecute method.
+    private class DownloadWebpageTask extends AsyncTask<String, Void, String> {
+        @Override
+        protected String doInBackground(String... urls) {
+
+            // params comes from the execute() call: params[0] is the url.
+            try {
+                return HttpManager.downloadUrl(urls[0]);
+            } catch (IOException e) {
+                return "Unable to retrieve web page. URL may be invalid.";
+            }
+        }
+
+        // onPostExecute displays the results of the AsyncTask.
+        @Override
+        protected void onPostExecute(String result) {
+            Log.i(LOG_TAG, result);
+            // TODO: 8/4/16 update parser to return readable reviews
+            // TODO: 8/4/16 update ui here
+        }
+    }
+
+    public void getData(String resourceRoot) {
+        String fullUrl = HttpManager.BuildUrl(resourceRoot);
+        Log.i(LOG_TAG, fullUrl);
+        boolean hasConnection = HttpManager.CheckConnection(getContext());
+        if (hasConnection) {
+            new DownloadWebpageTask().execute(fullUrl);
+        } else {
+            Toast.makeText(getContext(), "No network", Toast.LENGTH_SHORT);
+        }
     }
 }
