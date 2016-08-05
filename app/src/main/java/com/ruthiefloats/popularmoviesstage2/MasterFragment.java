@@ -1,8 +1,6 @@
 package com.ruthiefloats.popularmoviesstage2;
 
 import android.content.Context;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -21,7 +19,6 @@ import com.ruthiefloats.popularmoviesstage2.model.Movie;
 import com.ruthiefloats.popularmoviesstage2.parser.MovieParser;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 
@@ -31,23 +28,19 @@ import java.util.List;
 public class MasterFragment extends Fragment {
 
     /**
-     * Strings for keys in savedInstanceState
-     */
-    private static final String MOVIE_LIST = "list";
-    private static final String INT_PLACEHOLDER = "int placeholder";
-
-    /**
      * Roots for the two APIs used
      */
     public static final String POPULAR_RESOURCE_ROOT = "/movie/popular";
     public static final String TOP_RATED_RESOURCE_ROOT = "/movie/top_rated";
-
+    /**
+     * Strings for keys in savedInstanceState
+     */
+    private static final String MOVIE_LIST = "list";
+    private static final String INT_PLACEHOLDER = "int placeholder";
     private static final String DEBUG_TAG = "MasterFragment";
-
+    OnPosterSelectedListener mCallback;
     private GridView mGridView;
     private List<Movie> mMovieList;
-
-    OnPosterSelectedListener mCallback;
 
     public MasterFragment() {
         // Required empty public constructor
@@ -78,7 +71,6 @@ public class MasterFragment extends Fragment {
             getData(POPULAR_RESOURCE_ROOT);
 //            useOfflinePlaceholderData();
         }
-
         return rootView;
     }
 
@@ -86,21 +78,58 @@ public class MasterFragment extends Fragment {
     // task.
     // Before attempting to fetch the URL, makes sure that there is a network connection.
     public void getData(String resourceRoot) {
-        String baseUrl = "http://api.themoviedb.org/3";
-        String apiKeyUrl = "/?api_key=" +
-                BuildConfig.DEVELOPER_API_KEY;
-        String sortByVoteFullUrl = (new StringBuilder(baseUrl +
-                resourceRoot +
-                apiKeyUrl)).
-                toString();
-        ConnectivityManager connMgr = (ConnectivityManager)
-                getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
-        if (networkInfo != null && networkInfo.isConnected()) {
-            new DownloadWebpageTask().execute(sortByVoteFullUrl);
+        String fullUrl = HttpManager.BuildUrl(resourceRoot);
+        boolean hasConnection = HttpManager.CheckConnection(getContext());
+        if (hasConnection) {
+            new DownloadWebpageTask().execute(fullUrl);
         } else {
             Toast.makeText(getContext(), "No network", Toast.LENGTH_SHORT);
         }
+    }
+
+    /*
+    a method for offline debugging (plane/train)
+     */
+    private void useOfflinePlaceholderData() {
+        mMovieList = DummyData.getDummyData();
+        MovieImageAdapter adapter = new MovieImageAdapter(getContext(), mMovieList);
+        mGridView.setAdapter(adapter);
+        mGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                mCallback.onPosterSelected(mMovieList.get(position));
+            }
+        });
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        try {
+            mCallback = (OnPosterSelectedListener) context;
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new ClassCastException(context.toString()
+                    + " must implement OnHeadlineSelectedListener");
+        }
+    }
+
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        Log.i(DEBUG_TAG, "onviewcreated");
+        if (savedInstanceState != null) {
+            mGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    mCallback.onPosterSelected(mMovieList.get(position));
+                }
+            });
+        }
+    }
+
+    public interface OnPosterSelectedListener {
+        void onPosterSelected(Movie currentMovie);
     }
 
     // Uses AsyncTask to create a task away from the main UI thread. This task takes a
@@ -127,52 +156,6 @@ public class MasterFragment extends Fragment {
             mMovieList = MovieParser.parseFeed(result);
             MovieImageAdapter adapter = new MovieImageAdapter(getContext(), mMovieList);
             mGridView.setAdapter(adapter);
-            mGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    mCallback.onPosterSelected(mMovieList.get(position));
-                }
-            });
-        }
-    }
-
-    /*
-    a method for offline debugging (plane/train)
-     */
-    private void useOfflinePlaceholderData() {
-        mMovieList = DummyData.getDummyData();
-        MovieImageAdapter adapter = new MovieImageAdapter(getContext(), mMovieList);
-        mGridView.setAdapter(adapter);
-        mGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                mCallback.onPosterSelected(mMovieList.get(position));
-            }
-        });
-    }
-
-
-    public interface OnPosterSelectedListener {
-        void onPosterSelected(Movie currentMovie);
-    }
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        try {
-            mCallback = (OnPosterSelectedListener) context;
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new ClassCastException(context.toString()
-                    + " must implement OnHeadlineSelectedListener");
-        }
-    }
-
-    @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        Log.i(DEBUG_TAG, "onviewcreated");
-        if (savedInstanceState != null) {
             mGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
