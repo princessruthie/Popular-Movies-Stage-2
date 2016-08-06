@@ -27,9 +27,7 @@ public class DetailFragment extends Fragment {
     public static final String ARG_ITEM_ID = "item_id";
     private static final String LOG_TAG = "DetailFragment AsyncRes";
     private Movie currentMovie;
-    //    private String REVIEW_ROOT_PREFIX = "/movie/209112/reviews";
     private String REVIEW_ROOT_PREFIX = "/movie/";
-
     private String REVIEW_ROOT_POSTFIX = "/reviews";
 
     // TODO: 8/3/16 find a maintainable to have distinct tablet/phone detail layouts.
