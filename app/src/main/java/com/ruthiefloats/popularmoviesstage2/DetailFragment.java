@@ -14,9 +14,11 @@ import android.widget.Toast;
 
 import com.ruthiefloats.popularmoviesstage2.adapter.MovieImageAdapter;
 import com.ruthiefloats.popularmoviesstage2.model.Movie;
+import com.ruthiefloats.popularmoviesstage2.parser.MovieParser;
 import com.squareup.picasso.Picasso;
 
 import java.io.IOException;
+import java.util.List;
 
 
 /**
@@ -116,6 +118,8 @@ public class DetailFragment extends Fragment {
         @Override
         protected void onPostExecute(String result) {
             Log.i(LOG_TAG, result);
+            List<String> reviewList = MovieParser.parseReviews(result);
+            Log.i(LOG_TAG, reviewList.toString());
             // TODO: 8/4/16 update parser to return readable reviews
             // TODO: 8/4/16 update ui here
         }
