@@ -17,6 +17,8 @@ import com.ruthiefloats.popularmoviesstage2.model.Movie;
 import com.ruthiefloats.popularmoviesstage2.parser.MovieParser;
 import com.squareup.picasso.Picasso;
 
+import org.w3c.dom.Text;
+
 import java.io.IOException;
 import java.util.List;
 
@@ -31,6 +33,8 @@ public class DetailFragment extends Fragment {
     private Movie currentMovie;
     private String REVIEW_ROOT_PREFIX = "/movie/";
     private String REVIEW_ROOT_POSTFIX = "/reviews";
+    private int numReviews;
+    List<String> reviewList;
 
     // TODO: 8/3/16 find a maintainable to have distinct tablet/phone detail layouts.
     // TODO: 8/3/16 remove hardcoded review
@@ -118,11 +122,24 @@ public class DetailFragment extends Fragment {
         @Override
         protected void onPostExecute(String result) {
             Log.i(LOG_TAG, result);
-            List<String> reviewList = MovieParser.parseReviews(result);
-            Log.i(LOG_TAG, reviewList.toString());
+            //check that there are reviews
+            numReviews = MovieParser.getNumReviews(result);
+            Log.i(LOG_TAG, numReviews + "  reviews available");
+            if (numReviews > 0){
+                reviewList = MovieParser.parseReviews(result);
+                Log.i(LOG_TAG, reviewList.toString());
+            }
+
             // TODO: 8/4/16 update parser to return readable reviews
             // TODO: 8/4/16 update ui here
         }
+    }
+
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        TextView reviewTextView = (TextView) view.findViewById(R.id.reviewTextView);
+        reviewTextView.setText("placeholder review text");
+        super.onViewCreated(view, savedInstanceState);
     }
 
     public void getData(String resourceRoot) {

@@ -86,6 +86,7 @@
             android:text="@string/reviews"/>
 
         <TextView
+            android:id="@+id/reviewTextView"
             android:paddingBottom="48dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

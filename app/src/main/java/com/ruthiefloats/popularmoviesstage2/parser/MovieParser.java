@@ -87,4 +87,16 @@ public class MovieParser {
             return null;
         }
     }
+
+    public static int getNumReviews(String content){
+        try {
+            JSONObject obj = new JSONObject(content);
+            int numReviews = obj.optInt("total_results", 0);
+            return numReviews;
+        } catch (JSONException e){
+            e.printStackTrace();
+            Log.i(LOG_TAG, "exception caught");
+            return 0;
+        }
+    }
 }
