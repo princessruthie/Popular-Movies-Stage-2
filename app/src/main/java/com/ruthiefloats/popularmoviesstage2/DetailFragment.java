@@ -4,6 +4,8 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,6 +15,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.ruthiefloats.popularmoviesstage2.adapter.MovieImageAdapter;
+import com.ruthiefloats.popularmoviesstage2.adapter.ReviewsAdapter;
+import com.ruthiefloats.popularmoviesstage2.model.DummyData;
 import com.ruthiefloats.popularmoviesstage2.model.Movie;
 import com.ruthiefloats.popularmoviesstage2.parser.MovieParser;
 import com.squareup.picasso.Picasso;
@@ -20,6 +24,7 @@ import com.squareup.picasso.Picasso;
 import org.w3c.dom.Text;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -137,8 +142,12 @@ public class DetailFragment extends Fragment {
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        TextView reviewTextView = (TextView) view.findViewById(R.id.reviewTextView);
-        reviewTextView.setText("placeholder review text");
+        RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.reviewRecyclerView);
+        reviewList = DummyData.getDummyReviews();
+        ReviewsAdapter adapter = new ReviewsAdapter(getContext(), reviewList);
+        recyclerView.setAdapter(adapter);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+
         super.onViewCreated(view, savedInstanceState);
     }
 

@@ -26,4 +26,12 @@ public class DummyData {
     public static Movie getSingleDummyDatum(){
         return new Movie("Blah", "2016", "/5JU9ytZJyR3zmClGmVm9q4Geqbd.jpg", 4.7, "Stuff happens", 209112);
     }
+
+    public static List<String> getDummyReviews(){
+        List<String> reviews = new ArrayList<>();
+        for (int i = 0; i<5; i++){
+            reviews.add("blah blah " + i);
+        }
+        return reviews;
+    }
 }
