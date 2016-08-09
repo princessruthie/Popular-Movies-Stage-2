@@ -29,7 +29,7 @@ public class DummyData {
 
     public static List<String> getDummyReviews(){
         List<String> reviews = new ArrayList<>();
-        for (int i = 0; i<5; i++){
+        for (int i = 0; i<35; i++){
             reviews.add("blah blah " + i);
         }
         return reviews;
