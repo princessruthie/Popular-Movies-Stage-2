@@ -40,6 +40,7 @@ public class DetailFragment extends Fragment {
     private String REVIEW_ROOT_POSTFIX = "/reviews";
     private int numReviews;
     List<String> reviewList;
+    private View mView;
 
     // TODO: 8/3/16 find a maintainable to have distinct tablet/phone detail layouts.
     // TODO: 8/3/16 remove hardcoded review
@@ -71,7 +72,7 @@ public class DetailFragment extends Fragment {
 
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_detail, container, false);
-        getData(REVIEW_ROOT_PREFIX + currentMovie.getId() + REVIEW_ROOT_POSTFIX);
+//        getData(REVIEW_ROOT_PREFIX + currentMovie.getId() + REVIEW_ROOT_POSTFIX);
 
         /**Set the current movie by getting an Extra from the calling intent */
 //        Movie currentMovie = getActivity().getIntent().getExtras().getParcelable(MovieImageAdapter.CURRENT_MOVIE);
@@ -133,7 +134,17 @@ public class DetailFragment extends Fragment {
             if (numReviews > 0){
                 reviewList = MovieParser.parseReviews(result);
                 Log.i(LOG_TAG, reviewList.toString());
+            } else{
+                reviewList = new ArrayList<>();
+                reviewList.add("There aren't any reviews for this film.");
             }
+
+            RecyclerView recyclerView = (RecyclerView) mView.findViewById(R.id.reviewRecyclerView);
+//            reviewList = DummyData.getDummyReviews();
+            ReviewsAdapter adapter = new ReviewsAdapter(getContext(), reviewList);
+            recyclerView.setAdapter(adapter);
+            recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+
 
             // TODO: 8/4/16 update parser to return readable reviews
             // TODO: 8/4/16 update ui here
@@ -142,12 +153,8 @@ public class DetailFragment extends Fragment {
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.reviewRecyclerView);
-        reviewList = DummyData.getDummyReviews();
-        ReviewsAdapter adapter = new ReviewsAdapter(getContext(), reviewList);
-        recyclerView.setAdapter(adapter);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-
+        mView = view;
+        getData(REVIEW_ROOT_PREFIX + currentMovie.getId() + REVIEW_ROOT_POSTFIX);
         super.onViewCreated(view, savedInstanceState);
     }
 

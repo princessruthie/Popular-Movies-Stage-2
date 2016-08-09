@@ -19,6 +19,11 @@ public class MovieParser {
 
     private static final String LOG_TAG = "MovieParser ";
 
+    /**
+     *
+     * @param content JSON from Movies API
+     * @return List<Movie>
+     */
     public static List<Movie> parseFeed(String content) {
 
         try {
@@ -66,8 +71,13 @@ public class MovieParser {
         }
     }
 
+    /**
+     *
+     * @param content JSON from MovieDB API
+     * @return List<String> with user reviews.  If error, a 1-item List
+     * stating the problem.
+     */
     public static List<String> parseReviews(String content) {
-        // TODO: 8/5/16 parse out whatever reviews there may be.
         try {
             JSONObject obj = new JSONObject(content);
             JSONArray results = obj.getJSONArray("results");
@@ -84,10 +94,21 @@ public class MovieParser {
         } catch (JSONException e) {
             e.printStackTrace();
             Log.i(LOG_TAG, "exception caught");
-            return null;
+            List<String> errorList = new ArrayList<>();
+            errorList.add("There aren't any reviews for this film.");
+            return errorList;
         }
     }
 
+    /*
+
+     */
+
+    /**
+     * checks how many reviews are return by API
+     * @param content JSON
+     * @return   the number of reviews api returns
+     */
     public static int getNumReviews(String content){
         try {
             JSONObject obj = new JSONObject(content);
