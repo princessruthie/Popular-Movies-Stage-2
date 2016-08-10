@@ -80,7 +80,8 @@ public class MovieParser {
     public static List<String> parseReviews(String content) {
         try {
             JSONObject obj = new JSONObject(content);
-            JSONArray results = obj.getJSONArray("results");
+            JSONObject reviewsObject = obj.getJSONObject("reviews");
+            JSONArray results = reviewsObject.getJSONArray("results");
 
             List<String> reviewList = new ArrayList<>();
             for (int i = 0; i < results.length(); i++) {
@@ -95,7 +96,7 @@ public class MovieParser {
             e.printStackTrace();
             Log.i(LOG_TAG, "exception caught");
             List<String> errorList = new ArrayList<>();
-            errorList.add("There aren't any reviews for this film.");
+            errorList.add("Wow.  There aren't any reviews for this film.");
             return errorList;
         }
     }
@@ -111,8 +112,10 @@ public class MovieParser {
      */
     public static int getNumReviews(String content){
         try {
+//            JSONObject obj = new JSONObject(content);
             JSONObject obj = new JSONObject(content);
-            int numReviews = obj.optInt("total_results", 0);
+            JSONObject reviewsObject = obj.getJSONObject("reviews");
+            int numReviews = reviewsObject.optInt("total_results", 0);
             return numReviews;
         } catch (JSONException e){
             e.printStackTrace();
