@@ -37,13 +37,12 @@ public class DetailFragment extends Fragment {
     private static final String LOG_TAG = "DetailFragment AsyncRes";
     private Movie currentMovie;
     private String REVIEW_ROOT_PREFIX = "/movie/";
-    private String REVIEW_ROOT_POSTFIX = "/reviews";
+
     private int numReviews;
     List<String> reviewList;
     private View mView;
 
     // TODO: 8/3/16 find a maintainable to have distinct tablet/phone detail layouts.
-    // TODO: 8/3/16 remove hardcoded review
     public DetailFragment() {
         // Required empty public constructor
     }
@@ -131,10 +130,11 @@ public class DetailFragment extends Fragment {
             //check that there are reviews
             numReviews = MovieParser.getNumReviews(result);
             Log.i(LOG_TAG, numReviews + "  reviews available");
-            if (numReviews > 0){
+            if (numReviews > 0) {
                 reviewList = MovieParser.parseReviews(result);
+//                reviewList = MovieParser.parseReviews(DummyData.TEST_JSON);
                 Log.i(LOG_TAG, reviewList.toString());
-            } else{
+            } else {
                 reviewList = new ArrayList<>();
                 reviewList.add("There aren't any reviews for this film.");
             }
@@ -154,12 +154,12 @@ public class DetailFragment extends Fragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         mView = view;
-        getData(REVIEW_ROOT_PREFIX + currentMovie.getId() + REVIEW_ROOT_POSTFIX);
+        getData(REVIEW_ROOT_PREFIX + currentMovie.getId(), "&append_to_response=reviews,videos");
         super.onViewCreated(view, savedInstanceState);
     }
 
-    public void getData(String resourceRoot) {
-        String fullUrl = HttpManager.BuildUrl(resourceRoot);
+    public void getData(String resourceRoot, String appendix) {
+        String fullUrl = HttpManager.BuildUrl(resourceRoot, appendix);
         Log.i(LOG_TAG, fullUrl);
         boolean hasConnection = HttpManager.CheckConnection(getContext());
         if (hasConnection) {
