@@ -80,7 +80,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/synopsisTextView"
             android:layout_gravity="center"
-            android:src="@drawable/placeholder"/>
+            tools:src="@drawable/thumbnail480x360"/>
 
         <TextView
             android:id="@+id/reviewHeaderTextView"

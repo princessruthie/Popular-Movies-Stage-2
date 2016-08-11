@@ -170,7 +170,7 @@ public class DetailFragment extends Fragment {
             recyclerView.setAdapter(adapter);
             recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
             String youtubePrefix = "http://img.youtube.com/vi/";
-            String youtubePostfix = "/1.jpg";
+            String youtubePostfix = "/0.jpg";
 //            final String trailerId = "IwfUnkBfdZ4";
             final String trailerId = trailerIds.get(0);
             final String youtubeTrailerPrefix = "https://www.youtube.com/watch?v=";
