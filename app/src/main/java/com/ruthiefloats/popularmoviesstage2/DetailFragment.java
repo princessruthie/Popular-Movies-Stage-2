@@ -29,22 +29,19 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+// TODO: 8/10/16 Change fragment_detail.xml to be less nested
 
 /**
  * A simple {@link Fragment} subclass.
  */
 public class DetailFragment extends Fragment {
 
-    public static final String ARG_ITEM_ID = "item_id";
     private static final String LOG_TAG = "DetailFragment AsyncRes";
-    private Movie currentMovie;
-    private String REVIEW_ROOT_PREFIX = "/movie/";
-
-    private int numReviews;
     List<String> reviewList;
+    private Movie currentMovie;
+    private int numReviews;
     private View mView;
 
-    // TODO: 8/3/16 find a maintainable to have distinct tablet/phone detail layouts.
     public DetailFragment() {
         // Required empty public constructor
     }
@@ -74,11 +71,7 @@ public class DetailFragment extends Fragment {
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_detail, container, false);
 //        getData(REVIEW_ROOT_PREFIX + currentMovie.getId() + REVIEW_ROOT_POSTFIX);
-
-        /**Set the current movie by getting an Extra from the calling intent */
-//        Movie currentMovie = getActivity().getIntent().getExtras().getParcelable(MovieImageAdapter.CURRENT_MOVIE);
-
-//            Movie currentMovie = DummyData.getSingleDummyDatum();
+//        Movie currentMovie = DummyData.getSingleDummyDatum();
 
         /**Populate the Views using the information in the Movie object */
         TextView movieTextView = (TextView) rootView.findViewById(R.id.movieTitle);
@@ -87,11 +80,7 @@ public class DetailFragment extends Fragment {
         TextView ratingTextView = (TextView) rootView.findViewById(R.id.voteAverageTextView);
         ImageView imageView = (ImageView) rootView.findViewById(R.id.imageView);
         // TODO: 8/2/16 add Views for trailer and listener to launch intent
-        // TODO: 8/2/16 add Views for reviews
-        //for part 2 we'll populate the lengthTextView TextView
-        //from the looks of it, I'll need a separate call to the server for the
-        //duration portion because it's not exposed in  /popular or /top_rated
-        //I guess the Movie model will need to get the id, too.  That's a tomorrow thing.
+        // TODO: 8/10/16 populate the lengthTextView
 //        TextView lengthTextView = (TextView) findViewById(R.id.lengthTextView);
 
         movieTextView.setText(currentMovie.getTitle());
@@ -107,12 +96,34 @@ public class DetailFragment extends Fragment {
         return rootView;
     }
 
-    // Uses AsyncTask to create a task away from the main UI thread. This task takes a
-    // URL string and uses it to create an HttpUrlConnection. Once the connection
-    // has been established, the AsyncTask downloads the contents of the webpage as
-    // an InputStream. Finally, the InputStream is converted into a string, which is
-    // parsed into a List<Movie> and used to construct/set the GridView's adapter in
-    // the AsyncTask's onPostExecute method.
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        mView = view;
+        String REVIEW_ROOT_PREFIX = "/movie/";
+        getData(REVIEW_ROOT_PREFIX + currentMovie.getId(), "&append_to_response=reviews,videos");
+        super.onViewCreated(view, savedInstanceState);
+    }
+
+    public void getData(String resourceRoot, String appendix) {
+        String fullUrl = HttpManager.BuildUrl(resourceRoot, appendix);
+        Log.i(LOG_TAG, fullUrl);
+        boolean hasConnection = HttpManager.CheckConnection(getContext());
+        if (hasConnection) {
+            new DownloadWebpageTask().execute(fullUrl);
+        } else {
+            Toast.makeText(getContext(), "No network", Toast.LENGTH_SHORT);
+        }
+    }
+
+    /**
+     * Uses AsyncTask to create a task away from the main UI thread. This task takes a
+     * URL string and uses it to create an HttpUrlConnection. Once the connection
+     * has been established, the AsyncTask downloads the contents as
+     * an InputStream. Finally, the InputStream is converted into a String, which is
+     * parsed into a List<Movie>, List<Strings> for reviews and List<String> for trailer
+     * Ids and used to the make the review RecyclerView, trailer thumbnails
+     * onPostExecute method.
+     */
     private class DownloadWebpageTask extends AsyncTask<String, Void, String> {
         @Override
         protected String doInBackground(String... urls) {
@@ -125,7 +136,15 @@ public class DetailFragment extends Fragment {
             }
         }
 
-        // onPostExecute displays the results of the AsyncTask.
+
+        // TODO: 8/10/16 this could use a refactor.  something something what changes
+        // something something what stays the same.
+
+        /**
+         * Populate the list of reviews and trailer images
+         *
+         * @param result JSON String
+         */
         @Override
         protected void onPostExecute(String result) {
             Log.i(LOG_TAG, result);
@@ -166,27 +185,6 @@ public class DetailFragment extends Fragment {
                     startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(youtubeTrailerPrefix + trailerId)));
                 }
             });
-
-            // TODO: 8/4/16 update parser to return readable reviews
-            // TODO: 8/4/16 update ui here
-        }
-    }
-
-    @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        mView = view;
-        getData(REVIEW_ROOT_PREFIX + currentMovie.getId(), "&append_to_response=reviews,videos");
-        super.onViewCreated(view, savedInstanceState);
-    }
-
-    public void getData(String resourceRoot, String appendix) {
-        String fullUrl = HttpManager.BuildUrl(resourceRoot, appendix);
-        Log.i(LOG_TAG, fullUrl);
-        boolean hasConnection = HttpManager.CheckConnection(getContext());
-        if (hasConnection) {
-            new DownloadWebpageTask().execute(fullUrl);
-        } else {
-            Toast.makeText(getContext(), "No network", Toast.LENGTH_SHORT);
         }
     }
 }
