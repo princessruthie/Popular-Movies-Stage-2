@@ -20,7 +20,6 @@ public class MovieParser {
     private static final String LOG_TAG = "MovieParser ";
 
     /**
-     *
      * @param content JSON from Movies API
      * @return List<Movie>
      */
@@ -72,7 +71,6 @@ public class MovieParser {
     }
 
     /**
-     *
      * @param content JSON from MovieDB API
      * @return List<String> with user reviews.  If error, a 1-item List
      * stating the problem.
@@ -89,8 +87,8 @@ public class MovieParser {
 
                 String currentReview = currentResult.optString("content", "No review for this result");
                 reviewList.add(currentReview);
-                Log.i(LOG_TAG, reviewList.toString());
             }
+            Log.i(LOG_TAG, reviewList.toString());
             return reviewList;
         } catch (JSONException e) {
             e.printStackTrace();
@@ -101,26 +99,52 @@ public class MovieParser {
         }
     }
 
-    /*
-
-     */
-
     /**
      * checks how many reviews are return by API
+     *
      * @param content JSON
-     * @return   the number of reviews api returns
+     * @return the number of reviews api returns
      */
-    public static int getNumReviews(String content){
+    public static int getNumReviews(String content) {
         try {
 //            JSONObject obj = new JSONObject(content);
             JSONObject obj = new JSONObject(content);
             JSONObject reviewsObject = obj.getJSONObject("reviews");
             int numReviews = reviewsObject.optInt("total_results", 0);
             return numReviews;
-        } catch (JSONException e){
+        } catch (JSONException e) {
             e.printStackTrace();
             Log.i(LOG_TAG, "exception caught");
             return 0;
+        }
+    }
+
+    public static List<String> getTrailers(String content) {
+
+        try {
+            List<String> trailerList = new ArrayList<>();
+            JSONObject obj = new JSONObject(content);
+            JSONObject reviewsObject = obj.getJSONObject("videos");
+            JSONArray videos = reviewsObject.getJSONArray("results");
+            //limit to a max of three vids
+            int numTrailers = 3;
+            if (videos.length() < 3) {
+                numTrailers = videos.length();
+            }
+
+            for (int i = 0; i < numTrailers; i++) {
+                JSONObject currentResult = videos.getJSONObject(i);
+
+                String currentKey = currentResult.optString("key", "No review for this result");
+                trailerList.add(currentKey);
+            }
+            Log.i(LOG_TAG, trailerList.toString());
+            return trailerList;
+
+        } catch (JSONException e) {
+            List<String> trailerList = new ArrayList<>();
+            trailerList.add("");
+            return trailerList;
         }
     }
 }
