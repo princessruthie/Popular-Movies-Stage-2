@@ -7,8 +7,7 @@
     android:orientation="vertical"
     tools:context=".DetailActivity">
 
-
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:descendantFocusability="blocksDescendants"
@@ -25,69 +24,84 @@
             android:textSize="36sp"
             tools:text="The Young and the Bestless"/>
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+        <ImageView
+            android:id="@+id/imageView"
+            android:layout_width="138.755dp"
+            android:layout_height="201dp"
+            android:layout_below="@+id/movieTitle"
             android:layout_marginLeft="24dp"
             android:layout_marginRight="24dp"
-            android:orientation="horizontal">
+            android:padding="8dp"
+            tools:src="@drawable/placeholder"/>
 
-            <ImageView
-                android:id="@+id/imageView"
-                android:layout_width="138.755dp"
-                android:layout_height="201dp"
-                android:padding="8dp"
-                tools:src="@drawable/placeholder"/>
+        <TextView
+            android:id="@+id/dateTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@id/imageView"
+            android:layout_margin="8dp"
+            android:layout_toRightOf="@id/imageView"
+            tools:text="2016"/>
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="12dp"
-                android:weightSum="1">
+        <TextView
+            android:id="@+id/lengthTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@id/dateTextView"
+            android:layout_below="@id/dateTextView"
+            android:layout_marginBottom="8dp"
+            tools:text="186 min"/>
 
-                <TextView
-                    android:id="@+id/dateTextView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="8dp"
-                    tools:text="2016"/>
-
-                <TextView
-                    android:id="@+id/lengthTextView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="8dp"
-                    tools:text="186 min"/>
-
-                <TextView
-                    android:id="@+id/voteAverageTextView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="8dp"
-                    android:isIndicator="true"
-                    tools:text="9.25/10"/>
-            </LinearLayout>
-        </LinearLayout>
+        <TextView
+            android:id="@+id/voteAverageTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@id/lengthTextView"
+            android:layout_below="@id/lengthTextView"
+            android:layout_marginBottom="8dp"
+            android:isIndicator="true"
+            tools:text="9.25/10"/>
 
         <TextView
             android:id="@+id/synopsisTextView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_below="@id/imageView"
             android:layout_marginLeft="24dp"
             android:layout_marginRight="24dp"
+            android:padding="8dp"
             android:paddingBottom="24dp"
-            tools:text="Fearing the actions of a god-like Super Hero left unchecked, Gotham City’s own formidable, forceful vigilante takes on Metropolis’s most revered, modern-day savior, while the world wrestles with what sort of hero it really needs. And with Batman and Superman at war with one another, a new threat quickly arises, putting mankind in greater danger than it’s ever known before."/>
+            tools:text="Fearing the actions of a god-like Super Hero left unchecked, Gotham City’s own formidable, forceful vigilante takes on Metropolis’s most revered, modern-day savior, while the world wrestles with what sort of hero it really..."/>
 
         <ImageView
-            android:layout_width="120dp"
-            android:layout_height="90dp"
-            android:layout_gravity="center"
-            android:id="@+id/poster_1"/>
-
-        <TextView
+            android:id="@+id/trailerThumbnail_0"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_below="@id/synopsisTextView"
+            android:layout_gravity="center"
+            tools:src="@drawable/thumbnail480x360"/>
+
+        <ImageView
+            android:id="@+id/trailerThumbnail_1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/trailerThumbnail_0"
+            android:layout_gravity="center"
+            tools:src="@drawable/thumbnail480x360"/>
+
+        <ImageView
+            android:id="@+id/trailerThumbnail_2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/trailerThumbnail_1"
+            android:layout_gravity="center"
+            tools:src="@drawable/thumbnail480x360"/>
+
+        <TextView
+            android:id="@+id/reviewHeaderTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/trailerThumbnail_2"
             android:layout_marginLeft="24dp"
             android:layout_marginRight="24dp"
             android:paddingBottom="24dp"
@@ -98,8 +112,9 @@
             android:id="@+id/reviewRecyclerView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_below="@id/reviewHeaderTextView"
             android:paddingBottom="64dp"/>
 
-    </LinearLayout>
+    </RelativeLayout>
 
 </android.support.v4.widget.NestedScrollView>

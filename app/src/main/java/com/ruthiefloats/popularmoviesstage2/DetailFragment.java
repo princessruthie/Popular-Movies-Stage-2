@@ -64,7 +64,7 @@ public class DetailFragment extends Fragment {
         // Before attempting to fetch the URL, makes sure that there is a network connection.
 
         // Inflate the layout for this fragment
-        View rootView = inflater.inflate(R.layout.fragment_detail_denested, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_detail, container, false);
 //        getData(REVIEW_ROOT_PREFIX + currentMovie.getId() + REVIEW_ROOT_POSTFIX);
 //        Movie currentMovie = DummyData.getSingleDummyDatum();
 
