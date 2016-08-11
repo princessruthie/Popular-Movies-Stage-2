@@ -18,6 +18,7 @@ public class Movie implements Parcelable {
     private double vote_average;
     private String overview;
     private int id;
+    private boolean isFavorite;
 
     public int getId() {
         return id;
@@ -91,6 +92,7 @@ public class Movie implements Parcelable {
         vote_average = in.readDouble();
         overview = in.readString();
         id = in.readInt();
+        isFavorite = in.readByte() !=0;
     }
 
     @Override
@@ -106,6 +108,7 @@ public class Movie implements Parcelable {
         dest.writeDouble(vote_average);
         dest.writeString(overview);
         dest.writeInt(id);
+        dest.writeByte((byte) (isFavorite ? 1 : 0));
     }
 
     @SuppressWarnings("unused")
@@ -120,4 +123,12 @@ public class Movie implements Parcelable {
             return new Movie[size];
         }
     };
+
+    public boolean isFavorite() {
+        return isFavorite;
+    }
+
+    public void toggleFavorite() {
+        isFavorite = !isFavorite;
+    }
 }

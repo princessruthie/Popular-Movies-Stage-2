@@ -1,6 +1,8 @@
 package com.ruthiefloats.popularmoviesstage2;
 
 import android.content.Intent;
+import android.content.res.Resources;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -12,6 +14,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -88,6 +91,19 @@ public class DetailFragment extends Fragment {
                 .error(R.drawable.placeholder)
                 .into(imageView);
 
+        final ImageButton favoriteButton = (ImageButton) rootView.findViewById(R.id.favoriteButton);
+        Resources resources = getResources();
+        // TODO: 8/11/16 find update method for deprecated getDrawable 
+        final Drawable favoriteIcon = resources.getDrawable(R.drawable.ic_favorite_red_24dp);
+        final Drawable nonFavoriteIcon = resources.getDrawable(R.drawable.ic_favorite_gray_24dp);
+        favoriteButton.setImageDrawable(currentMovie.isFavorite() ? favoriteIcon : nonFavoriteIcon);
+        favoriteButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                currentMovie.toggleFavorite();
+                favoriteButton.setImageDrawable(currentMovie.isFavorite() ? favoriteIcon : nonFavoriteIcon);
+            }
+        });
         return rootView;
     }
 
@@ -181,7 +197,7 @@ public class DetailFragment extends Fragment {
                     .load(youtubePrefix + trailerId_0 + youtubePostfix)
                     .error(R.drawable.placeholder)
                     .into(trailerPoster_0);
-            
+
             trailerPoster_0.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -189,7 +205,7 @@ public class DetailFragment extends Fragment {
                 }
             });
 
-            if(numTrailers > 1){
+            if (numTrailers > 1) {
                 final String trailerId_1 = trailerIds.get(1);
                 Picasso.with(getContext())
                         .load(youtubePrefix + trailerId_1 + youtubePostfix)
@@ -203,7 +219,7 @@ public class DetailFragment extends Fragment {
                 });
             }
 
-            if(numTrailers > 2){
+            if (numTrailers > 2) {
                 final String trailerId_2 = trailerIds.get(2);
                 Picasso.with(getContext())
                         .load(youtubePrefix + trailerId_2 + youtubePostfix)
