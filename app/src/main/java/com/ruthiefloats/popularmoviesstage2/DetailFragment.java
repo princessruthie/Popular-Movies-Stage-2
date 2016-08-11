@@ -1,5 +1,7 @@
 package com.ruthiefloats.popularmoviesstage2;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -139,12 +141,31 @@ public class DetailFragment extends Fragment {
                 reviewList.add("There aren't any reviews for this film.");
             }
 
+            List<String> trailerIds = MovieParser.getTrailers(result);
+            int numTrailers = trailerIds.size();
+            Log.i(LOG_TAG, "Number of trailers" + numTrailers);
+
             RecyclerView recyclerView = (RecyclerView) mView.findViewById(R.id.reviewRecyclerView);
 //            reviewList = DummyData.getDummyReviews();
             ReviewsAdapter adapter = new ReviewsAdapter(getContext(), reviewList);
             recyclerView.setAdapter(adapter);
             recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-
+            String youtubePrefix = "http://img.youtube.com/vi/";
+            String youtubePostfix = "/1.jpg";
+//            final String trailerId = "IwfUnkBfdZ4";
+            final String trailerId = trailerIds.get(0);
+            final String youtubeTrailerPrefix = "https://www.youtube.com/watch?v=";
+            ImageView posterOne = (ImageView) mView.findViewById(R.id.poster_1);
+            Picasso.with(getContext())
+                    .load(youtubePrefix + trailerId + youtubePostfix)
+                    .error(R.drawable.placeholder)
+                    .into(posterOne);
+            posterOne.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(youtubeTrailerPrefix + trailerId)));
+                }
+            });
 
             // TODO: 8/4/16 update parser to return readable reviews
             // TODO: 8/4/16 update ui here
