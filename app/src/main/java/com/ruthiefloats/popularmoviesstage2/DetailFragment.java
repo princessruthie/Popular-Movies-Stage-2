@@ -18,18 +18,13 @@ import android.widget.Toast;
 
 import com.ruthiefloats.popularmoviesstage2.adapter.MovieImageAdapter;
 import com.ruthiefloats.popularmoviesstage2.adapter.ReviewsAdapter;
-import com.ruthiefloats.popularmoviesstage2.model.DummyData;
 import com.ruthiefloats.popularmoviesstage2.model.Movie;
 import com.ruthiefloats.popularmoviesstage2.parser.MovieParser;
 import com.squareup.picasso.Picasso;
 
-import org.w3c.dom.Text;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
-// TODO: 8/10/16 Change fragment_detail.xml to be less nested
 
 /**
  * A simple {@link Fragment} subclass.
@@ -141,7 +136,8 @@ public class DetailFragment extends Fragment {
         // something something what stays the same.
 
         /**
-         * Populate the list of reviews and trailer images
+         * Populate the list of reviews and trailer images Because some movies only have
+         * one or two trailers, conditionals have been employed
          *
          * @param result JSON String
          */
@@ -171,20 +167,56 @@ public class DetailFragment extends Fragment {
             recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
             String youtubePrefix = "http://img.youtube.com/vi/";
             String youtubePostfix = "/0.jpg";
-//            final String trailerId = "IwfUnkBfdZ4";
-            final String trailerId = trailerIds.get(0);
+
+            final String trailerId_0 = trailerIds.get(0);
+
             final String youtubeTrailerPrefix = "https://www.youtube.com/watch?v=";
-            ImageView posterOne = (ImageView) mView.findViewById(R.id.poster_1);
+            ImageView trailerPoster_0 = (ImageView) mView.findViewById(R.id.trailerThumbnail_0);
+            ImageView trailerPoster_1 = (ImageView) mView.findViewById(R.id.trailerThumbnail_1);
+            ImageView trailerPoster_2 = (ImageView) mView.findViewById(R.id.trailerThumbnail_2);
+
+            // TODO: 8/11/16 should this just be a recyclerview 
+            // TODO: 8/11/16 either way could refactor away duplicate code
             Picasso.with(getContext())
-                    .load(youtubePrefix + trailerId + youtubePostfix)
+                    .load(youtubePrefix + trailerId_0 + youtubePostfix)
                     .error(R.drawable.placeholder)
-                    .into(posterOne);
-            posterOne.setOnClickListener(new View.OnClickListener() {
+                    .into(trailerPoster_0);
+            
+            trailerPoster_0.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(youtubeTrailerPrefix + trailerId)));
+                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(youtubeTrailerPrefix + trailerId_0)));
                 }
             });
+
+            if(numTrailers > 1){
+                final String trailerId_1 = trailerIds.get(1);
+                Picasso.with(getContext())
+                        .load(youtubePrefix + trailerId_1 + youtubePostfix)
+                        .error(R.drawable.placeholder)
+                        .into(trailerPoster_1);
+                trailerPoster_1.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(youtubeTrailerPrefix + trailerId_1)));
+                    }
+                });
+            }
+
+            if(numTrailers > 2){
+                final String trailerId_2 = trailerIds.get(2);
+                Picasso.with(getContext())
+                        .load(youtubePrefix + trailerId_2 + youtubePostfix)
+                        .error(R.drawable.placeholder)
+                        .into(trailerPoster_2);
+                trailerPoster_2.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(youtubeTrailerPrefix + trailerId_2)));
+                    }
+                });
+            }
+
         }
     }
 }
