@@ -62,6 +62,13 @@
             android:isIndicator="true"
             tools:text="9.25/10"/>
 
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@id/lengthTextView"
+            android:layout_below="@id/voteAverageTextView"
+            android:src="@drawable/ic_favorite_gray_24dp"/>
+
         <TextView
             android:id="@+id/synopsisTextView"
             android:layout_width="match_parent"
