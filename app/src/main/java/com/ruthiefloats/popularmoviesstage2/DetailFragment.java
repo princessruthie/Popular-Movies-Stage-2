@@ -43,6 +43,8 @@ public class DetailFragment extends Fragment {
     private Movie currentMovie;
     private int numReviews;
     private View mView;
+    /**Whether this movie in the favorite db */
+    private boolean isFavorite;
 
     public DetailFragment() {
         // Required empty public constructor
@@ -63,7 +65,7 @@ public class DetailFragment extends Fragment {
         currentMovie = getArguments().getParcelable(MainActivity.INSTANCE_STATE_TAG);
         //check if the movie is in favorite db
         FavoritesDataSource datasource = new FavoritesDataSource(getContext());
-        currentMovie.setFavorite(datasource.isThisMovieFavorited(currentMovie.getId()));
+        isFavorite = datasource.isThisMovieFavorited(currentMovie.getId());
     }
 
     @Override
@@ -104,16 +106,16 @@ public class DetailFragment extends Fragment {
         final Drawable favoriteIcon = resources.getDrawable(R.drawable.ic_favorite_red_24dp);
         final Drawable nonFavoriteIcon = resources.getDrawable(R.drawable.ic_favorite_gray_24dp);
         //check if the current movie is a favorite
-        favoriteButton.setImageDrawable(currentMovie.isFavorite() ? favoriteIcon : nonFavoriteIcon);
+        favoriteButton.setImageDrawable(isFavorite ? favoriteIcon : nonFavoriteIcon);
         favoriteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 //toggle favorite boolean
-                currentMovie.toggleFavorite();
+                toggleFavorite();
                 //toggle the drawable
-                favoriteButton.setImageDrawable(currentMovie.isFavorite() ? favoriteIcon : nonFavoriteIcon);
+                favoriteButton.setImageDrawable(isFavorite ? favoriteIcon : nonFavoriteIcon);
                 //toggle db
-                if (currentMovie.isFavorite()) {
+                if (isFavorite) {
                     Bitmap bitmap = ((BitmapDrawable) imageView.getDrawable()).getBitmap();
                     ByteArrayOutputStream stream = new ByteArrayOutputStream();
                     bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
@@ -125,6 +127,10 @@ public class DetailFragment extends Fragment {
             }
         });
         return rootView;
+    }
+
+    private void toggleFavorite() {
+        isFavorite = !isFavorite;
     }
 
     /**
@@ -139,7 +145,6 @@ public class DetailFragment extends Fragment {
 
     /**
      * add Movie to favorite db
-     *
      * @param currentMovie Movie to add to db
      * @param byteArray    Movie poster drawable
      */
