@@ -46,7 +46,8 @@ public class FavoritesDBHelper extends SQLiteOpenHelper{
                 Favorites.COLUMN_POSTER + " BLOB NOT NULL, " +
                 Favorites.COLUMN_RATING + " TEXT NOT NULL, " +
                 Favorites.COLUMN_SYNOPSIS + " TEXT NOT NULL, " +
-                Favorites.COLUMN_RELEASE_DATE + " TEXT NOT NULL " +
+                Favorites.COLUMN_RELEASE_DATE + " TEXT NOT NULL, " +
+                Favorites.COLUMN_API_ID + " INTEGER NOT NULL" +
                 " );";
         Log.i(LOGTAG, SQL_CREATE_LOCATION_TABLE);
         db.execSQL(SQL_CREATE_LOCATION_TABLE);
@@ -76,6 +77,19 @@ public class FavoritesDBHelper extends SQLiteOpenHelper{
      */
     @Override
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, int oldVersion, int newVersion) {
+        sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + Favorites.TABLE_NAME);
+        onCreate(sqLiteDatabase);
+    }
+
+    /**
+     * During debugging used this to toggle between v1 and v2
+     * @param sqLiteDatabase
+     * @param oldVersion
+     * @param newVersion
+     */
+    // TODO: 8/12/16 remove from "production" code 
+    @Override
+    public void onDowngrade(SQLiteDatabase sqLiteDatabase, int oldVersion, int newVersion) {
         sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + Favorites.TABLE_NAME);
         onCreate(sqLiteDatabase);
     }

@@ -131,4 +131,8 @@ public class Movie implements Parcelable {
     public void toggleFavorite() {
         isFavorite = !isFavorite;
     }
+
+    public void setFavorite(boolean isFavorite){
+        this.isFavorite = isFavorite;
+    }
 }

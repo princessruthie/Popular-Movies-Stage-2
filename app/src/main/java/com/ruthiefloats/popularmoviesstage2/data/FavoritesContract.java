@@ -16,8 +16,6 @@ public class FavoritesContract {
         public static final String COLUMN_SYNOPSIS = "synopsis";
         public static final String COLUMN_RATING = "rating";
         public static final String COLUMN_RELEASE_DATE = "release_date";
-
+        public static final String COLUMN_API_ID = "api_id";
     }
 }
-
-

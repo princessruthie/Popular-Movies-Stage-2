@@ -2,6 +2,8 @@ package com.ruthiefloats.popularmoviesstage2;
 
 import android.content.Intent;
 import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -21,10 +23,12 @@ import android.widget.Toast;
 
 import com.ruthiefloats.popularmoviesstage2.adapter.MovieImageAdapter;
 import com.ruthiefloats.popularmoviesstage2.adapter.ReviewsAdapter;
+import com.ruthiefloats.popularmoviesstage2.data.FavoritesDataSource;
 import com.ruthiefloats.popularmoviesstage2.model.Movie;
 import com.ruthiefloats.popularmoviesstage2.parser.MovieParser;
 import com.squareup.picasso.Picasso;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -57,6 +61,9 @@ public class DetailFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
         currentMovie = getArguments().getParcelable(MainActivity.INSTANCE_STATE_TAG);
+        //check if the movie is in favorite db
+        FavoritesDataSource datasource = new FavoritesDataSource(getContext());
+        currentMovie.setFavorite(datasource.isThisMovieFavorited(currentMovie.getId()));
     }
 
     @Override
@@ -76,8 +83,8 @@ public class DetailFragment extends Fragment {
         TextView dateTextView = (TextView) rootView.findViewById(R.id.dateTextView);
         TextView summaryTextView = (TextView) rootView.findViewById(R.id.synopsisTextView);
         TextView ratingTextView = (TextView) rootView.findViewById(R.id.voteAverageTextView);
-        ImageView imageView = (ImageView) rootView.findViewById(R.id.imageView);
-        // TODO: 8/2/16 add Views for trailer and listener to launch intent
+        //make ref to imageView final so that it can be used in inner class
+        final ImageView imageView = (ImageView) rootView.findViewById(R.id.imageView);
         // TODO: 8/10/16 populate the lengthTextView
 //        TextView lengthTextView = (TextView) findViewById(R.id.lengthTextView);
 
@@ -96,15 +103,54 @@ public class DetailFragment extends Fragment {
         // TODO: 8/11/16 find update method for deprecated getDrawable 
         final Drawable favoriteIcon = resources.getDrawable(R.drawable.ic_favorite_red_24dp);
         final Drawable nonFavoriteIcon = resources.getDrawable(R.drawable.ic_favorite_gray_24dp);
+        //check if the current movie is a favorite
         favoriteButton.setImageDrawable(currentMovie.isFavorite() ? favoriteIcon : nonFavoriteIcon);
         favoriteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                //toggle favorite boolean
                 currentMovie.toggleFavorite();
+                //toggle the drawable
                 favoriteButton.setImageDrawable(currentMovie.isFavorite() ? favoriteIcon : nonFavoriteIcon);
+                //toggle db
+                if (currentMovie.isFavorite()) {
+                    Bitmap bitmap = ((BitmapDrawable) imageView.getDrawable()).getBitmap();
+                    ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                    bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+                    byte[] byteArray = stream.toByteArray();
+                    addMovie(currentMovie, byteArray);
+                } else {
+                    removeMovie(currentMovie);
+                }
             }
         });
         return rootView;
+    }
+
+    /**
+     * Removie movie from favorites db
+     *
+     * @param currentMovie Movie to remove from db
+     */
+    private void removeMovie(Movie currentMovie) {
+        FavoritesDataSource dataSource = new FavoritesDataSource(getContext());
+        dataSource.removeMovie(currentMovie.getId());
+    }
+
+    /**
+     * add Movie to favorite db
+     *
+     * @param currentMovie Movie to add to db
+     * @param byteArray    Movie poster drawable
+     */
+    // TODO: 8/13/16 ideally refactor to writing the Drawable to disk and have db ref the file 
+    private void addMovie(Movie currentMovie, byte[] byteArray) {
+        FavoritesDataSource dataSource = new FavoritesDataSource(getContext());
+//        dataSource.open();
+        String voteAverage = Double.toString(currentMovie.getVote_average());
+        dataSource.addMovie(currentMovie.getTitle(), byteArray, currentMovie.getOverview()
+                , voteAverage, currentMovie.getRelease_date(), currentMovie.getId());
+//        dataSource.close();
     }
 
     @Override
@@ -166,7 +212,7 @@ public class DetailFragment extends Fragment {
             if (numReviews > 0) {
                 reviewList = MovieParser.parseReviews(result);
 //                reviewList = MovieParser.parseReviews(DummyData.TEST_JSON);
-                Log.i(LOG_TAG, reviewList.toString());
+//                Log.i(LOG_TAG, reviewList.toString());
             } else {
                 reviewList = new ArrayList<>();
                 reviewList.add("There aren't any reviews for this film.");
@@ -232,7 +278,6 @@ public class DetailFragment extends Fragment {
                     }
                 });
             }
-
         }
     }
 }
