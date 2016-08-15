@@ -58,7 +58,7 @@ public class MovieImageAdapter extends BaseAdapter {
         imageView.setAdjustViewBounds(true);
         Picasso.with(mContext).
                 load(getCompletePhotoUrl(mMovieList.get(position).getPoster_path()))
-                .error(R.drawable.placeholder)
+                .error(R.drawable.poster_placeholder)
                 .into(imageView);
         /**Clicking on the ImageView starts a DetailActivity based on the current
          * Movie.

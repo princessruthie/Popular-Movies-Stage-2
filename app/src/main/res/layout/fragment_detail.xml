@@ -32,7 +32,7 @@
             android:layout_marginLeft="24dp"
             android:layout_marginRight="24dp"
             android:padding="8dp"
-            tools:src="@drawable/placeholder"/>
+            tools:src="@drawable/poster_placeholder"/>
 
         <TextView
             android:id="@+id/dateTextView"
