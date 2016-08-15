@@ -87,7 +87,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/synopsisTextView"
             android:layout_gravity="center"
-            tools:src="@drawable/thumbnail480x360"/>
+            tools:src="@drawable/trailer_thumbnail_placeholder"/>
 
         <ImageView
             android:id="@+id/trailerThumbnail_1"
@@ -95,7 +95,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/trailerThumbnail_0"
             android:layout_gravity="center"
-            tools:src="@drawable/thumbnail480x360"/>
+            tools:src="@drawable/trailer_thumbnail_placeholder"/>
 
         <ImageView
             android:id="@+id/trailerThumbnail_2"
@@ -103,7 +103,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/trailerThumbnail_1"
             android:layout_gravity="center"
-            tools:src="@drawable/thumbnail480x360"/>
+            tools:src="@drawable/trailer_thumbnail_placeholder"/>
 
         <TextView
             android:id="@+id/reviewHeaderTextView"

@@ -246,7 +246,7 @@ public class DetailFragment extends Fragment {
             // TODO: 8/11/16 either way could refactor away duplicate code
             Picasso.with(getContext())
                     .load(youtubePrefix + trailerId_0 + youtubePostfix)
-                    .error(R.drawable.poster_placeholder)
+                    .error(R.drawable.trailer_thumbnail_placeholder)
                     .into(trailerPoster_0);
 
             trailerPoster_0.setOnClickListener(new View.OnClickListener() {
@@ -260,7 +260,7 @@ public class DetailFragment extends Fragment {
                 final String trailerId_1 = trailerIds.get(1);
                 Picasso.with(getContext())
                         .load(youtubePrefix + trailerId_1 + youtubePostfix)
-                        .error(R.drawable.poster_placeholder)
+                        .error(R.drawable.trailer_thumbnail_placeholder)
                         .into(trailerPoster_1);
                 trailerPoster_1.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -274,7 +274,7 @@ public class DetailFragment extends Fragment {
                 final String trailerId_2 = trailerIds.get(2);
                 Picasso.with(getContext())
                         .load(youtubePrefix + trailerId_2 + youtubePostfix)
-                        .error(R.drawable.poster_placeholder)
+                        .error(R.drawable.trailer_thumbnail_placeholder)
                         .into(trailerPoster_2);
                 trailerPoster_2.setOnClickListener(new View.OnClickListener() {
                     @Override
