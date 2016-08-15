@@ -81,27 +81,11 @@
             android:paddingBottom="24dp"
             tools:text="Fearing the actions of a god-like Super Hero left unchecked, Gotham City’s own formidable, forceful vigilante takes on Metropolis’s most revered, modern-day savior, while the world wrestles with what sort of hero it really..."/>
 
-        <ImageView
-            android:id="@+id/trailerThumbnail_0"
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/trailerRecyclerView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/synopsisTextView"
-            android:layout_gravity="center"
-            tools:src="@drawable/trailer_thumbnail_placeholder"/>
-
-        <ImageView
-            android:id="@+id/trailerThumbnail_1"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/trailerThumbnail_0"
-            android:layout_gravity="center"
-            tools:src="@drawable/trailer_thumbnail_placeholder"/>
-
-        <ImageView
-            android:id="@+id/trailerThumbnail_2"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/trailerThumbnail_1"
             android:layout_gravity="center"
             tools:src="@drawable/trailer_thumbnail_placeholder"/>
 
@@ -109,7 +93,7 @@
             android:id="@+id/reviewHeaderTextView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/trailerThumbnail_2"
+            android:layout_below="@id/trailerRecyclerView"
             android:layout_marginLeft="24dp"
             android:layout_marginRight="24dp"
             android:paddingBottom="24dp"
