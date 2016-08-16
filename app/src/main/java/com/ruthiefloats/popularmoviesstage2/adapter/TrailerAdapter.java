@@ -1,6 +1,8 @@
 package com.ruthiefloats.popularmoviesstage2.adapter;
 
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,7 +16,7 @@ import com.squareup.picasso.Picasso;
 import java.util.List;
 
 /**
- * TODO: add a class header comment.
+ * An Adapter for populating the RecyclerView of Trailers
  */
 public class TrailerAdapter extends RecyclerView.Adapter<TrailerAdapter.ViewHolder> {
     private List<String> mTrailerIds;
@@ -81,10 +83,9 @@ public class TrailerAdapter extends RecyclerView.Adapter<TrailerAdapter.ViewHold
      */
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        String trailerIdString = mTrailerIds.get(position);
+        final String trailerIdString = mTrailerIds.get(position);
         String youtubePrefix = "http://img.youtube.com/vi/";
         String youtubePostfix = "/0.jpg";
-
 
 
         ImageButton imageButton = holder.imageButton;
@@ -93,11 +94,18 @@ public class TrailerAdapter extends RecyclerView.Adapter<TrailerAdapter.ViewHold
                 .load(youtubePrefix + trailerIdString + youtubePostfix)
                 .error(R.drawable.trailer_thumbnail_placeholder)
                 .into(imageButton);
-//        imageButton.setImageResource(R.drawable.trailer_thumbnail_placeholder);
+
+        imageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final String youtubeTrailerPrefix = "https://www.youtube.com/watch?v=";
+                mContext.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(youtubeTrailerPrefix + trailerIdString)));
+            }
+        });
     }
 
     /**
-     * Returns the total number of items in the data set hold by the adapter.
+     * Returns the total number of items in the data set held by the adapter.
      *
      * @return The total number of items in this adapter.
      */
