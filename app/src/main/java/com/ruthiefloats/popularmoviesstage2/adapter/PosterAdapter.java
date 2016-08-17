@@ -10,6 +10,7 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.ruthiefloats.popularmoviesstage2.MasterFragment;
 import com.ruthiefloats.popularmoviesstage2.R;
 import com.ruthiefloats.popularmoviesstage2.model.Movie;
 import com.squareup.picasso.Picasso;
@@ -45,7 +46,7 @@ public class PosterAdapter extends RecyclerView.Adapter<PosterAdapter.ViewHolder
         LayoutInflater inflater = LayoutInflater.from(context);
 
         View posterView = inflater.inflate(R.layout.item_poster, parent, false);
-        ViewHolder viewHolder = new ViewHolder(posterView);
+        ViewHolder viewHolder = new ViewHolder(posterView, context);
         return viewHolder;
     }
 
@@ -92,11 +93,13 @@ public class PosterAdapter extends RecyclerView.Adapter<PosterAdapter.ViewHolder
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         public ImageView mImageView;
+        public MasterFragment.OnPosterSelectedListener onPosterSelectedListener;
 
-        public ViewHolder(View itemView) {
+        public ViewHolder(View itemView, Context context) {
             super(itemView);
             mImageView = (ImageView) itemView.findViewById(R.id.master_poster);
             mImageView.setOnClickListener(this);
+            onPosterSelectedListener = (MasterFragment.OnPosterSelectedListener) context;
         }
 
         @Override
@@ -104,6 +107,7 @@ public class PosterAdapter extends RecyclerView.Adapter<PosterAdapter.ViewHolder
             int position = getLayoutPosition();
             Movie movie = mMovieList.get(position);
             Log.i(LOG_TAG, "movie clicked was number " + position);
+            onPosterSelectedListener.onPosterSelected(movie);
         }
     }
 }
