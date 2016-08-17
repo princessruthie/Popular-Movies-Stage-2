@@ -95,4 +95,17 @@ public class FavoritesDataSource {
         close();
         return isFavorited;
     }
+
+    public void printAllMovies(){
+        open();
+        Cursor cursor = database.query(Favorites.TABLE_NAME,
+                null, null, null, null, null, null);
+        int i = 0;
+        while(cursor.moveToNext()){
+            Log.i(LOGTAG, "Here's a movie!");
+            i++;
+        }
+        Log.i(LOGTAG, "There were this many movies" + i);
+        close();
+    }
 }

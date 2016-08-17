@@ -69,6 +69,8 @@ public class MainActivity extends AppCompatActivity implements MasterFragment.On
             fragment.getData(MasterFragment.POPULAR_RESOURCE_ROOT);
         } else if (item.getItemId() == R.id.menu_sort_rating) {
             fragment.getData(MasterFragment.TOP_RATED_RESOURCE_ROOT);
+        } else if (item.getItemId() == R.id.menu_show_favorites){
+            fragment.getData();
         }
         return false;
     }

@@ -17,6 +17,7 @@ import android.widget.Toast;
 
 import com.ruthiefloats.popularmoviesstage2.adapter.MovieImageAdapter;
 import com.ruthiefloats.popularmoviesstage2.adapter.PosterAdapter;
+import com.ruthiefloats.popularmoviesstage2.data.FavoritesDataSource;
 import com.ruthiefloats.popularmoviesstage2.model.DummyData;
 import com.ruthiefloats.popularmoviesstage2.model.Movie;
 import com.ruthiefloats.popularmoviesstage2.parser.MovieParser;
@@ -139,6 +140,24 @@ public class MasterFragment extends Fragment {
 //                }
 //            });
 //        }
+    }
+
+    public void getData() {
+        //doing nothing
+//        mMovieList = MovieParser.parseFeed(result);
+//        Log.i(LOG_TAG, mMovieList.toString());
+//        posterAdapter = new PosterAdapter(getContext(), mMovieList);
+//        Log.i(LOG_TAG, "posterAdapter set");
+//        RecyclerView posterRecyclerView = (RecyclerView) mView.findViewById(R.id.posterRecyclerView);
+//        posterRecyclerView.setAdapter(posterAdapter);
+//        posterRecyclerView.setLayoutManager(new GridLayoutManager(getContext(), 2));
+
+        /*
+        get a List of Movies and make an adapter get the recyclerview and set everyone up!
+         */
+        Log.i(LOG_TAG, "Favorites tab selected ");
+        FavoritesDataSource dataSource = new FavoritesDataSource(getContext());
+        dataSource.printAllMovies();
     }
 
     public interface OnPosterSelectedListener {
