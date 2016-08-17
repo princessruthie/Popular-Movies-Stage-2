@@ -100,6 +100,9 @@ public class PosterAdapter extends RecyclerView.Adapter<PosterAdapter.ViewHolder
             mImageView = (ImageView) itemView.findViewById(R.id.master_poster);
             mImageView.setOnClickListener(this);
             onPosterSelectedListener = (MasterFragment.OnPosterSelectedListener) context;
+            mImageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+            mImageView.setPadding(8, 8, 8, 8);
+            mImageView.setAdjustViewBounds(true);
         }
 
         @Override
