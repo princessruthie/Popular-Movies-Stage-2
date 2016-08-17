@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.ruthiefloats.popularmoviesstage2.R;
 import com.ruthiefloats.popularmoviesstage2.model.Movie;
@@ -39,12 +40,12 @@ public class PosterAdapter extends RecyclerView.Adapter<PosterAdapter.ViewHolder
     }
 
     @Override
-    public PosterAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         Context context = parent.getContext();
         LayoutInflater inflater = LayoutInflater.from(context);
 
         View posterView = inflater.inflate(R.layout.item_poster, parent, false);
-        PosterAdapter.ViewHolder viewHolder = new ViewHolder(posterView);
+        ViewHolder viewHolder = new ViewHolder(posterView);
         return viewHolder;
     }
 
@@ -61,7 +62,7 @@ public class PosterAdapter extends RecyclerView.Adapter<PosterAdapter.ViewHolder
      * on (e.g. in a click listener), use {@link ViewHolder#getAdapterPosition()} which will
      * have the updated adapter position.
      * <p/>
-     * Override {@link #onBindViewHolder(ViewHolder, int, List)} instead if Adapter can
+     * Override {@links #onBindViewHolder(ViewHolder, int, List)} instead if Adapter can
      * handle effcient partial bind.
      *
      * @param holder   The ViewHolder which should be updated to represent the contents of the
@@ -89,12 +90,20 @@ public class PosterAdapter extends RecyclerView.Adapter<PosterAdapter.ViewHolder
         return mMovieList.size();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
+    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         public ImageView mImageView;
 
         public ViewHolder(View itemView) {
             super(itemView);
             mImageView = (ImageView) itemView.findViewById(R.id.master_poster);
+            mImageView.setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(View v) {
+            int position = getLayoutPosition();
+            Movie movie = mMovieList.get(position);
+            Log.i(LOG_TAG, "movie clicked was number " + position);
         }
     }
 }

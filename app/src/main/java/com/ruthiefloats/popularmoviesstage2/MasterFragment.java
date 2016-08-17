@@ -173,7 +173,6 @@ public class MasterFragment extends Fragment {
             RecyclerView posterRecyclerView = (RecyclerView) mView.findViewById(R.id.posterRecyclerView);
             posterRecyclerView.setAdapter(posterAdapter);
             posterRecyclerView.setLayoutManager(new GridLayoutManager(getContext(), 2));
-
         }
     }
 }
