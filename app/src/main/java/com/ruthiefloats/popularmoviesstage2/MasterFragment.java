@@ -39,14 +39,11 @@ public class MasterFragment extends Fragment {
     /**
      * Strings for keys in savedInstanceState
      */
-    private static final String MOVIE_LIST = "list";
-    private static final String INT_PLACEHOLDER = "int placeholder";
     private static final String LOG_TAG = "MasterFragment";
-    OnPosterSelectedListener mCallback;
-//    private GridView mGridView;
-    private List<Movie> mMovieList;
     public View mView;
-    PosterAdapter posterAdapter;
+    private OnPosterSelectedListener mCallback;
+    private PosterAdapter posterAdapter;
+    private List<Movie> mMovieList;
 
     public MasterFragment() {
         // Required empty public constructor
@@ -101,28 +98,10 @@ public class MasterFragment extends Fragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         Log.i(LOG_TAG, "onViewCreated");
         super.onViewCreated(view, savedInstanceState);
-
-//        Log.i(DEBUG_TAG, "onviewcreated");
-//        if (savedInstanceState != null) {
-//            mGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-//                @Override
-//                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-//                    mCallback.onPosterSelected(mMovieList.get(position));
-//                }
-//            });
-//        }
     }
 
     public void getData() {
-        //doing nothing
-//        mMovieList = MovieParser.parseFeed(result);
-//        Log.i(LOG_TAG, mMovieList.toString());
-//        posterAdapter = new PosterAdapter(getContext(), mMovieList);
-//        Log.i(LOG_TAG, "posterAdapter set");
-//        RecyclerView posterRecyclerView = (RecyclerView) mView.findViewById(R.id.posterRecyclerView);
-//        posterRecyclerView.setAdapter(posterAdapter);
-//        posterRecyclerView.setLayoutManager(new GridLayoutManager(getContext(), 2));
-
+        // TODO: 8/18/16 : 
         /*
         get a List of Movies and make an adapter get the recyclerview and set everyone up!
          */
@@ -135,7 +114,7 @@ public class MasterFragment extends Fragment {
                 null,
                 null,
                 null);
-        if (cursor != null){
+        if (cursor != null) {
             Log.i(LOG_TAG, "Number of results in cursor: " + cursor.getCount());
         }
     }
