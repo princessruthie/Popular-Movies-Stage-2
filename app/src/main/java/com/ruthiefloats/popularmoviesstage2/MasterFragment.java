@@ -1,6 +1,7 @@
 package com.ruthiefloats.popularmoviesstage2;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -17,6 +18,7 @@ import android.widget.Toast;
 
 import com.ruthiefloats.popularmoviesstage2.adapter.MovieImageAdapter;
 import com.ruthiefloats.popularmoviesstage2.adapter.PosterAdapter;
+import com.ruthiefloats.popularmoviesstage2.data.FavoritesContract;
 import com.ruthiefloats.popularmoviesstage2.data.FavoritesDataSource;
 import com.ruthiefloats.popularmoviesstage2.model.DummyData;
 import com.ruthiefloats.popularmoviesstage2.model.Movie;
@@ -158,6 +160,15 @@ public class MasterFragment extends Fragment {
         Log.i(LOG_TAG, "Favorites tab selected ");
         FavoritesDataSource dataSource = new FavoritesDataSource(getContext());
         dataSource.printAllMovies();
+
+        Cursor cursor = getContext().getContentResolver().query(FavoritesContract.Favorites.CONTENT_URI,
+                null,
+                null,
+                null,
+                null);
+        if (cursor != null){
+            Log.i(LOG_TAG, "Number of results in cursor: " + cursor.getCount());
+        }
     }
 
     public interface OnPosterSelectedListener {

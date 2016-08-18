@@ -20,6 +20,9 @@
         </activity>
         <activity android:name=".DetailActivity">
         </activity>
+        <provider
+            android:name="com.ruthiefloats.popularmoviesstage2.data.MovieProvider"
+            android:authorities="com.ruthiefloats.popular-movies-stage-2"/>
     </application>
 
 </manifest>
