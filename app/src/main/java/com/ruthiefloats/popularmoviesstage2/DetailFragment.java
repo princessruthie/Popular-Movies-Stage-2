@@ -1,11 +1,9 @@
 package com.ruthiefloats.popularmoviesstage2;
 
-import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -22,12 +20,13 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.ruthiefloats.popularmoviesstage2.adapter.MovieImageAdapter;
 import com.ruthiefloats.popularmoviesstage2.adapter.ReviewsAdapter;
 import com.ruthiefloats.popularmoviesstage2.adapter.TrailerAdapter;
 import com.ruthiefloats.popularmoviesstage2.data.FavoritesDataSource;
 import com.ruthiefloats.popularmoviesstage2.model.Movie;
 import com.ruthiefloats.popularmoviesstage2.parser.MovieParser;
+import com.ruthiefloats.popularmoviesstage2.utility.ApiUtility;
+import com.ruthiefloats.popularmoviesstage2.utility.HttpManager;
 import com.squareup.picasso.Picasso;
 
 import java.io.ByteArrayOutputStream;
@@ -98,7 +97,7 @@ public class DetailFragment extends Fragment {
         ratingTextView.setText((int) currentMovie.getVote_average() + "/10");
 
         Picasso.with(getActivity()).
-                load(MovieImageAdapter.getCompletePhotoUrl(currentMovie.getPoster_path()))
+                load(ApiUtility.getCompletePhotoUrl(currentMovie.getPoster_path()))
                 .error(R.drawable.poster_placeholder)
                 .into(imageView);
 
@@ -169,7 +168,7 @@ public class DetailFragment extends Fragment {
     }
 
     public void getData(String resourceRoot, String appendix) {
-        String fullUrl = HttpManager.BuildUrl(resourceRoot, appendix);
+        String fullUrl = ApiUtility.BuildUrl(resourceRoot, appendix);
         Log.i(LOG_TAG, fullUrl);
         boolean hasConnection = HttpManager.CheckConnection(getContext());
         if (hasConnection) {

@@ -8,7 +8,7 @@ import java.util.List;
  */
 public class DummyData {
     /**
-     * Returns a List<Movie> that can be used to make a MovieImageAdapter
+     * Returns a List<Movie>
      */
     public static List<Movie> getDummyData() {
         List<Movie> movies = new ArrayList<>();

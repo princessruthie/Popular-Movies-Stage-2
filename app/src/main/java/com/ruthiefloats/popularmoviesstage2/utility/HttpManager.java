@@ -1,9 +1,11 @@
-package com.ruthiefloats.popularmoviesstage2;
+package com.ruthiefloats.popularmoviesstage2.utility;
 
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.util.Log;
+
+import com.ruthiefloats.popularmoviesstage2.BuildConfig;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -72,34 +74,10 @@ public class HttpManager {
         return stringBuffer.toString();
     }
 
-    static String BuildUrl(String resourceRoot) {
-        String baseUrl = "http://api.themoviedb.org/3";
-        String apiKeyUrl = "?api_key=" +
-                BuildConfig.DEVELOPER_API_KEY;
-        String fullUrl = (new StringBuilder(baseUrl +
-                resourceRoot +
-                apiKeyUrl)).
-                toString();
-        return fullUrl;
-    }
-
     // TODO: 8/10/16 refactor to remove duplicate code
 
-    static String BuildUrl(String resourceRoot, String appendix) {
-        String baseUrl = "http://api.themoviedb.org/3";
-        String apiKeyUrl = "?api_key=" +
-                BuildConfig.DEVELOPER_API_KEY;
-        String fullUrl = (new StringBuilder(baseUrl +
-                resourceRoot +
-                apiKeyUrl +
-                appendix)).
-                toString();
-        Log.i(DEBUG_TAG, "full Url: " + fullUrl);
-        return fullUrl;
-    }
 
-
-    static boolean CheckConnection(Context context) {
+    public static boolean CheckConnection(Context context) {
         ConnectivityManager connMgr = (ConnectivityManager)
                 context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();

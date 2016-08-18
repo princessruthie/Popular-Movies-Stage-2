@@ -12,17 +12,15 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.GridView;
 import android.widget.Toast;
 
-import com.ruthiefloats.popularmoviesstage2.adapter.MovieImageAdapter;
 import com.ruthiefloats.popularmoviesstage2.adapter.PosterAdapter;
 import com.ruthiefloats.popularmoviesstage2.data.FavoritesContract;
 import com.ruthiefloats.popularmoviesstage2.data.FavoritesDataSource;
-import com.ruthiefloats.popularmoviesstage2.model.DummyData;
 import com.ruthiefloats.popularmoviesstage2.model.Movie;
 import com.ruthiefloats.popularmoviesstage2.parser.MovieParser;
+import com.ruthiefloats.popularmoviesstage2.utility.ApiUtility;
+import com.ruthiefloats.popularmoviesstage2.utility.HttpManager;
 
 import java.io.IOException;
 import java.util.List;
@@ -70,20 +68,6 @@ public class MasterFragment extends Fragment {
 
         View rootView = inflater.inflate(R.layout.fragment_master, container, false);
         mView = rootView;
-//        Log.i(DEBUG_TAG, "oncreateview");
-//        mGridView = (GridView) rootView.findViewById(R.id.gridview);
-//        /**If restoring, use the stored data.  Otherwise get data. */
-//        if (savedInstanceState != null) {
-//            Log.i(DEBUG_TAG, "using existing data");
-//            if (mMovieList != null) {
-//                MovieImageAdapter adapter = new MovieImageAdapter(getActivity(), mMovieList);
-//                mGridView.setAdapter(adapter);
-//            }
-//        } else {
-//            Log.i(DEBUG_TAG, "getting fresh data");
-//            getData(POPULAR_RESOURCE_ROOT);
-////            useOfflinePlaceholderData();
-//        }
         return rootView;
     }
 
@@ -91,7 +75,7 @@ public class MasterFragment extends Fragment {
     // task.
     // Before attempting to fetch the URL, makes sure that there is a network connection.
     public void getData(String resourceRoot) {
-        String fullUrl = HttpManager.BuildUrl(resourceRoot);
+        String fullUrl = ApiUtility.BuildUrl(resourceRoot);
         boolean hasConnection = HttpManager.CheckConnection(getContext());
         if (hasConnection) {
             new DownloadWebpageTask().execute(fullUrl);
@@ -99,21 +83,6 @@ public class MasterFragment extends Fragment {
             Toast.makeText(getContext(), "No network", Toast.LENGTH_SHORT);
         }
     }
-
-    /*
-    a method for offline debugging (plane/train)
-     */
-//    private void useOfflinePlaceholderData() {
-//        mMovieList = DummyData.getDummyData();
-//        MovieImageAdapter adapter = new MovieImageAdapter(getContext(), mMovieList);
-//        mGridView.setAdapter(adapter);
-//        mGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-//            @Override
-//            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-//                mCallback.onPosterSelected(mMovieList.get(position));
-//            }
-//        });
-//    }
 
     @Override
     public void onAttach(Context context) {
