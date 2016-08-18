@@ -9,6 +9,7 @@ import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.ruthiefloats.popularmoviesstage2.model.Movie;
+import com.ruthiefloats.popularmoviesstage2.utility.ApiUtility;
 
 /**
  * The MainActivity by default populates with a list of the most popular movies.
@@ -66,9 +67,9 @@ public class MainActivity extends AppCompatActivity implements MasterFragment.On
         MasterFragment fragment = (MasterFragment) getSupportFragmentManager().
                 findFragmentByTag(MASTER_FRAGMENT_TAG);
         if (item.getItemId() == R.id.menu_sort_popularity) {
-            fragment.getData(MasterFragment.POPULAR_RESOURCE_ROOT);
+            fragment.getData(ApiUtility.POPULAR_RESOURCE_ROOT);
         } else if (item.getItemId() == R.id.menu_sort_rating) {
-            fragment.getData(MasterFragment.TOP_RATED_RESOURCE_ROOT);
+            fragment.getData(ApiUtility.TOP_RATED_RESOURCE_ROOT);
         } else if (item.getItemId() == R.id.menu_show_favorites){
             fragment.getData();
         }

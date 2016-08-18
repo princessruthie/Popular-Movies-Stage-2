@@ -27,18 +27,10 @@ import java.util.List;
 
 
 /**
- *
+ * The master fragment in a master-detail flow.
  */
 public class MasterFragment extends Fragment {
 
-    /**
-     * Roots for the two APIs used
-     */
-    public static final String POPULAR_RESOURCE_ROOT = "/movie/popular";
-    public static final String TOP_RATED_RESOURCE_ROOT = "/movie/top_rated";
-    /**
-     * Strings for keys in savedInstanceState
-     */
     private static final String LOG_TAG = "MasterFragment";
     public View mView;
     private OnPosterSelectedListener mCallback;
@@ -54,7 +46,7 @@ public class MasterFragment extends Fragment {
         super.onCreate(savedInstanceState);
         Log.i(LOG_TAG, "onCreate");
         setRetainInstance(true);
-        getData(POPULAR_RESOURCE_ROOT);
+        getData(ApiUtility.POPULAR_RESOURCE_ROOT);
     }
 
     @Override

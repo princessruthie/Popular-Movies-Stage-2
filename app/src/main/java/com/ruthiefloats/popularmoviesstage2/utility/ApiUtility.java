@@ -11,6 +11,11 @@ public class ApiUtility {
     public static final String LOG_TAG = "ApiUtility";
     public static final String PHOTOS_BASE_URL = "http://image.tmdb.org/t/p/";
     public static final String PHOTOS_SIZE_URL = "w185/";
+    /**
+     * Roots for the two APIs used
+     */
+    public static final String POPULAR_RESOURCE_ROOT = "/movie/popular";
+    public static final String TOP_RATED_RESOURCE_ROOT = "/movie/top_rated";
 
     /**
      * takes the poster URL provided by the API response and builds the entire valid URL
