@@ -16,22 +16,16 @@ public class DetailActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_movie_detail);
 
-       if (savedInstanceState == null){
-           DetailFragment fragment = DetailFragment
-                   .newInstance((Movie) getIntent().getParcelableExtra(MainActivity.INSTANCE_STATE_TAG));
-//           Bundle arguments = new Bundle();
-//           arguments.putParcelable(DetailFragment.ARG_ITEM_ID,
-//                   getIntent().getParcelableExtra(MainActivity.INSTANCE_STATE_TAG));
-//           DetailFragment fragment = new DetailFragment();
-//           fragment.setArguments(arguments);
-           getSupportFragmentManager().beginTransaction()
-                   .add(R.id.detail_container, fragment)
-                   .commit();
-       }
-
-//        getSupportFragmentManager().beginTransaction().
-//                replace(R.id.detail_container, new DetailFragment())
-//                .commit();
-
+        /*
+        if there is no Bundle, make a DetailFragment and put it
+        in the detail_container
+         */
+        if (savedInstanceState == null) {
+            DetailFragment fragment = DetailFragment
+                    .newInstance((Movie) getIntent().getParcelableExtra(MainActivity.INSTANCE_STATE_TAG));
+            getSupportFragmentManager().beginTransaction()
+                    .add(R.id.detail_container, fragment)
+                    .commit();
+        }
     }
 }
