@@ -98,16 +98,25 @@ public class MasterFragment extends Fragment {
         get a List of Movies and make an adapter get the recyclerview and set everyone up!
          */
         Log.i(LOG_TAG, "Favorites tab selected ");
-        FavoritesDataSource dataSource = new FavoritesDataSource(getContext());
-        dataSource.printAllMovies();
 
         Cursor cursor = getContext().getContentResolver().query(FavoritesContract.Favorites.CONTENT_URI,
-                null,
+                new String[]{FavoritesContract.Favorites.COLUMN_API_ID,
+                        FavoritesContract.Favorites.COLUMN_TITLE,
+                FavoritesContract.Favorites.COLUMN_RATING,
+                FavoritesContract.Favorites.COLUMN_POSTER,
+                FavoritesContract.Favorites.COLUMN_SYNOPSIS,
+                FavoritesContract.Favorites.COLUMN_RELEASE_DATE},
                 null,
                 null,
                 null);
         if (cursor != null) {
             Log.i(LOG_TAG, "Number of results in cursor: " + cursor.getCount());
+            int i = 0;
+            while(cursor.moveToNext()){
+                String movieName = cursor.getString(1);
+                Log.i(LOG_TAG, "Movie " + i + " is called: " + movieName);
+                i++;
+            }
         }
     }
 
