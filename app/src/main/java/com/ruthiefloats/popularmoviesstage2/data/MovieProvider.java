@@ -4,7 +4,6 @@ import android.content.ContentProvider;
 import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.UriMatcher;
-import android.database.ContentObserver;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
@@ -247,7 +246,7 @@ public class MovieProvider extends ContentProvider {
         final SQLiteDatabase db = mOpenHelper.getWritableDatabase();
         int rows;
 
-        switch (sUriMatcher.match(uri)){
+        switch (sUriMatcher.match(uri)) {
             case FAVORITES:
                 rows = db.delete(FavoritesContract.Favorites.TABLE_NAME, selection, selectionArgs);
                 break;
@@ -255,7 +254,7 @@ public class MovieProvider extends ContentProvider {
                 throw new UnsupportedOperationException("Unknown Uri: " + uri);
         }
 
-        if(selection == null || rows !=0){
+        if (selection == null || rows != 0) {
             getContext().getContentResolver().notifyChange(uri, null);
         }
 

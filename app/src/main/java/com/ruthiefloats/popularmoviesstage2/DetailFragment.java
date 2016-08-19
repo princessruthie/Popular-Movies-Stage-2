@@ -1,9 +1,11 @@
 package com.ruthiefloats.popularmoviesstage2;
 
+import android.content.ContentValues;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -22,6 +24,7 @@ import android.widget.Toast;
 
 import com.ruthiefloats.popularmoviesstage2.adapter.ReviewsAdapter;
 import com.ruthiefloats.popularmoviesstage2.adapter.TrailerAdapter;
+import com.ruthiefloats.popularmoviesstage2.data.FavoritesContract;
 import com.ruthiefloats.popularmoviesstage2.data.FavoritesDataSource;
 import com.ruthiefloats.popularmoviesstage2.model.Movie;
 import com.ruthiefloats.popularmoviesstage2.parser.MovieParser;
@@ -44,7 +47,7 @@ public class DetailFragment extends Fragment {
     private Movie currentMovie;
     private int numReviews;
     private View mView;
-    /**Whether this movie in the favorite db */
+    /*Whether this movie in the favorite db */
     private boolean isFavorite;
 
     public DetailFragment() {
@@ -146,17 +149,40 @@ public class DetailFragment extends Fragment {
 
     /**
      * add Movie to favorite db
+     *
      * @param currentMovie Movie to add to db
      * @param byteArray    Movie poster drawable
      */
     // TODO: 8/13/16 ideally refactor to writing the Drawable to disk and have db ref the file 
     private void addMovie(Movie currentMovie, byte[] byteArray) {
-        FavoritesDataSource dataSource = new FavoritesDataSource(getContext());
-//        dataSource.open();
         String voteAverage = Double.toString(currentMovie.getVote_average());
-        dataSource.addMovie(currentMovie.getTitle(), byteArray, currentMovie.getOverview()
+
+        addMovieUsingContentProvider(currentMovie.getTitle(), byteArray, currentMovie.getOverview()
                 , voteAverage, currentMovie.getRelease_date(), currentMovie.getId());
-//        dataSource.close();
+    }
+
+    /**
+     * a method to add a Movie to the database using Content Provider
+     *
+     * @param title        Movie title
+     * @param poster       Movie poster as a byte[]
+     * @param synopsis     Movie synopsis
+     * @param rating       Movie rating
+     * @param release_date Movie release date
+     * @param api_id       Movie id from the API
+     */
+    private void addMovieUsingContentProvider(String title, byte[] poster, String synopsis, String rating, String release_date, int api_id) {
+
+        ContentValues values = new ContentValues();
+        values.put(FavoritesContract.Favorites.COLUMN_TITLE, title);
+        values.put(FavoritesContract.Favorites.COLUMN_POSTER, poster);
+        values.put(FavoritesContract.Favorites.COLUMN_SYNOPSIS, synopsis);
+        values.put(FavoritesContract.Favorites.COLUMN_RATING, rating);
+        values.put(FavoritesContract.Favorites.COLUMN_RELEASE_DATE, release_date);
+        values.put(FavoritesContract.Favorites.COLUMN_API_ID, api_id);
+
+        Uri insertedMovieUri = getContext().getContentResolver().insert(FavoritesContract.Favorites.CONTENT_URI, values);
+        Log.i(LOG_TAG, "newly inserted movie uri: " + insertedMovieUri);
     }
 
     @Override
