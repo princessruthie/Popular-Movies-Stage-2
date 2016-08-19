@@ -15,6 +15,11 @@ import com.ruthiefloats.popularmoviesstage2.R;
 import com.ruthiefloats.popularmoviesstage2.model.Movie;
 import com.squareup.picasso.Picasso;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.net.URL;
 import java.util.List;
 
 /**
@@ -41,12 +46,12 @@ public class PosterAdapter extends RecyclerView.Adapter<PosterAdapter.ViewHolder
     }
 
     @Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public PosterAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         Context context = parent.getContext();
         LayoutInflater inflater = LayoutInflater.from(context);
 
         View posterView = inflater.inflate(R.layout.item_poster, parent, false);
-        ViewHolder viewHolder = new ViewHolder(posterView, context);
+        PosterAdapter.ViewHolder viewHolder = new PosterAdapter.ViewHolder(posterView, context);
         return viewHolder;
     }
 
@@ -77,7 +82,32 @@ public class PosterAdapter extends RecyclerView.Adapter<PosterAdapter.ViewHolder
                 load(getCompletePhotoUrl(mMovieList.get(position).getPoster_path()))
                 .error(R.drawable.poster_placeholder)
                 .into(imageView);
-        Log.i(LOG_TAG, mMovieList.get(position).getPoster_path());
+
+
+//        Log.i(LOG_TAG, "writing to disk...");
+//        String filename = "movieImageFile";
+//        FileOutputStream outputStream;
+//        File file = new File(getContext().getFilesDir(), filename);
+//        try{
+//            outputStream = new FileOutputStream(file);
+//            outputStream.write(byteArray);
+//            outputStream.close();
+//            Log.i(LOG_TAG, "wrote to disk");
+
+//
+//        String path = mContext.getFilesDir() + "movieImageFile";
+//        URL fileURL = getClass().getClassLoader().getResource("movieImageFile");
+//        String filePath = fileURL.getPath();
+//        try {
+//            FileInputStream fileInputStream = mContext.openFileInput("movieImageFile");
+//        } catch (FileNotFoundException e) {
+//            e.printStackTrace();
+//        }
+//        Picasso.with(mContext).
+//                load(filePath)
+//                .error(R.drawable.poster_placeholder)
+//                .into(imageView);
+//        Log.i(LOG_TAG, mMovieList.get(position).getPoster_path());
 
     }
 

@@ -1,6 +1,7 @@
 package com.ruthiefloats.popularmoviesstage2;
 
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
@@ -33,6 +34,8 @@ import com.ruthiefloats.popularmoviesstage2.utility.HttpManager;
 import com.squareup.picasso.Picasso;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -125,6 +128,22 @@ public class DetailFragment extends Fragment {
                     bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
                     byte[] byteArray = stream.toByteArray();
                     addMovie(currentMovie, byteArray);
+
+                    //try and write to disk
+                    Log.i(LOG_TAG, "writing to disk...");
+                    String filename = "movieImageFile";
+                    FileOutputStream outputStream;
+//                    File file = new File(getContext().getFilesDir(), filename);
+                    try{
+                        outputStream = getContext().openFileOutput(filename, Context.MODE_PRIVATE);
+                        outputStream.write(byteArray);
+                        outputStream.close();
+                        Log.i(LOG_TAG, "wrote to disk");
+                    } catch (Exception e){
+                        e.printStackTrace();
+                    }
+
+
                 } else {
                     removeMovie(currentMovie);
                 }

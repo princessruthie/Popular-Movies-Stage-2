@@ -23,6 +23,7 @@ import com.ruthiefloats.popularmoviesstage2.utility.ApiUtility;
 import com.ruthiefloats.popularmoviesstage2.utility.HttpManager;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -109,15 +110,30 @@ public class MasterFragment extends Fragment {
                 null,
                 null,
                 null);
-        if (cursor != null) {
-            Log.i(LOG_TAG, "Number of results in cursor: " + cursor.getCount());
-            int i = 0;
-            while(cursor.moveToNext()){
-                String movieName = cursor.getString(1);
-                Log.i(LOG_TAG, "Movie " + i + " is called: " + movieName);
-                i++;
+
+        /*use the results from the cursor to make a movie list and update ui */
+        List<Movie> moviesFromCursor = new ArrayList<>();
+        if (cursor !=null && cursor.getCount() != 0){
+            while (cursor.moveToNext()){
+                int id = cursor.getInt(0);
+                String title = cursor.getString(1);
+                String vote_average_string = cursor.getString(2);
+                // TODO: 8/19/16 de-hardcode this
+                String poster_path = "/5JU9ytZJyR3zmClGmVm9q4Geqbd.jpg";
+                String overview = cursor.getString(4);
+                String release_date = cursor.getString(5);
+
+                double vote_average = Double.valueOf(vote_average_string);
+
+                moviesFromCursor.add(new Movie(title, release_date, poster_path, vote_average, overview, id));
             }
         }
+        posterAdapter = new PosterAdapter(getContext(), moviesFromCursor);
+        Log.i(LOG_TAG, "posterAdapter set");
+        RecyclerView posterRecyclerView = (RecyclerView) mView.findViewById(R.id.posterRecyclerView);
+        posterRecyclerView.setAdapter(posterAdapter);
+        posterRecyclerView.setLayoutManager(new GridLayoutManager(getContext(), 2));
+
     }
 
     public interface OnPosterSelectedListener {
