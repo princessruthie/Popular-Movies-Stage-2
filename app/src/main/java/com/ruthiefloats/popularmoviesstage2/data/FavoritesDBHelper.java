@@ -82,12 +82,11 @@ public class FavoritesDBHelper extends SQLiteOpenHelper{
     }
 
     /**
-     * During debugging used this to toggle between v1 and v2
-     * @param sqLiteDatabase
-     * @param oldVersion
-     * @param newVersion
+     * In event of downgrade, drop the only table and call onCreate
+     * @param sqLiteDatabase db to downgrade
+     * @param oldVersion the old version number
+     * @param newVersion the new version number
      */
-    // TODO: 8/12/16 remove from "production" code 
     @Override
     public void onDowngrade(SQLiteDatabase sqLiteDatabase, int oldVersion, int newVersion) {
         sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + Favorites.TABLE_NAME);
