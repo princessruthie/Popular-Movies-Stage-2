@@ -11,7 +11,7 @@ import android.net.Uri;
 import android.support.annotation.Nullable;
 
 /**
- * TODO: add a class header comment.
+ * A Content Provider for the favorite Movies data source
  * following tutorial at:
  * https://guides.codepath.com/android/Creating-Content-Providers
  */
