@@ -12,7 +12,7 @@ import com.ruthiefloats.popularmoviesstage2.R;
 import java.util.List;
 
 /**
- * TODO: update comment.
+ * An adapter to populate a RecyclerView from a List<String>
  */
 public class ReviewsAdapter extends RecyclerView.Adapter<ReviewsAdapter.ViewHolder> {
     private List<String> mReviews;
