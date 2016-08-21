@@ -29,9 +29,6 @@ public class HttpManager {
 // a string.
     public static String downloadUrl(String myurl) throws IOException {
         InputStream inputStream = null;
-        // Only display the first 500 characters of the retrieved
-        // web page content.
-        int len = 500;
 
         try {
             URL url = new URL(myurl);
@@ -74,10 +71,7 @@ public class HttpManager {
         return stringBuffer.toString();
     }
 
-    // TODO: 8/10/16 refactor to remove duplicate code
-
-
-    public static boolean CheckConnection(Context context) {
+    public static boolean checkConnection(Context context) {
         ConnectivityManager connMgr = (ConnectivityManager)
                 context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();

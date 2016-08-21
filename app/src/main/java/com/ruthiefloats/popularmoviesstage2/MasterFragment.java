@@ -16,7 +16,6 @@ import android.widget.Toast;
 
 import com.ruthiefloats.popularmoviesstage2.adapter.PosterAdapter;
 import com.ruthiefloats.popularmoviesstage2.data.FavoritesContract;
-import com.ruthiefloats.popularmoviesstage2.data.FavoritesDataSource;
 import com.ruthiefloats.popularmoviesstage2.model.Movie;
 import com.ruthiefloats.popularmoviesstage2.parser.MovieParser;
 import com.ruthiefloats.popularmoviesstage2.utility.ApiUtility;
@@ -66,7 +65,7 @@ public class MasterFragment extends Fragment {
     // Before attempting to fetch the URL, makes sure that there is a network connection.
     public void getData(String resourceRoot) {
         String fullUrl = ApiUtility.BuildUrl(resourceRoot);
-        boolean hasConnection = HttpManager.CheckConnection(getContext());
+        boolean hasConnection = HttpManager.checkConnection(getContext());
         if (hasConnection) {
             new DownloadWebpageTask().execute(fullUrl);
         } else {

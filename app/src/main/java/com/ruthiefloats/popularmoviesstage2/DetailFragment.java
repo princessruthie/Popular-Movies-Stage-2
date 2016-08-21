@@ -34,7 +34,6 @@ import com.ruthiefloats.popularmoviesstage2.utility.HttpManager;
 import com.squareup.picasso.Picasso;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -215,7 +214,7 @@ public class DetailFragment extends Fragment {
     public void getData(String resourceRoot, String appendix) {
         String fullUrl = ApiUtility.BuildUrl(resourceRoot, appendix);
         Log.i(LOG_TAG, fullUrl);
-        boolean hasConnection = HttpManager.CheckConnection(getContext());
+        boolean hasConnection = HttpManager.checkConnection(getContext());
         if (hasConnection) {
             new DownloadWebpageTask().execute(fullUrl);
         } else {
