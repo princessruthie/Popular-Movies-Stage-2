@@ -23,7 +23,8 @@ import java.net.URL;
 import java.util.List;
 
 /**
- * TODO: add a class header comment.
+ * An adapter to populate a RecyclerView, from a List<Movie>, with
+ * poster images
  */
 public class PosterAdapter extends RecyclerView.Adapter<PosterAdapter.ViewHolder> {
 
