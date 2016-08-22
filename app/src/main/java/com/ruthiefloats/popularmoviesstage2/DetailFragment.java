@@ -214,7 +214,7 @@ public class DetailFragment extends Fragment {
     public void getData(String resourceRoot, String appendix) {
         String fullUrl = ApiUtility.BuildUrl(resourceRoot, appendix);
         Log.i(LOG_TAG, fullUrl);
-        boolean hasConnection = HttpManager.checkConnection(getContext());
+        boolean hasConnection = HttpManager.checkConnection();
         if (hasConnection) {
             new DownloadWebpageTask().execute(fullUrl);
         } else {

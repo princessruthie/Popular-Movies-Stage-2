@@ -45,11 +45,20 @@ public class HttpManager {
             return response.body().string();
     }
 
-    public static boolean checkConnection(Context context) {
-        ConnectivityManager connMgr = (ConnectivityManager)
-                context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
-        boolean hasConnection = (networkInfo != null && networkInfo.isConnected());
-        return hasConnection;
+    public static boolean checkConnection() {
+        /*
+        a la http://stackoverflow.com/a/27312494/3818437
+         */
+        Runtime runtime = Runtime.getRuntime();
+        try {
+
+            Process ipProcess = runtime.exec("/system/bin/ping -c 1 8.8.8.8");
+            int     exitValue = ipProcess.waitFor();
+            return (exitValue == 0);
+
+        } catch (IOException e)          { e.printStackTrace(); }
+        catch (InterruptedException e) { e.printStackTrace(); }
+
+        return false;
     }
 }

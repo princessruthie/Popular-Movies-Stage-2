@@ -65,7 +65,7 @@ public class MasterFragment extends Fragment {
     // Before attempting to fetch the URL, makes sure that there is a network connection.
     public void getData(String resourceRoot) {
         String fullUrl = ApiUtility.BuildUrl(resourceRoot);
-        boolean hasConnection = HttpManager.checkConnection(getContext());
+        boolean hasConnection = HttpManager.checkConnection();
         if (hasConnection) {
             new DownloadWebpageTask().execute(fullUrl);
         } else {
