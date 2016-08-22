@@ -21,6 +21,7 @@ public class MainActivity extends AppCompatActivity implements MasterFragment.On
 
     public static final String INSTANCE_STATE_TAG = "heres the movie";
     private static final String MASTER_FRAGMENT_TAG = "master frag tag";
+    public static final String MASTER_FRAGMENT_BUNDLE_ID = "mFragment";
     MasterFragment mMasterFragment;
     private boolean mTwoPane;
 
@@ -42,7 +43,7 @@ public class MainActivity extends AppCompatActivity implements MasterFragment.On
          */
         if (savedInstanceState != null) {
             mMasterFragment = (MasterFragment) getSupportFragmentManager()
-                    .getFragment(savedInstanceState, "mFragment");
+                    .getFragment(savedInstanceState, MASTER_FRAGMENT_BUNDLE_ID);
         } else {
             mMasterFragment = new MasterFragment();
             getSupportFragmentManager().beginTransaction().replace(R.id.master_container, mMasterFragment, MASTER_FRAGMENT_TAG)
@@ -84,8 +85,11 @@ public class MainActivity extends AppCompatActivity implements MasterFragment.On
     @Override
     public void onPosterSelected(Movie currentMovie) {
         Toast.makeText(this, "Movie selected is " + currentMovie.getTitle(), Toast.LENGTH_SHORT).show();
-        // TODO: query movies api for the trailer location  
         if (mTwoPane) {
+            /*
+            pass the current Movie as a parcelable extra and add a DetailFragment
+            to the RHS of the ContentView
+             */
             Bundle arguments = new Bundle();
             arguments.putParcelable(INSTANCE_STATE_TAG, currentMovie);
             DetailFragment fragment = new DetailFragment();
@@ -94,6 +98,10 @@ public class MainActivity extends AppCompatActivity implements MasterFragment.On
                     .replace(R.id.detail_container, fragment)
                     .commit();
         } else {
+             /*
+            pass the current Movie as an extra and start a new
+            DetailActivity
+             */
             Intent intent = new Intent(this, DetailActivity.class);
             intent.putExtra(INSTANCE_STATE_TAG, currentMovie);
             startActivity(intent);
@@ -103,6 +111,6 @@ public class MainActivity extends AppCompatActivity implements MasterFragment.On
     @Override
     public void onSaveInstanceState(Bundle outState, PersistableBundle outPersistentState) {
         super.onSaveInstanceState(outState, outPersistentState);
-        getSupportFragmentManager().putFragment(outState, "mFragment", mMasterFragment);
+        getSupportFragmentManager().putFragment(outState, MASTER_FRAGMENT_BUNDLE_ID, mMasterFragment);
     }
 }
