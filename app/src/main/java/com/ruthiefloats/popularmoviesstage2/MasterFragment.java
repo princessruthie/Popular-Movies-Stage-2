@@ -14,16 +14,26 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.ruthiefloats.popularmoviesstage2.adapter.PosterAdapter;
 import com.ruthiefloats.popularmoviesstage2.data.FavoritesContract;
+import com.ruthiefloats.popularmoviesstage2.model.DummyData;
 import com.ruthiefloats.popularmoviesstage2.model.Movie;
 import com.ruthiefloats.popularmoviesstage2.parser.MovieParser;
 import com.ruthiefloats.popularmoviesstage2.utility.ApiUtility;
 import com.ruthiefloats.popularmoviesstage2.utility.HttpManager;
+import com.ruthiefloats.popularmoviesstage2.utility.MyApiEndpointInterface;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 
 /**
@@ -46,7 +56,8 @@ public class MasterFragment extends Fragment {
         super.onCreate(savedInstanceState);
         Log.i(LOG_TAG, "onCreate");
         setRetainInstance(true);
-        getData(ApiUtility.POPULAR_RESOURCE_ROOT);
+//        getData(ApiUtility.POPULAR_RESOURCE_ROOT);
+        getRetrofitData();
     }
 
     @Override
@@ -102,18 +113,18 @@ public class MasterFragment extends Fragment {
         Cursor cursor = getContext().getContentResolver().query(FavoritesContract.Favorites.CONTENT_URI,
                 new String[]{FavoritesContract.Favorites.COLUMN_API_ID,
                         FavoritesContract.Favorites.COLUMN_TITLE,
-                FavoritesContract.Favorites.COLUMN_RATING,
-                FavoritesContract.Favorites.COLUMN_POSTER,
-                FavoritesContract.Favorites.COLUMN_SYNOPSIS,
-                FavoritesContract.Favorites.COLUMN_RELEASE_DATE},
+                        FavoritesContract.Favorites.COLUMN_RATING,
+                        FavoritesContract.Favorites.COLUMN_POSTER,
+                        FavoritesContract.Favorites.COLUMN_SYNOPSIS,
+                        FavoritesContract.Favorites.COLUMN_RELEASE_DATE},
                 null,
                 null,
                 null);
 
         /*use the results from the cursor to make a movie list and update ui */
         List<Movie> moviesFromCursor = new ArrayList<>();
-        if (cursor !=null && cursor.getCount() != 0){
-            while (cursor.moveToNext()){
+        if (cursor != null && cursor.getCount() != 0) {
+            while (cursor.moveToNext()) {
                 int id = cursor.getInt(0);
                 String title = cursor.getString(1);
                 String vote_average_string = cursor.getString(2);
@@ -161,12 +172,51 @@ public class MasterFragment extends Fragment {
         @Override
         protected void onPostExecute(String result) {
             mMovieList = MovieParser.parseFeed(result);
-            Log.i(LOG_TAG, mMovieList.toString());
-            posterAdapter = new PosterAdapter(getContext(), mMovieList);
-            Log.i(LOG_TAG, "posterAdapter set");
-            RecyclerView posterRecyclerView = (RecyclerView) mView.findViewById(R.id.posterRecyclerView);
-            posterRecyclerView.setAdapter(posterAdapter);
-            posterRecyclerView.setLayoutManager(new GridLayoutManager(getContext(), 2));
+            updateDisplay();
+
+
+//            List<Movie> mmMovie = new ArrayList<>();
+//            Gson gson = new GsonBuilder().create();
+//            Movie tempMovie = gson.fromJson(result, Movie.class);
+
+
         }
+    }
+
+    void getRetrofitData(){
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl("http://api.themoviedb.org/3/")
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+        Log.i(LOG_TAG, "retrofit object built");
+
+        MyApiEndpointInterface myApiEndpointInterface = retrofit.create(MyApiEndpointInterface.class);
+        Call<List<Movie>> call = myApiEndpointInterface.getMovies(BuildConfig.DEVELOPER_API_KEY);
+        call.enqueue(new Callback<List<Movie>>() {
+            @Override
+            public void onResponse(Call<List<Movie>> call, Response<List<Movie>> response) {
+                if (response.isSuccessful()) {
+                    mMovieList = response.body();
+                    updateDisplay();
+                } else{
+                    mMovieList = DummyData.getDummyData();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<Movie>> call, Throwable t) {
+                mMovieList = DummyData.getDummyData();
+                updateDisplay();
+
+            }
+        });
+    }
+    private void updateDisplay() {
+        Log.i(LOG_TAG, mMovieList.toString());
+        posterAdapter = new PosterAdapter(getContext(), mMovieList);
+        Log.i(LOG_TAG, "posterAdapter set");
+        RecyclerView posterRecyclerView = (RecyclerView) mView.findViewById(R.id.posterRecyclerView);
+        posterRecyclerView.setAdapter(posterAdapter);
+        posterRecyclerView.setLayoutManager(new GridLayoutManager(getContext(), 2));
     }
 }
