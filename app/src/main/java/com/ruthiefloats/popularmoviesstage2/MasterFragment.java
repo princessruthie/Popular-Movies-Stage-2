@@ -14,11 +14,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.ruthiefloats.popularmoviesstage2.adapter.PosterAdapter;
 import com.ruthiefloats.popularmoviesstage2.data.FavoritesContract;
-import com.ruthiefloats.popularmoviesstage2.model.DummyData;
+import com.ruthiefloats.popularmoviesstage2.model.BOMR;
 import com.ruthiefloats.popularmoviesstage2.model.Movie;
 import com.ruthiefloats.popularmoviesstage2.parser.MovieParser;
 import com.ruthiefloats.popularmoviesstage2.utility.ApiUtility;
@@ -171,6 +169,7 @@ public class MasterFragment extends Fragment {
         // onPostExecute sets the adapter
         @Override
         protected void onPostExecute(String result) {
+//            BOMR bomr = BOMR.parseJSON(result);
             mMovieList = MovieParser.parseFeed(result);
             updateDisplay();
 
@@ -185,31 +184,65 @@ public class MasterFragment extends Fragment {
 
     void getRetrofitData(){
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("http://api.themoviedb.org/3/")
+                .baseUrl("http://api.themoviedb.org/")
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
         Log.i(LOG_TAG, "retrofit object built");
+
 
         MyApiEndpointInterface myApiEndpointInterface = retrofit.create(MyApiEndpointInterface.class);
         Call<List<Movie>> call = myApiEndpointInterface.getMovies(BuildConfig.DEVELOPER_API_KEY);
         call.enqueue(new Callback<List<Movie>>() {
             @Override
             public void onResponse(Call<List<Movie>> call, Response<List<Movie>> response) {
-                if (response.isSuccessful()) {
-                    mMovieList = response.body();
-                    updateDisplay();
-                } else{
-                    mMovieList = DummyData.getDummyData();
-                }
+                Log.i(LOG_TAG, "success");
+
             }
 
             @Override
             public void onFailure(Call<List<Movie>> call, Throwable t) {
-                mMovieList = DummyData.getDummyData();
-                updateDisplay();
-
+                t.printStackTrace();
+                Log.i(LOG_TAG, "fail");
             }
         });
+
+//        Call<BOMR> call = myApiEndpointInterface.listRepos(BuildConfig.DEVELOPER_API_KEY);
+//        call.enqueue(new Callback<BOMR>() {
+//            @Override
+//            public void onResponse(Call<BOMR> call, Response<BOMR> response) {
+//                if (response.isSuccessful()) {
+//                    BOMR bomr = response.body();
+//                    List<BOMR.Results> resultsList = bomr.getResultSet();
+//                    int numResults = resultsList.size();
+//                    Log.i(LOG_TAG, "number of results" + numResults);
+//                }
+//            }
+//
+//            @Override
+//            public void onFailure(Call<BOMR> call, Throwable t) {
+//                    Log.i(LOG_TAG, "fail");
+//            }
+//        });
+
+//        Call<List<Movie>> call = myApiEndpointInterface.getMovies(BuildConfig.DEVELOPER_API_KEY);
+//        call.enqueue(new Callback<List<Movie>>() {
+//            @Override
+//            public void onResponse(Call<List<Movie>> call, Response<List<Movie>> response) {
+//                if (response.isSuccessful()) {
+//                    mMovieList = response.body();
+//                    updateDisplay();
+//                } else{
+//                    mMovieList = DummyData.getDummyData();
+//                }
+//            }
+//
+//            @Override
+//            public void onFailure(Call<List<Movie>> call, Throwable t) {
+//                mMovieList = DummyData.getDummyData();
+//                updateDisplay();
+//
+//            }
+//        });
     }
     private void updateDisplay() {
         Log.i(LOG_TAG, mMovieList.toString());
