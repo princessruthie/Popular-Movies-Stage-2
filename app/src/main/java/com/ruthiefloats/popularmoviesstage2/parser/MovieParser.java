@@ -99,6 +99,18 @@ public class MovieParser {
         }
     }
 
+    public static String parseRuntime(String content){
+        try {
+            JSONObject obj = new JSONObject(content);
+            String runtime = obj.optString("runtime", "0");
+            Log.i(LOG_TAG, "Runtime: " + runtime);
+            return runtime;
+        } catch (JSONException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
     /**
      * checks how many reviews are return by API
      *
@@ -107,7 +119,6 @@ public class MovieParser {
      */
     public static int getNumReviews(String content) {
         try {
-//            JSONObject obj = new JSONObject(content);
             JSONObject obj = new JSONObject(content);
             JSONObject reviewsObject = obj.getJSONObject("reviews");
             int numReviews = reviewsObject.optInt("total_results", 0);
@@ -127,6 +138,8 @@ public class MovieParser {
             JSONObject reviewsObject = obj.getJSONObject("videos");
             JSONArray videos = reviewsObject.getJSONArray("results");
             //limit to a max of three vids
+            //todo this is redundant,
+            // FIXME: 8/24/16
             int numTrailers = 3;
             if (videos.length() < 3) {
                 numTrailers = videos.length();

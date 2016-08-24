@@ -91,8 +91,6 @@ public class DetailFragment extends Fragment {
         TextView ratingTextView = (TextView) rootView.findViewById(R.id.voteAverageTextView);
         //make ref to imageView final so that it can be used in inner class
         final ImageView imageView = (ImageView) rootView.findViewById(R.id.imageView);
-        // TODO: 8/10/16 populate the lengthTextView
-//        TextView lengthTextView = (TextView) findViewById(R.id.lengthTextView);
 
         movieTextView.setText(currentMovie.getTitle());
         dateTextView.setText(currentMovie.getRelease_date());
@@ -264,6 +262,9 @@ public class DetailFragment extends Fragment {
                 reviewList = new ArrayList<>();
                 reviewList.add("There aren't any reviews for this film.");
             }
+
+            TextView lengthTextView = (TextView) mView.findViewById(R.id.lengthTextView);
+            lengthTextView.setText(MovieParser.parseRuntime(result) + " mins");
 
             RecyclerView recyclerView = (RecyclerView) mView.findViewById(R.id.reviewRecyclerView);
 //            reviewList = DummyData.getDummyReviews();
