@@ -2,7 +2,6 @@ package com.ruthiefloats.popularmoviesstage2;
 
 import android.content.ContentValues;
 import android.content.Context;
-import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
@@ -12,6 +11,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -126,10 +126,9 @@ public class DetailFragment extends Fragment {
 
 
         final ImageButton favoriteButton = (ImageButton) rootView.findViewById(R.id.favoriteButton);
-        Resources resources = getResources();
-        // TODO: 8/11/16 find update method for deprecated getDrawable 
-        final Drawable favoriteIcon = resources.getDrawable(R.drawable.ic_favorite_red_24dp);
-        final Drawable nonFavoriteIcon = resources.getDrawable(R.drawable.ic_favorite_gray_24dp);
+        Context context = getContext();
+        final Drawable favoriteIcon = ContextCompat.getDrawable(context, R.drawable.ic_favorite_red_24dp);
+        final Drawable nonFavoriteIcon = ContextCompat.getDrawable(context, R.drawable.ic_favorite_gray_24dp);
         //check if the current movie is a favorite
         favoriteButton.setImageDrawable(isFavorite ? favoriteIcon : nonFavoriteIcon);
         favoriteButton.setOnClickListener(new View.OnClickListener() {
@@ -147,12 +146,12 @@ public class DetailFragment extends Fragment {
                     byte[] byteArray = stream.toByteArray();
                     addMovie(currentMovie, byteArray);
 
+                    /*
+                    Write the file to disk
+                     */
                     Log.i(LOG_TAG, "writing photo to disk...");
                     String filename = String.valueOf(currentMovie.getId());
-//                    String filename = "photo.jpg";
-//
                     FileOutputStream outputStream;
-//                    File file = new File(getContext().getFilesDir(), filename);
                     try {
                         outputStream = getContext().openFileOutput(filename, Context.MODE_PRIVATE);
                         outputStream.write(byteArray);
@@ -262,7 +261,7 @@ public class DetailFragment extends Fragment {
         // something something what stays the same.
 
         /**
-         * Populate the list of reviews and trailer images 
+         * Populate the list of reviews and trailer images
          *
          * @param result JSON String
          */
