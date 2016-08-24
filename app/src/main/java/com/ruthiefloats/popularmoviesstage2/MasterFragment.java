@@ -102,23 +102,23 @@ public class MasterFragment extends Fragment {
         Cursor cursor = getContext().getContentResolver().query(FavoritesContract.Favorites.CONTENT_URI,
                 new String[]{FavoritesContract.Favorites.COLUMN_API_ID,
                         FavoritesContract.Favorites.COLUMN_TITLE,
-                FavoritesContract.Favorites.COLUMN_RATING,
-                FavoritesContract.Favorites.COLUMN_POSTER,
-                FavoritesContract.Favorites.COLUMN_SYNOPSIS,
-                FavoritesContract.Favorites.COLUMN_RELEASE_DATE},
+                        FavoritesContract.Favorites.COLUMN_RATING,
+                        FavoritesContract.Favorites.COLUMN_POSTER,
+                        FavoritesContract.Favorites.COLUMN_SYNOPSIS,
+                        FavoritesContract.Favorites.COLUMN_RELEASE_DATE},
                 null,
                 null,
                 null);
 
         /*use the results from the cursor to make a movie list and update ui */
         List<Movie> moviesFromCursor = new ArrayList<>();
-        if (cursor !=null && cursor.getCount() != 0){
-            while (cursor.moveToNext()){
+        if (cursor != null && cursor.getCount() != 0) {
+            while (cursor.moveToNext()) {
                 int id = cursor.getInt(0);
                 String title = cursor.getString(1);
                 String vote_average_string = cursor.getString(2);
-                // TODO: 8/19/16 de-hardcode this
-                String poster_path = "/5JU9ytZJyR3zmClGmVm9q4Geqbd.jpg";
+                /*the poster will be set by the adapter */
+                String poster_path = "";
                 String overview = cursor.getString(4);
                 String release_date = cursor.getString(5);
 
@@ -127,7 +127,9 @@ public class MasterFragment extends Fragment {
                 moviesFromCursor.add(new Movie(title, release_date, poster_path, vote_average, overview, id));
             }
         }
-        posterAdapter = new PosterAdapter(getContext(), moviesFromCursor);
+        cursor.close();
+
+        posterAdapter = new PosterAdapter(getContext(), moviesFromCursor, true);
         Log.i(LOG_TAG, "posterAdapter set");
         RecyclerView posterRecyclerView = (RecyclerView) mView.findViewById(R.id.posterRecyclerView);
         posterRecyclerView.setAdapter(posterAdapter);

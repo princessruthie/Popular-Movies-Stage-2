@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -34,6 +35,9 @@ import com.ruthiefloats.popularmoviesstage2.utility.HttpManager;
 import com.squareup.picasso.Picasso;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -69,7 +73,7 @@ public class DetailFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
         currentMovie = getArguments().getParcelable(MainActivity.INSTANCE_STATE_TAG);
-        //check if the movie is in favorite db
+        /*check if the movie is in favorite db*/
         FavoritesDataSource datasource = new FavoritesDataSource(getContext());
         isFavorite = datasource.isThisMovieFavorited(currentMovie.getId());
     }
@@ -77,13 +81,13 @@ public class DetailFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
         // When called builds a valid valid URL for The Movie DB API and starts a DownloadWeb
         // task.
         // Before attempting to fetch the URL, makes sure that there is a network connection.
 
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_detail, container, false);
-//        getData(REVIEW_ROOT_PREFIX + currentMovie.getId() + REVIEW_ROOT_POSTFIX);
 //        Movie currentMovie = DummyData.getSingleDummyDatum();
 
         /**Populate the Views using the information in the Movie object */
@@ -101,10 +105,25 @@ public class DetailFragment extends Fragment {
         summaryTextView.setText(currentMovie.getOverview());
         ratingTextView.setText((int) currentMovie.getVote_average() + "/10");
 
-        Picasso.with(getActivity()).
-                load(ApiUtility.getCompletePhotoUrl(currentMovie.getPoster_path()))
-                .error(R.drawable.poster_placeholder)
-                .into(imageView);
+        if (isFavorite) {
+
+            try {
+                String filename = String.valueOf(currentMovie.getId());
+                File photofile = new File(getContext().getFilesDir(), filename);
+                Log.i(LOG_TAG, "getting saved photo data");
+                Bitmap freshBitMap = BitmapFactory.decodeStream(new FileInputStream(photofile));
+                imageView.setImageBitmap(freshBitMap);
+            } catch (FileNotFoundException e) {
+                imageView.setImageResource(R.drawable.poster_placeholder);
+                e.printStackTrace();
+            }
+        } else {
+            Picasso.with(getActivity()).
+                    load(ApiUtility.getCompletePhotoUrl(currentMovie.getPoster_path()))
+                    .error(R.drawable.poster_placeholder)
+                    .into(imageView);
+        }
+
 
         final ImageButton favoriteButton = (ImageButton) rootView.findViewById(R.id.favoriteButton);
         Resources resources = getResources();
@@ -128,17 +147,18 @@ public class DetailFragment extends Fragment {
                     byte[] byteArray = stream.toByteArray();
                     addMovie(currentMovie, byteArray);
 
-                    //try and write to disk
-                    Log.i(LOG_TAG, "writing to disk...");
-                    String filename = "movieImageFile";
+                    Log.i(LOG_TAG, "writing photo to disk...");
+                    String filename = String.valueOf(currentMovie.getId());
+//                    String filename = "photo.jpg";
+//
                     FileOutputStream outputStream;
 //                    File file = new File(getContext().getFilesDir(), filename);
-                    try{
+                    try {
                         outputStream = getContext().openFileOutput(filename, Context.MODE_PRIVATE);
                         outputStream.write(byteArray);
                         outputStream.close();
                         Log.i(LOG_TAG, "wrote to disk");
-                    } catch (Exception e){
+                    } catch (Exception e) {
                         e.printStackTrace();
                     }
 
@@ -171,7 +191,8 @@ public class DetailFragment extends Fragment {
      * @param currentMovie Movie to add to db
      * @param byteArray    Movie poster drawable
      */
-    // TODO: 8/13/16 ideally refactor to writing the Drawable to disk and have db ref the file 
+    // TODO: 8/13/16 ideally refactor to writing the Drawable to disk and have db ref the file
+    // TODO: 8/24/16 no longer need db to hold the image at all.  remove that code. 
     private void addMovie(Movie currentMovie, byte[] byteArray) {
         String voteAverage = Double.toString(currentMovie.getVote_average());
 
@@ -223,13 +244,8 @@ public class DetailFragment extends Fragment {
     }
 
     /**
-     * Uses AsyncTask to create a task away from the main UI thread. This task takes a
-     * URL string and uses it to create an HttpUrlConnection. Once the connection
-     * has been established, the AsyncTask downloads the contents as
-     * an InputStream. Finally, the InputStream is converted into a String, which is
-     * parsed into a List<Movie>, List<Strings> for reviews and List<String> for trailer
-     * Ids and used to the make the review RecyclerView, trailer thumbnails
-     * onPostExecute method.
+     * Extends AsyncTask to create a task away from the main UI thread. This task takes a
+     * URL string and uses it to perform a network connection and update the ui
      */
     private class DownloadWebpageTask extends AsyncTask<String, Void, String> {
         @Override
@@ -242,32 +258,25 @@ public class DetailFragment extends Fragment {
                 return "Unable to retrieve web page. URL may be invalid.";
             }
         }
-
-
         // TODO: 8/10/16 this could use a refactor.  something something what changes
         // something something what stays the same.
 
         /**
-         * Populate the list of reviews and trailer images Because some movies only have
-         * one or two trailers, conditionals have been employed
+         * Populate the list of reviews and trailer images 
          *
          * @param result JSON String
          */
         @Override
         protected void onPostExecute(String result) {
-            Log.i(LOG_TAG, result);
             //check that there are reviews
             numReviews = MovieParser.getNumReviews(result);
             Log.i(LOG_TAG, numReviews + "  reviews available");
             if (numReviews > 0) {
                 reviewList = MovieParser.parseReviews(result);
-//                reviewList = MovieParser.parseReviews(DummyData.TEST_JSON);
-//                Log.i(LOG_TAG, reviewList.toString());
             } else {
                 reviewList = new ArrayList<>();
                 reviewList.add("There aren't any reviews for this film.");
             }
-
 
             RecyclerView recyclerView = (RecyclerView) mView.findViewById(R.id.reviewRecyclerView);
 //            reviewList = DummyData.getDummyReviews();
@@ -278,8 +287,6 @@ public class DetailFragment extends Fragment {
             List<String> trailerIds = MovieParser.getTrailers(result);
             int numTrailers = trailerIds.size();
             Log.i(LOG_TAG, "Number of trailers: " + numTrailers);
-            String youtubePrefix = "http://img.youtube.com/vi/";
-            String youtubePostfix = "/0.jpg";
 
             RecyclerView trailerRecyclerView = (RecyclerView) mView.findViewById(R.id.trailerRecyclerView);
             TrailerAdapter trailerAdapter = new TrailerAdapter(getContext(), trailerIds);
