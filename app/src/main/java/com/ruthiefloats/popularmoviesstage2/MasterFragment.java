@@ -103,7 +103,6 @@ public class MasterFragment extends Fragment {
                 new String[]{FavoritesContract.Favorites.COLUMN_API_ID,
                         FavoritesContract.Favorites.COLUMN_TITLE,
                         FavoritesContract.Favorites.COLUMN_RATING,
-                        FavoritesContract.Favorites.COLUMN_POSTER,
                         FavoritesContract.Favorites.COLUMN_SYNOPSIS,
                         FavoritesContract.Favorites.COLUMN_RELEASE_DATE},
                 null,
@@ -117,14 +116,12 @@ public class MasterFragment extends Fragment {
                 int id = cursor.getInt(0);
                 String title = cursor.getString(1);
                 String vote_average_string = cursor.getString(2);
-                /*the poster will be set by the adapter */
-                String poster_path = "";
-                String overview = cursor.getString(4);
-                String release_date = cursor.getString(5);
+                String overview = cursor.getString(3);
+                String release_date = cursor.getString(4);
 
                 double vote_average = Double.valueOf(vote_average_string);
-
-                moviesFromCursor.add(new Movie(title, release_date, poster_path, vote_average, overview, id));
+                /*the poster will be set by the adapter, so pass null*/
+                moviesFromCursor.add(new Movie(title, release_date, null, vote_average, overview, id));
             }
         }
         cursor.close();
