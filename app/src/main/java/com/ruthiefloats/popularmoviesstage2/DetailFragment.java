@@ -81,12 +81,6 @@ public class DetailFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
-        // When called builds a valid valid URL for The Movie DB API and starts a DownloadWeb
-        // task.
-        // Before attempting to fetch the URL, makes sure that there is a network connection.
-
-        // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_detail, container, false);
 //        Movie currentMovie = DummyData.getSingleDummyDatum();
 
@@ -144,7 +138,7 @@ public class DetailFragment extends Fragment {
                     ByteArrayOutputStream stream = new ByteArrayOutputStream();
                     bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
                     byte[] byteArray = stream.toByteArray();
-                    addMovie(currentMovie, byteArray);
+                    addMovie(currentMovie);
 
                     /*
                     Write the file to disk
@@ -161,9 +155,9 @@ public class DetailFragment extends Fragment {
                         e.printStackTrace();
                     }
 
-
                 } else {
                     removeMovie(currentMovie);
+                    // TODO: 8/24/16 delete the image from disk if it's no longer favorite
                 }
             }
         });
@@ -188,14 +182,11 @@ public class DetailFragment extends Fragment {
      * add Movie to favorite db
      *
      * @param currentMovie Movie to add to db
-     * @param byteArray    Movie poster drawable
      */
-    // TODO: 8/13/16 ideally refactor to writing the Drawable to disk and have db ref the file
-    // TODO: 8/24/16 no longer need db to hold the image at all.  remove that code. 
-    private void addMovie(Movie currentMovie, byte[] byteArray) {
-        String voteAverage = Double.toString(currentMovie.getVote_average());
 
-        addMovieUsingContentProvider(currentMovie.getTitle(), byteArray, currentMovie.getOverview()
+    private void addMovie(Movie currentMovie) {
+        String voteAverage = Double.toString(currentMovie.getVote_average());
+        addMovieUsingContentProvider(currentMovie.getTitle(), currentMovie.getOverview()
                 , voteAverage, currentMovie.getRelease_date(), currentMovie.getId());
     }
 
@@ -203,17 +194,14 @@ public class DetailFragment extends Fragment {
      * a method to add a Movie to the database using Content Provider
      *
      * @param title        Movie title
-     * @param poster       Movie poster as a byte[]
      * @param synopsis     Movie synopsis
      * @param rating       Movie rating
      * @param release_date Movie release date
      * @param api_id       Movie id from the API
      */
-    private void addMovieUsingContentProvider(String title, byte[] poster, String synopsis, String rating, String release_date, int api_id) {
-
+    private void addMovieUsingContentProvider(String title, String synopsis, String rating, String release_date, int api_id) {
         ContentValues values = new ContentValues();
         values.put(FavoritesContract.Favorites.COLUMN_TITLE, title);
-        values.put(FavoritesContract.Favorites.COLUMN_POSTER, poster);
         values.put(FavoritesContract.Favorites.COLUMN_SYNOPSIS, synopsis);
         values.put(FavoritesContract.Favorites.COLUMN_RATING, rating);
         values.put(FavoritesContract.Favorites.COLUMN_RELEASE_DATE, release_date);

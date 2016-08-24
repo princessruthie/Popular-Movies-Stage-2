@@ -13,7 +13,7 @@ import com.ruthiefloats.popularmoviesstage2.data.FavoritesContract.Favorites;
 public class FavoritesDBHelper extends SQLiteOpenHelper{
 
     // If you change the database schema, you must increment the database version.
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 2;
 
     static final String DATABASE_NAME = "favorites.db";
     private static final String LOGTAG = "FavoritesDBHelper ";
@@ -43,7 +43,7 @@ public class FavoritesDBHelper extends SQLiteOpenHelper{
         final String SQL_CREATE_LOCATION_TABLE = "CREATE TABLE " + Favorites.TABLE_NAME + " (" +
                 Favorites._ID + " INTEGER PRIMARY KEY," +
                 Favorites.COLUMN_TITLE + " TEXT NOT NULL, " +
-                Favorites.COLUMN_POSTER + " BLOB NOT NULL, " +
+//                Favorites.COLUMN_POSTER + " BLOB NOT NULL, " +
                 Favorites.COLUMN_RATING + " TEXT NOT NULL, " +
                 Favorites.COLUMN_SYNOPSIS + " TEXT NOT NULL, " +
                 Favorites.COLUMN_RELEASE_DATE + " TEXT NOT NULL, " +
