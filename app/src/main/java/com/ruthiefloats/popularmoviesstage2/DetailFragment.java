@@ -155,7 +155,13 @@ public class DetailFragment extends Fragment {
 
                 } else {
                     removeMovie(currentMovie);
-                    // TODO: 8/24/16 delete the image from disk if it's no longer favorite
+                    String filename = String.valueOf(currentMovie.getId());
+                    File photofile = new File(getContext().getFilesDir(), filename);
+                    Log.i(LOG_TAG, "getting saved photo data");
+                    if (photofile.exists()) {
+                        Log.i(LOG_TAG, "Deleting Movie poster number " + currentMovie.getId());
+                        photofile.delete();
+                    }
                 }
             }
         });

@@ -137,11 +137,10 @@ public class MovieParser {
             JSONObject obj = new JSONObject(content);
             JSONObject reviewsObject = obj.getJSONObject("videos");
             JSONArray videos = reviewsObject.getJSONArray("results");
-            //limit to a max of three vids
-            //todo this is redundant,
-            // FIXME: 8/24/16
-            int numTrailers = 3;
-            if (videos.length() < 3) {
+            //limit the number of trailers
+            int maxTrailers = 3;
+            int numTrailers = maxTrailers;
+            if (videos.length() < maxTrailers) {
                 numTrailers = videos.length();
             }
 
