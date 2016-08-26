@@ -61,22 +61,9 @@ public class MasterFragment extends Fragment {
         return rootView;
     }
 
-    // When called builds a valid valid URL for The Movie DB API and starts a DownloadWeb
-    // task.
-    // Before attempting to fetch the URL, makes sure that there is a network connection.
-    public void getData(String resourceRoot) {
-        String fullUrl = ApiUtility.BuildUrl(resourceRoot);
-        boolean hasConnection = HttpManager.checkConnection();
-        if (hasConnection) {
-            new DownloadWebpageTask().execute(fullUrl);
-        } else {
-            Toast.makeText(getContext(), "No network", Toast.LENGTH_SHORT);
-        }
-    }
 
     @Override
     public void onAttach(Context context) {
-        Log.i(LOG_TAG, "onAttach");
         super.onAttach(context);
         try {
             mCallback = (OnPosterSelectedListener) context;
@@ -89,17 +76,25 @@ public class MasterFragment extends Fragment {
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
-        Log.i(LOG_TAG, "onViewCreated");
         super.onViewCreated(view, savedInstanceState);
     }
 
-    public void getData() {
-        // TODO: 8/18/16 : 
-        /*
-        get a List of Movies and make an adapter get the recyclerview and set everyone up!
-         */
-        Log.i(LOG_TAG, "Favorites tab selected ");
+    /* When called builds a valid valid URL for The Movie DB API and starts a DownloadWeb
+     task.
+     Before attempting to fetch the URL, makes sure that there is a network connection.
+     */
+    public void getData(String resourceRoot) {
+        String fullUrl = ApiUtility.BuildUrl(resourceRoot);
+        boolean hasConnection = HttpManager.checkConnection();
+        if (hasConnection) {
+            new DownloadWebpageTask().execute(fullUrl);
+        } else {
+            Toast.makeText(getContext(), "No network", Toast.LENGTH_SHORT);
+        }
+    }
 
+    /*Calling getData without a resource root gets local data */
+    public void getData() {
         Cursor cursor = getContext().getContentResolver().query(FavoritesContract.Favorites.CONTENT_URI,
                 new String[]{FavoritesContract.Favorites.COLUMN_API_ID,
                         FavoritesContract.Favorites.COLUMN_TITLE,
@@ -111,7 +106,7 @@ public class MasterFragment extends Fragment {
                 null);
 
         /*use the results from the cursor to make a movie list and update ui */
-        List<Movie> moviesFromCursor = new ArrayList<>();
+        mMovieList = new ArrayList<>();
         if (cursor != null && cursor.getCount() != 0) {
             while (cursor.moveToNext()) {
                 int id = cursor.getInt(0);
@@ -122,17 +117,35 @@ public class MasterFragment extends Fragment {
 
                 double vote_average = Double.valueOf(vote_average_string);
                 /*the poster will be set by the adapter, so pass null*/
-                moviesFromCursor.add(new Movie(title, release_date, null, vote_average, overview, id));
+                mMovieList.add(new Movie(title, release_date, null, vote_average, overview, id));
             }
+            cursor.close();
+            populateRecyclerView(true);
+        } else {
+            // TODO: 8/26/16 in event that user has no favorites, prompt them
         }
-        cursor.close();
+    }
 
-        posterAdapter = new PosterAdapter(getContext(), moviesFromCursor, true);
-        Log.i(LOG_TAG, "posterAdapter set");
-        RecyclerView posterRecyclerView = (RecyclerView) mView.findViewById(R.id.posterRecyclerView);
-        posterRecyclerView.setAdapter(posterAdapter);
-        posterRecyclerView.setLayoutManager(new GridLayoutManager(getContext(), 2));
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putParcelableArrayList("movie list key", (ArrayList<? extends Parcelable>) mMovieList);
+    }
 
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        if (savedInstanceState != null) {
+            mMovieList = savedInstanceState.getParcelableArrayList("movie list key");
+            populateRecyclerView(false);
+        }
+    }
+
+    private void populateRecyclerView(boolean useOfflineData) {
+        RecyclerView rv = (RecyclerView) mView.findViewById(R.id.posterRecyclerView);
+        posterAdapter = new PosterAdapter(getContext(), mMovieList, useOfflineData);
+        rv.setLayoutManager(new GridLayoutManager(getContext(), 2));
+        rv.setAdapter(posterAdapter);
     }
 
     public interface OnPosterSelectedListener {
@@ -161,30 +174,7 @@ public class MasterFragment extends Fragment {
         @Override
         protected void onPostExecute(String result) {
             mMovieList = MovieParser.parseFeed(result);
-            Log.i(LOG_TAG, mMovieList.toString());
-            posterAdapter = new PosterAdapter(getContext(), mMovieList);
-            Log.i(LOG_TAG, "posterAdapter set");
-            RecyclerView posterRecyclerView = (RecyclerView) mView.findViewById(R.id.posterRecyclerView);
-            posterRecyclerView.setAdapter(posterAdapter);
-            posterRecyclerView.setLayoutManager(new GridLayoutManager(getContext(), 2));
-        }
-    }
-
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putParcelableArrayList("movie list key", (ArrayList<? extends Parcelable>) mMovieList);
-    }
-
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        if (savedInstanceState != null){
-            mMovieList = savedInstanceState.getParcelableArrayList("movie list key");
-            RecyclerView rv = (RecyclerView) mView.findViewById(R.id.posterRecyclerView);
-            PosterAdapter adapter = new PosterAdapter(getContext(), mMovieList);
-            rv.setLayoutManager(new GridLayoutManager(getContext(), 2));
-            rv.setAdapter(adapter);
+            populateRecyclerView(false);
         }
     }
 }
