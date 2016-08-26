@@ -113,4 +113,10 @@ public class MainActivity extends AppCompatActivity implements MasterFragment.On
         super.onSaveInstanceState(outState, outPersistentState);
         getSupportFragmentManager().putFragment(outState, MASTER_FRAGMENT_BUNDLE_ID, mMasterFragment);
     }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        getSupportFragmentManager().putFragment(outState, MASTER_FRAGMENT_BUNDLE_ID, mMasterFragment);
+    }
 }

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
@@ -166,6 +167,24 @@ public class MasterFragment extends Fragment {
             RecyclerView posterRecyclerView = (RecyclerView) mView.findViewById(R.id.posterRecyclerView);
             posterRecyclerView.setAdapter(posterAdapter);
             posterRecyclerView.setLayoutManager(new GridLayoutManager(getContext(), 2));
+        }
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putParcelableArrayList("movie list key", (ArrayList<? extends Parcelable>) mMovieList);
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        if (savedInstanceState != null){
+            mMovieList = savedInstanceState.getParcelableArrayList("movie list key");
+            RecyclerView rv = (RecyclerView) mView.findViewById(R.id.posterRecyclerView);
+            PosterAdapter adapter = new PosterAdapter(getContext(), mMovieList);
+            rv.setLayoutManager(new GridLayoutManager(getContext(), 2));
+            rv.setAdapter(adapter);
         }
     }
 }
