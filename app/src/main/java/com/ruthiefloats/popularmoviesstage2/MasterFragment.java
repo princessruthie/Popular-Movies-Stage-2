@@ -33,10 +33,15 @@ import java.util.List;
 public class MasterFragment extends Fragment {
 
     private static final String LOG_TAG = "MasterFragment";
+    public static final String BUNDLE_KEY_FAVORITES = "faves";
+    public static final String BUNDLE_KEY_MOVIE_LIST = "movie list key";
     public View mView;
     private OnPosterSelectedListener mCallback;
     private PosterAdapter posterAdapter;
     private List<Movie> mMovieList;
+    /*whether using data from the Favorites Provider */
+    private boolean mFavorites;
+
 
     public MasterFragment() {
         // Required empty public constructor
@@ -84,6 +89,7 @@ public class MasterFragment extends Fragment {
      Before attempting to fetch the URL, makes sure that there is a network connection.
      */
     public void getData(String resourceRoot) {
+        mFavorites = false;
         String fullUrl = ApiUtility.BuildUrl(resourceRoot);
         boolean hasConnection = HttpManager.checkConnection();
         if (hasConnection) {
@@ -95,6 +101,7 @@ public class MasterFragment extends Fragment {
 
     /*Calling getData without a resource root gets local data */
     public void getData() {
+        mFavorites = true;
         Cursor cursor = getContext().getContentResolver().query(FavoritesContract.Favorites.CONTENT_URI,
                 new String[]{FavoritesContract.Favorites.COLUMN_API_ID,
                         FavoritesContract.Favorites.COLUMN_TITLE,
@@ -120,7 +127,7 @@ public class MasterFragment extends Fragment {
                 mMovieList.add(new Movie(title, release_date, null, vote_average, overview, id));
             }
             cursor.close();
-            populateRecyclerView(true);
+            populateRecyclerView();
         } else {
             // TODO: 8/26/16 in event that user has no favorites, prompt them
         }
@@ -130,20 +137,22 @@ public class MasterFragment extends Fragment {
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putParcelableArrayList("movie list key", (ArrayList<? extends Parcelable>) mMovieList);
+        outState.putBoolean(BUNDLE_KEY_FAVORITES, mFavorites);
     }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         if (savedInstanceState != null) {
-            mMovieList = savedInstanceState.getParcelableArrayList("movie list key");
-            populateRecyclerView(false);
+            mMovieList = savedInstanceState.getParcelableArrayList(BUNDLE_KEY_MOVIE_LIST);
+            mFavorites = savedInstanceState.getBoolean(BUNDLE_KEY_FAVORITES);
+            populateRecyclerView();
         }
     }
 
-    private void populateRecyclerView(boolean useOfflineData) {
+    private void populateRecyclerView() {
         RecyclerView rv = (RecyclerView) mView.findViewById(R.id.posterRecyclerView);
-        posterAdapter = new PosterAdapter(getContext(), mMovieList, useOfflineData);
+        posterAdapter = new PosterAdapter(getContext(), mMovieList, mFavorites);
         rv.setLayoutManager(new GridLayoutManager(getContext(), 2));
         rv.setAdapter(posterAdapter);
     }
@@ -174,7 +183,7 @@ public class MasterFragment extends Fragment {
         @Override
         protected void onPostExecute(String result) {
             mMovieList = MovieParser.parseFeed(result);
-            populateRecyclerView(false);
+            populateRecyclerView();
         }
     }
 }
