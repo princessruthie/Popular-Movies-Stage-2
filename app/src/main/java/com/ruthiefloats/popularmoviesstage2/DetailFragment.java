@@ -36,7 +36,6 @@ import com.ruthiefloats.popularmoviesstage2.data.FavoritesContract;
 import com.ruthiefloats.popularmoviesstage2.data.FavoritesDataSource;
 import com.ruthiefloats.popularmoviesstage2.model.Movie;
 import com.ruthiefloats.popularmoviesstage2.parser.MovieParser;
-import com.ruthiefloats.popularmoviesstage2.utility.ApiUtility;
 import com.ruthiefloats.popularmoviesstage2.utility.HttpManager;
 import com.squareup.picasso.Picasso;
 
@@ -178,13 +177,6 @@ public class DetailFragment extends Fragment {
 
                 } else {
                     removeMovie(currentMovie);
-                    String filename = String.valueOf(currentMovie.getId());
-                    File photofile = new File(getContext().getFilesDir(), filename);
-                    Log.i(LOG_TAG, "getting saved photo data");
-                    if (photofile.exists()) {
-                        Log.i(LOG_TAG, "Deleting Movie poster number " + currentMovie.getId());
-                        photofile.delete();
-                    }
                 }
             }
         });
@@ -201,9 +193,18 @@ public class DetailFragment extends Fragment {
      * @param currentMovie Movie to remove from db
      */
     private void removeMovie(Movie currentMovie) {
-        // TODO: 8/29/16 change this to use the content provider (per rubric)
-        FavoritesDataSource dataSource = new FavoritesDataSource(getContext());
-        dataSource.removeMovie(currentMovie.getId());
+        String currentMovieId = String.valueOf(currentMovie.getId());
+        String whereClause = FavoritesContract.Favorites.COLUMN_API_ID + " = ?";
+        String[] whereArgs = new String[]{currentMovieId};
+        int rowsDeleted = getContext().getContentResolver().delete(FavoritesContract.Favorites.CONTENT_URI, whereClause, whereArgs);
+        Log.i(LOG_TAG, "Row(s) with app_id " + currentMovieId + " were deleted: " + rowsDeleted);
+
+        File photofile = new File(getContext().getFilesDir(), currentMovieId);
+        Log.i(LOG_TAG, "getting saved photo data");
+        if (photofile.exists()) {
+            Log.i(LOG_TAG, "Deleting Movie poster number " + currentMovieId);
+            photofile.delete();
+        }
     }
 
     /**
