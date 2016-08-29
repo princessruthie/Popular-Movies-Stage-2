@@ -2,6 +2,7 @@ package com.ruthiefloats.popularmoviesstage2;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
@@ -12,11 +13,16 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.ShareActionProvider;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
@@ -30,7 +36,6 @@ import com.ruthiefloats.popularmoviesstage2.data.FavoritesContract;
 import com.ruthiefloats.popularmoviesstage2.data.FavoritesDataSource;
 import com.ruthiefloats.popularmoviesstage2.model.Movie;
 import com.ruthiefloats.popularmoviesstage2.parser.MovieParser;
-import com.ruthiefloats.popularmoviesstage2.utility.ApiUtility;
 import com.ruthiefloats.popularmoviesstage2.utility.HttpManager;
 import com.squareup.picasso.Picasso;
 
@@ -42,6 +47,10 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.ruthiefloats.popularmoviesstage2.utility.ApiUtility.BuildUrl;
+import static com.ruthiefloats.popularmoviesstage2.utility.ApiUtility.getCompletePhotoUrl;
+import static com.ruthiefloats.popularmoviesstage2.utility.ApiUtility.getTrailerUrlFromTrailerId;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -55,6 +64,7 @@ public class DetailFragment extends Fragment {
     private View mView;
     /*Whether this movie in the favorite db */
     private boolean isFavorite;
+    private String firstTrailerUrl;
 
     public DetailFragment() {
         // Required empty public constructor
@@ -69,11 +79,27 @@ public class DetailFragment extends Fragment {
     }
 
     @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        if (firstTrailerUrl != null) {
+            inflater.inflate(R.menu.detail, menu);
+            MenuItem item = menu.findItem(R.id.action_share);
+            ShareActionProvider mShareActionProvider = (android.support.v7.widget.ShareActionProvider) MenuItemCompat.getActionProvider(item);
+            Intent intent = new Intent();
+            intent.setAction(Intent.ACTION_SEND);
+            intent.putExtra(Intent.EXTRA_TEXT, firstTrailerUrl);
+            intent.setType("text/plain");
+            mShareActionProvider.setShareIntent(intent);
+        }
+    }
+
+    @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        setHasOptionsMenu(true);
         currentMovie = getArguments().getParcelable(MainActivity.INSTANCE_STATE_TAG);
         /*check if the movie is in favorite db*/
+        // TODO: 8/29/16 change this to use the content provider (per rubric)
         FavoritesDataSource datasource = new FavoritesDataSource(getContext());
         isFavorite = datasource.isThisMovieFavorited(currentMovie.getId());
     }
@@ -82,8 +108,6 @@ public class DetailFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_detail, container, false);
-//        Movie currentMovie = DummyData.getSingleDummyDatum();
-
         /**Populate the Views using the information in the Movie object */
         TextView movieTextView = (TextView) rootView.findViewById(R.id.movieTitle);
         TextView dateTextView = (TextView) rootView.findViewById(R.id.dateTextView);
@@ -98,7 +122,6 @@ public class DetailFragment extends Fragment {
         ratingTextView.setText((int) currentMovie.getVote_average() + "/10");
 
         if (isFavorite) {
-
             try {
                 String filename = String.valueOf(currentMovie.getId());
                 File photofile = new File(getContext().getFilesDir(), filename);
@@ -111,11 +134,10 @@ public class DetailFragment extends Fragment {
             }
         } else {
             Picasso.with(getActivity()).
-                    load(ApiUtility.getCompletePhotoUrl(currentMovie.getPoster_path()))
+                    load(getCompletePhotoUrl(currentMovie.getPoster_path()))
                     .error(R.drawable.poster_placeholder)
                     .into(imageView);
         }
-
 
         final ImageButton favoriteButton = (ImageButton) rootView.findViewById(R.id.favoriteButton);
         Context context = getContext();
@@ -224,7 +246,7 @@ public class DetailFragment extends Fragment {
     }
 
     public void getData(String resourceRoot, String appendix) {
-        String fullUrl = ApiUtility.BuildUrl(resourceRoot, appendix);
+        String fullUrl = BuildUrl(resourceRoot, appendix);
         Log.i(LOG_TAG, fullUrl);
         boolean hasConnection = HttpManager.checkConnection();
         if (hasConnection) {
@@ -233,6 +255,7 @@ public class DetailFragment extends Fragment {
             Toast.makeText(getContext(), "No network", Toast.LENGTH_SHORT);
         }
     }
+
 
     /**
      * Extends AsyncTask to create a task away from the main UI thread. This task takes a
@@ -249,8 +272,6 @@ public class DetailFragment extends Fragment {
                 return "Unable to retrieve web page. URL may be invalid.";
             }
         }
-        // TODO: 8/10/16 this could use a refactor.  something something what changes
-        // something something what stays the same.
 
         /**
          * Populate the list of reviews and trailer images
@@ -279,6 +300,9 @@ public class DetailFragment extends Fragment {
             recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
             List<String> trailerIds = MovieParser.getTrailers(result);
+            if (trailerIds.size() > 0) {
+                addShareMovieToOptionsMenu(trailerIds.get(0));
+            }
             int numTrailers = trailerIds.size();
             Log.i(LOG_TAG, "Number of trailers: " + numTrailers);
 
@@ -287,5 +311,10 @@ public class DetailFragment extends Fragment {
             trailerRecyclerView.setAdapter(trailerAdapter);
             trailerRecyclerView.setLayoutManager(new GridLayoutManager(getContext(), 2));
         }
+    }
+
+    private void addShareMovieToOptionsMenu(String trailerId) {
+        firstTrailerUrl = getTrailerUrlFromTrailerId(trailerId);
+        getActivity().invalidateOptionsMenu();
     }
 }

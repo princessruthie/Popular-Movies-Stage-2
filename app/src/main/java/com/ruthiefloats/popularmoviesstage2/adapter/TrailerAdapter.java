@@ -11,6 +11,7 @@ import android.widget.ImageButton;
 import android.widget.ListView;
 
 import com.ruthiefloats.popularmoviesstage2.R;
+import com.ruthiefloats.popularmoviesstage2.utility.ApiUtility;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -84,22 +85,17 @@ public class TrailerAdapter extends RecyclerView.Adapter<TrailerAdapter.ViewHold
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         final String trailerIdString = mTrailerIds.get(position);
-        String youtubePrefix = "http://img.youtube.com/vi/";
-        String youtubePostfix = "/0.jpg";
-
-
         ImageButton imageButton = holder.imageButton;
-
         Picasso.with(getContext())
-                .load(youtubePrefix + trailerIdString + youtubePostfix)
+//                .load(youtubePrefix + trailerIdString + youtubePostfix)
+                .load(ApiUtility.getPosterUrlFromTrailerId(trailerIdString))
                 .error(R.drawable.trailer_thumbnail_placeholder)
                 .into(imageButton);
 
         imageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                final String youtubeTrailerPrefix = "https://www.youtube.com/watch?v=";
-                mContext.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(youtubeTrailerPrefix + trailerIdString)));
+                mContext.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(ApiUtility.getTrailerUrlFromTrailerId(trailerIdString))));
             }
         });
     }
