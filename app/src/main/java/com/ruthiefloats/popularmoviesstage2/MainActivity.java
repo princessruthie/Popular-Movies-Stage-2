@@ -68,9 +68,9 @@ public class MainActivity extends AppCompatActivity implements MasterFragment.On
         MasterFragment fragment = (MasterFragment) getSupportFragmentManager().
                 findFragmentByTag(MASTER_FRAGMENT_TAG);
         if (item.getItemId() == R.id.menu_sort_popularity) {
-            fragment.getData(ApiUtility.POPULAR_RESOURCE_ROOT);
+            fragment.getData(ApiUtility.MovieDbUtility.POPULAR_RESOURCE_ROOT);
         } else if (item.getItemId() == R.id.menu_sort_rating) {
-            fragment.getData(ApiUtility.TOP_RATED_RESOURCE_ROOT);
+            fragment.getData(ApiUtility.MovieDbUtility.TOP_RATED_RESOURCE_ROOT);
         } else if (item.getItemId() == R.id.menu_show_favorites){
             fragment.getData();
         }

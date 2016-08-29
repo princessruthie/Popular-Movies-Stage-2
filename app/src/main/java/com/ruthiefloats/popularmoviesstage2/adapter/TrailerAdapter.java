@@ -88,14 +88,14 @@ public class TrailerAdapter extends RecyclerView.Adapter<TrailerAdapter.ViewHold
         ImageButton imageButton = holder.imageButton;
         Picasso.with(getContext())
 //                .load(youtubePrefix + trailerIdString + youtubePostfix)
-                .load(ApiUtility.getPosterUrlFromTrailerId(trailerIdString))
+                .load(ApiUtility.YoutubeUtility.getPosterUrlFromTrailerId(trailerIdString))
                 .error(R.drawable.trailer_thumbnail_placeholder)
                 .into(imageButton);
 
         imageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mContext.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(ApiUtility.getTrailerUrlFromTrailerId(trailerIdString))));
+                mContext.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(ApiUtility.YoutubeUtility.getTrailerUrlFromTrailerId(trailerIdString))));
             }
         });
     }

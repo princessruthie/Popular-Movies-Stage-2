@@ -52,7 +52,7 @@ public class MasterFragment extends Fragment {
         super.onCreate(savedInstanceState);
         Log.i(LOG_TAG, "onCreate");
         setRetainInstance(true);
-        getData(ApiUtility.POPULAR_RESOURCE_ROOT);
+        getData(ApiUtility.MovieDbUtility.POPULAR_RESOURCE_ROOT);
     }
 
     @Override
@@ -90,7 +90,7 @@ public class MasterFragment extends Fragment {
      */
     public void getData(String resourceRoot) {
         mFavorites = false;
-        String fullUrl = ApiUtility.buildUrl(resourceRoot);
+        String fullUrl = ApiUtility.MovieDbUtility.buildUrl(resourceRoot);
         boolean hasConnection = HttpManager.checkConnection();
         if (hasConnection) {
             new DownloadWebpageTask().execute(fullUrl);

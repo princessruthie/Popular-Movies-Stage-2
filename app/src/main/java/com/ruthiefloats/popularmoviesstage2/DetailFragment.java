@@ -49,9 +49,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.ruthiefloats.popularmoviesstage2.utility.ApiUtility.buildUrl;
-import static com.ruthiefloats.popularmoviesstage2.utility.ApiUtility.getCompletePhotoUrl;
-import static com.ruthiefloats.popularmoviesstage2.utility.ApiUtility.getTrailerUrlFromTrailerId;
+import static com.ruthiefloats.popularmoviesstage2.utility.ApiUtility.MovieDbUtility.buildUrl;
+import static com.ruthiefloats.popularmoviesstage2.utility.ApiUtility.MovieDbUtility.getCompletePhotoUrl;
+import static com.ruthiefloats.popularmoviesstage2.utility.ApiUtility.YoutubeUtility.getTrailerUrlFromTrailerId;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -232,12 +232,12 @@ public class DetailFragment extends Fragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         mView = view;
-        getData(ApiUtility.APPENDABLE_MOVIE_ROOT + currentMovie.getId(), ApiUtility.REVIEWS_APPENDIX);
+        getData(ApiUtility.MovieDbUtility.APPENDABLE_MOVIE_ROOT + currentMovie.getId(), ApiUtility.MovieDbUtility.REVIEWS_APPENDIX);
         super.onViewCreated(view, savedInstanceState);
     }
 
     public void getData(String resourceRoot, String appendix) {
-        String fullUrl = buildUrl(resourceRoot, appendix);
+        String fullUrl = ApiUtility.MovieDbUtility.buildUrl(resourceRoot, appendix);
         Log.i(LOG_TAG, fullUrl);
         boolean hasConnection = HttpManager.checkConnection();
         if (hasConnection) {
@@ -285,7 +285,6 @@ public class DetailFragment extends Fragment {
             lengthTextView.setText(MovieParser.parseRuntime(result) + " mins");
 
             RecyclerView recyclerView = (RecyclerView) mView.findViewById(R.id.reviewRecyclerView);
-//            reviewList = DummyData.getDummyReviews();
             ReviewsAdapter adapter = new ReviewsAdapter(getContext(), reviewList);
             recyclerView.setAdapter(adapter);
             recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
