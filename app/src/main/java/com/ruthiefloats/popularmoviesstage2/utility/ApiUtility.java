@@ -21,6 +21,8 @@ public class ApiUtility {
      */
     public static final String POPULAR_RESOURCE_ROOT = "/movie/popular";
     public static final String TOP_RATED_RESOURCE_ROOT = "/movie/top_rated";
+    public static final String APPENDABLE_MOVIE_ROOT = "/movie/";
+    public static final String REVIEWS_APPENDIX = "&append_to_response=reviews,videos";
 
     /**
      * takes the poster URL provided by the API response and builds the entire valid URL

@@ -36,6 +36,7 @@ import com.ruthiefloats.popularmoviesstage2.data.FavoritesContract;
 import com.ruthiefloats.popularmoviesstage2.data.FavoritesDataSource;
 import com.ruthiefloats.popularmoviesstage2.model.Movie;
 import com.ruthiefloats.popularmoviesstage2.parser.MovieParser;
+import com.ruthiefloats.popularmoviesstage2.utility.ApiUtility;
 import com.ruthiefloats.popularmoviesstage2.utility.HttpManager;
 import com.squareup.picasso.Picasso;
 
@@ -243,8 +244,7 @@ public class DetailFragment extends Fragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         mView = view;
-        String REVIEW_ROOT_PREFIX = "/movie/";
-        getData(REVIEW_ROOT_PREFIX + currentMovie.getId(), "&append_to_response=reviews,videos");
+        getData(ApiUtility.APPENDABLE_MOVIE_ROOT + currentMovie.getId(), ApiUtility.REVIEWS_APPENDIX);
         super.onViewCreated(view, savedInstanceState);
     }
 
