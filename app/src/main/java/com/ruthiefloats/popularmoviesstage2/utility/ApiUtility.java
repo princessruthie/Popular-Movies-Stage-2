@@ -12,9 +12,9 @@ public class ApiUtility {
     private static final String PHOTOS_BASE_URL = "http://image.tmdb.org/t/p/";
     private static final String PHOTOS_SIZE_URL = "w185/";
 
-    private static final String youtubePrefix = "http://img.youtube.com/vi/";
-    private static final String youtubePostfix = "/0.jpg";
-    private static final String youtubeTrailerPrefix = "https://www.youtube.com/watch?v=";
+    private static final String YOUTUBE_IMAGE_PREFIX = "http://img.youtube.com/vi/";
+    private static final String YOUTUBE_IMAGE_POSTFIX = "/0.jpg";
+    private static final String YOUTUBE_TRAILER_PREFIX = "https://www.youtube.com/watch?v=";
 
     /**
      * Roots for the two MovieDB APIs used
@@ -32,7 +32,7 @@ public class ApiUtility {
         return completeUrl;
     }
 
-    public static String BuildUrl(String resourceRoot) {
+    public static String buildUrl(String resourceRoot) {
         String baseUrl = "http://api.themoviedb.org/3";
         String apiKeyUrl = "?api_key=" +
                 BuildConfig.DEVELOPER_API_KEY;
@@ -43,7 +43,7 @@ public class ApiUtility {
         return fullUrl;
     }
 
-    public static String BuildUrl(String resourceRoot, String appendix) {
+    public static String buildUrl(String resourceRoot, String appendix) {
         String baseUrl = "http://api.themoviedb.org/3";
         String apiKeyUrl = "?api_key=" +
                 BuildConfig.DEVELOPER_API_KEY;
@@ -58,11 +58,11 @@ public class ApiUtility {
 
     /*given a youtube trailer id, generate the thumbnail url */
     public static String getPosterUrlFromTrailerId(String trailerIdString) {
-
-        return youtubePrefix + trailerIdString + youtubePostfix;
+        return YOUTUBE_IMAGE_PREFIX + trailerIdString + YOUTUBE_IMAGE_POSTFIX;
     }
 
+    /*given a youtube trailer id, generate the trailer url */
     public static String getTrailerUrlFromTrailerId(String trailerId){
-        return youtubeTrailerPrefix + trailerId;
+        return YOUTUBE_TRAILER_PREFIX + trailerId;
     }
 }

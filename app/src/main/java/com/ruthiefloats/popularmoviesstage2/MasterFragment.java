@@ -90,7 +90,7 @@ public class MasterFragment extends Fragment {
      */
     public void getData(String resourceRoot) {
         mFavorites = false;
-        String fullUrl = ApiUtility.BuildUrl(resourceRoot);
+        String fullUrl = ApiUtility.buildUrl(resourceRoot);
         boolean hasConnection = HttpManager.checkConnection();
         if (hasConnection) {
             new DownloadWebpageTask().execute(fullUrl);

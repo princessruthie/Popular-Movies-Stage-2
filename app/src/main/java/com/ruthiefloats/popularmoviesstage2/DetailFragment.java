@@ -36,6 +36,7 @@ import com.ruthiefloats.popularmoviesstage2.data.FavoritesContract;
 import com.ruthiefloats.popularmoviesstage2.data.FavoritesDataSource;
 import com.ruthiefloats.popularmoviesstage2.model.Movie;
 import com.ruthiefloats.popularmoviesstage2.parser.MovieParser;
+import com.ruthiefloats.popularmoviesstage2.utility.ApiUtility;
 import com.ruthiefloats.popularmoviesstage2.utility.HttpManager;
 import com.squareup.picasso.Picasso;
 
@@ -48,7 +49,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.ruthiefloats.popularmoviesstage2.utility.ApiUtility.BuildUrl;
+import static com.ruthiefloats.popularmoviesstage2.utility.ApiUtility.buildUrl;
 import static com.ruthiefloats.popularmoviesstage2.utility.ApiUtility.getCompletePhotoUrl;
 import static com.ruthiefloats.popularmoviesstage2.utility.ApiUtility.getTrailerUrlFromTrailerId;
 
@@ -200,6 +201,7 @@ public class DetailFragment extends Fragment {
      * @param currentMovie Movie to remove from db
      */
     private void removeMovie(Movie currentMovie) {
+        // TODO: 8/29/16 change this to use the content provider (per rubric)
         FavoritesDataSource dataSource = new FavoritesDataSource(getContext());
         dataSource.removeMovie(currentMovie.getId());
     }
@@ -246,7 +248,7 @@ public class DetailFragment extends Fragment {
     }
 
     public void getData(String resourceRoot, String appendix) {
-        String fullUrl = BuildUrl(resourceRoot, appendix);
+        String fullUrl = buildUrl(resourceRoot, appendix);
         Log.i(LOG_TAG, fullUrl);
         boolean hasConnection = HttpManager.checkConnection();
         if (hasConnection) {
