@@ -159,7 +159,7 @@ public class DetailFragment extends Fragment {
                     ByteArrayOutputStream stream = new ByteArrayOutputStream();
                     bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
                     byte[] byteArray = stream.toByteArray();
-                    addMovie(currentMovie);
+                    addMovie();
 
                     /*
                     Write the file to disk
@@ -177,7 +177,7 @@ public class DetailFragment extends Fragment {
                     }
 
                 } else {
-                    removeMovie(currentMovie);
+                    removeMovie();
                 }
             }
         });
@@ -189,11 +189,10 @@ public class DetailFragment extends Fragment {
     }
 
     /**
-     * Removie movie from favorites db
+     * Remove Movie from favorites db
      *
-     * @param currentMovie Movie to remove from db
      */
-    private void removeMovie(Movie currentMovie) {
+    private void removeMovie() {
         String currentMovieId = String.valueOf(currentMovie.getId());
         String whereClause = FavoritesContract.Favorites.COLUMN_API_ID + " = ?";
         String[] whereArgs = new String[]{currentMovieId};
@@ -211,10 +210,9 @@ public class DetailFragment extends Fragment {
     /**
      * add Movie to favorite db
      *
-     * @param currentMovie Movie to add to db
      */
 
-    private void addMovie(Movie currentMovie) {
+    private void addMovie() {
         String voteAverage = Double.toString(currentMovie.getVote_average());
         addMovieUsingContentProvider(currentMovie.getTitle(), currentMovie.getOverview()
                 , voteAverage, currentMovie.getRelease_date(), currentMovie.getId());
