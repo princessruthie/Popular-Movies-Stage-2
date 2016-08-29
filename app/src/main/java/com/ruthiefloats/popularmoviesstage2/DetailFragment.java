@@ -3,6 +3,7 @@ package com.ruthiefloats.popularmoviesstage2;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
@@ -33,7 +34,6 @@ import android.widget.Toast;
 import com.ruthiefloats.popularmoviesstage2.adapter.ReviewsAdapter;
 import com.ruthiefloats.popularmoviesstage2.adapter.TrailerAdapter;
 import com.ruthiefloats.popularmoviesstage2.data.FavoritesContract;
-import com.ruthiefloats.popularmoviesstage2.data.FavoritesDataSource;
 import com.ruthiefloats.popularmoviesstage2.model.Movie;
 import com.ruthiefloats.popularmoviesstage2.parser.MovieParser;
 import com.ruthiefloats.popularmoviesstage2.utility.ApiUtility;
@@ -100,9 +100,18 @@ public class DetailFragment extends Fragment {
         setHasOptionsMenu(true);
         currentMovie = getArguments().getParcelable(MainActivity.INSTANCE_STATE_TAG);
         /*check if the movie is in favorite db*/
-        // TODO: 8/29/16 change this to use the content provider (per rubric)
-        FavoritesDataSource datasource = new FavoritesDataSource(getContext());
-        isFavorite = datasource.isThisMovieFavorited(currentMovie.getId());
+
+        Cursor cursor = getContext().getContentResolver().query(
+                FavoritesContract.Favorites.CONTENT_URI,
+                new String[]{FavoritesContract.Favorites.COLUMN_API_ID},
+                FavoritesContract.Favorites.COLUMN_API_ID + " = ? ",
+                new String[]{String.valueOf(currentMovie.getId())},
+                null);
+        if (cursor != null) {
+            int cursorCount = cursor.getCount();
+            Log.i(LOG_TAG, "Cursor has count of: " + cursorCount);
+            isFavorite = cursorCount > 0 ? true : false;
+        }
     }
 
     @Override
@@ -190,7 +199,6 @@ public class DetailFragment extends Fragment {
 
     /**
      * Remove Movie from favorites db
-     *
      */
     private void removeMovie() {
         String currentMovieId = String.valueOf(currentMovie.getId());
@@ -209,7 +217,6 @@ public class DetailFragment extends Fragment {
 
     /**
      * add Movie to favorite db
-     *
      */
 
     private void addMovie() {
