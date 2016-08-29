@@ -168,22 +168,7 @@ public class DetailFragment extends Fragment {
                     ByteArrayOutputStream stream = new ByteArrayOutputStream();
                     bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
                     byte[] byteArray = stream.toByteArray();
-                    addMovie();
-
-                    /*
-                    Write the file to disk
-                     */
-                    Log.i(LOG_TAG, "writing photo to disk...");
-                    String filename = String.valueOf(currentMovie.getId());
-                    FileOutputStream outputStream;
-                    try {
-                        outputStream = getContext().openFileOutput(filename, Context.MODE_PRIVATE);
-                        outputStream.write(byteArray);
-                        outputStream.close();
-                        Log.i(LOG_TAG, "wrote to disk");
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
+                    addMovie(byteArray);
 
                 } else {
                     removeMovie();
@@ -219,31 +204,29 @@ public class DetailFragment extends Fragment {
      * add Movie to favorite db
      */
 
-    private void addMovie() {
-        String voteAverage = Double.toString(currentMovie.getVote_average());
-        addMovieUsingContentProvider(currentMovie.getTitle(), currentMovie.getOverview()
-                , voteAverage, currentMovie.getRelease_date(), currentMovie.getId());
-    }
-
-    /**
-     * a method to add a Movie to the database using Content Provider
-     *
-     * @param title        Movie title
-     * @param synopsis     Movie synopsis
-     * @param rating       Movie rating
-     * @param release_date Movie release date
-     * @param api_id       Movie id from the API
-     */
-    private void addMovieUsingContentProvider(String title, String synopsis, String rating, String release_date, int api_id) {
+    private void addMovie(byte[] byteArray) {
+        /* Add Movie to ContentProvider */
         ContentValues values = new ContentValues();
-        values.put(FavoritesContract.Favorites.COLUMN_TITLE, title);
-        values.put(FavoritesContract.Favorites.COLUMN_SYNOPSIS, synopsis);
-        values.put(FavoritesContract.Favorites.COLUMN_RATING, rating);
-        values.put(FavoritesContract.Favorites.COLUMN_RELEASE_DATE, release_date);
-        values.put(FavoritesContract.Favorites.COLUMN_API_ID, api_id);
-
+        values.put(FavoritesContract.Favorites.COLUMN_TITLE, currentMovie.getTitle());
+        values.put(FavoritesContract.Favorites.COLUMN_SYNOPSIS, currentMovie.getOverview());
+        values.put(FavoritesContract.Favorites.COLUMN_RATING, currentMovie.getVote_average());
+        values.put(FavoritesContract.Favorites.COLUMN_RELEASE_DATE, currentMovie.getRelease_date());
+        values.put(FavoritesContract.Favorites.COLUMN_API_ID, currentMovie.getId());
         Uri insertedMovieUri = getContext().getContentResolver().insert(FavoritesContract.Favorites.CONTENT_URI, values);
         Log.i(LOG_TAG, "newly inserted movie uri: " + insertedMovieUri);
+
+        /* Write the file to disk */
+        Log.i(LOG_TAG, "writing photo to disk...");
+        String filename = String.valueOf(currentMovie.getId());
+        FileOutputStream outputStream;
+        try {
+            outputStream = getContext().openFileOutput(filename, Context.MODE_PRIVATE);
+            outputStream.write(byteArray);
+            outputStream.close();
+            Log.i(LOG_TAG, "wrote to disk");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
