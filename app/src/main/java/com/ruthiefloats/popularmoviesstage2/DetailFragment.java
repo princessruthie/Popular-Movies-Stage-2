@@ -9,7 +9,6 @@ import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -29,9 +28,7 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.google.gson.Gson;
 import com.ruthiefloats.popularmoviesstage2.adapter.ReviewsAdapter;
 import com.ruthiefloats.popularmoviesstage2.adapter.TrailerAdapter;
 import com.ruthiefloats.popularmoviesstage2.data.FavoritesContract;
@@ -39,7 +36,7 @@ import com.ruthiefloats.popularmoviesstage2.model.ObjectWithMoviesWithin;
 import com.ruthiefloats.popularmoviesstage2.model.ObjectWithSingleMovieWithin;
 import com.ruthiefloats.popularmoviesstage2.model.ObjectWithSingleMovieWithin.ReviewsBean.ResultsBean;
 import com.ruthiefloats.popularmoviesstage2.utility.ApiUtility;
-import com.ruthiefloats.popularmoviesstage2.utility.HttpManager;
+import com.ruthiefloats.popularmoviesstage2.utility.MovieDbEndpointInterface;
 import com.squareup.picasso.Picasso;
 
 import java.io.ByteArrayOutputStream;
@@ -47,8 +44,11 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 import static com.ruthiefloats.popularmoviesstage2.utility.ApiUtility.MovieDbUtility.getCompletePhotoUrl;
 import static com.ruthiefloats.popularmoviesstage2.utility.ApiUtility.YoutubeUtility.getTrailerUrlFromTrailerId;
@@ -231,79 +231,55 @@ public class DetailFragment extends Fragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         mView = view;
-        getData(ApiUtility.MovieDbUtility.APPENDABLE_MOVIE_ROOT + currentMovie.getId(), ApiUtility.MovieDbUtility.REVIEWS_APPENDIX);
+
+        MovieDbEndpointInterface apiService = ApiUtility.getMovieDbEndpointInterface();
+        Call<ObjectWithSingleMovieWithin> call = apiService.getMovieDetails(currentMovie.getId(), BuildConfig.DEVELOPER_API_KEY, ApiUtility.MovieDbUtility.RETROFIT_REVIEWS_APPENDIX);
+
+        call.enqueue(new Callback<ObjectWithSingleMovieWithin>() {
+            @Override
+            public void onResponse(Call<ObjectWithSingleMovieWithin> call, Response<ObjectWithSingleMovieWithin> response) {
+                ObjectWithSingleMovieWithin obj = response.body();
+                /*set the runtime textview */
+                TextView lengthTextView = (TextView) mView.findViewById(R.id.lengthTextView);
+                lengthTextView.setText(obj.getRuntime() + " mins");
+
+            /*set the reviews rv */
+                numReviews = obj.getReviews().getTotal_results();
+                Log.i(LOG_TAG, numReviews + "  reviews available");
+                if (numReviews > 0) {
+                    reviewList = obj.getReviews().getResults();
+                } else {
+                    reviewList = null;
+                }
+                if (reviewList != null && reviewList.size() > 0) {
+                    RecyclerView recyclerView = (RecyclerView) mView.findViewById(R.id.reviewRecyclerView);
+                    ReviewsAdapter adapter = new ReviewsAdapter(getContext(), reviewList);
+                    recyclerView.setAdapter(adapter);
+                    recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+                }
+            /*set the trailers rv */
+                List<ObjectWithSingleMovieWithin.VideosBean.ResultsBean> videos = obj.getVideos().getResults();
+                if (videos != null && videos.size() > 0) {
+                    addShareMovieToOptionsMenu(videos.get(0).getKey());
+                    int numTrailers = videos.size();
+                    Log.i(LOG_TAG, "Number of trailers: " + numTrailers);
+                    RecyclerView trailerRecyclerView = (RecyclerView) mView.findViewById(R.id.trailerRecyclerView);
+                    TrailerAdapter trailerAdapter = new TrailerAdapter(getContext(), videos);
+                    trailerRecyclerView.setAdapter(trailerAdapter);
+                    trailerRecyclerView.setLayoutManager(new GridLayoutManager(getContext(), 2));
+                }
+                Log.i(LOG_TAG, "so retrofit did something");
+            }
+
+            @Override
+            public void onFailure(Call<ObjectWithSingleMovieWithin> call, Throwable t) {
+                Log.i(LOG_TAG, "so retrofit not so much");
+            }
+        });
+
         super.onViewCreated(view, savedInstanceState);
     }
 
-    public void getData(String resourceRoot, String appendix) {
-        String fullUrl = ApiUtility.MovieDbUtility.buildUrl(resourceRoot, appendix);
-        Log.i(LOG_TAG, fullUrl);
-        boolean hasConnection = HttpManager.checkConnection();
-        if (hasConnection) {
-            new DownloadWebpageTask().execute(fullUrl);
-        } else {
-            Toast.makeText(getContext(), "No network", Toast.LENGTH_SHORT);
-        }
-    }
-
-
-    /**
-     * Extends AsyncTask to create a task away from the main UI thread. This task takes a
-     * URL string and uses it to perform a network connection and update the ui
-     */
-    private class DownloadWebpageTask extends AsyncTask<String, Void, String> {
-        @Override
-        protected String doInBackground(String... urls) {
-
-            // params comes from the execute() call: params[0] is the url.
-            try {
-                return HttpManager.downloadUrl(urls[0]);
-            } catch (IOException e) {
-                return "Unable to retrieve web page. URL may be invalid.";
-            }
-        }
-
-        /**
-         * Populate the list of reviews and trailer images
-         *
-         * @param result JSON String
-         */
-        @Override
-        protected void onPostExecute(String result) {
-            Gson gson = new Gson();
-            ObjectWithSingleMovieWithin obj = gson.fromJson(result, ObjectWithSingleMovieWithin.class);
-
-            /*set the runtime textview */
-            TextView lengthTextView = (TextView) mView.findViewById(R.id.lengthTextView);
-            lengthTextView.setText(obj.getRuntime() + " mins");
-
-            /*set the reviews rv */
-            numReviews = obj.getReviews().getTotal_results();
-            Log.i(LOG_TAG, numReviews + "  reviews available");
-            if (numReviews > 0) {
-                reviewList = obj.getReviews().getResults();
-            } else {
-                reviewList = null;
-            }
-            if (reviewList != null && reviewList.size() > 0) {
-                RecyclerView recyclerView = (RecyclerView) mView.findViewById(R.id.reviewRecyclerView);
-                ReviewsAdapter adapter = new ReviewsAdapter(getContext(), reviewList);
-                recyclerView.setAdapter(adapter);
-                recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-            }
-            /*set the trailers rv */
-            List<ObjectWithSingleMovieWithin.VideosBean.ResultsBean> videos = obj.getVideos().getResults();
-            if (videos != null && videos.size() > 0) {
-                addShareMovieToOptionsMenu(videos.get(0).getKey());
-                int numTrailers = videos.size();
-                Log.i(LOG_TAG, "Number of trailers: " + numTrailers);
-                RecyclerView trailerRecyclerView = (RecyclerView) mView.findViewById(R.id.trailerRecyclerView);
-                TrailerAdapter trailerAdapter = new TrailerAdapter(getContext(), videos);
-                trailerRecyclerView.setAdapter(trailerAdapter);
-                trailerRecyclerView.setLayoutManager(new GridLayoutManager(getContext(), 2));
-            }
-        }
-    }
 
     private void addShareMovieToOptionsMenu(String trailerId) {
         firstTrailerUrl = getTrailerUrlFromTrailerId(trailerId);

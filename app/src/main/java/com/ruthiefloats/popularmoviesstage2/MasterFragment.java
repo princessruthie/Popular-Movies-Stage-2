@@ -13,7 +13,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.google.gson.Gson;
 import com.ruthiefloats.popularmoviesstage2.adapter.PosterAdapter;
 import com.ruthiefloats.popularmoviesstage2.data.FavoritesContract;
 import com.ruthiefloats.popularmoviesstage2.model.ObjectWithMoviesWithin;
@@ -27,8 +26,6 @@ import java.util.List;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 
 /**
@@ -62,7 +59,7 @@ public class MasterFragment extends Fragment {
         mFavorites = false;
 
         if (HttpManager.checkConnection()) {
-            MovieDbEndpointInterface apiService = getMovieDbEndpointInterface();
+            MovieDbEndpointInterface apiService = ApiUtility.getMovieDbEndpointInterface();
             Call<ObjectWithMoviesWithin> call = apiService.getTopRated(BuildConfig.DEVELOPER_API_KEY);
             doTheWork(call);
         }
@@ -70,7 +67,7 @@ public class MasterFragment extends Fragment {
 
     public void getPopularData() {
         mFavorites = false;
-        MovieDbEndpointInterface apiService = getMovieDbEndpointInterface();
+        MovieDbEndpointInterface apiService = ApiUtility.getMovieDbEndpointInterface();
         Call<ObjectWithMoviesWithin> call = apiService.getPopular(BuildConfig.DEVELOPER_API_KEY);
         doTheWork(call);
     }
@@ -90,15 +87,6 @@ public class MasterFragment extends Fragment {
                 Log.i(LOG_TAG, "so retrofit not so much");
             }
         });
-    }
-
-    private MovieDbEndpointInterface getMovieDbEndpointInterface() {
-        Gson gson = new Gson();
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(ApiUtility.MovieDbUtility.RETROFIT_BASE_URL)
-                .addConverterFactory(GsonConverterFactory.create(gson))
-                .build();
-        return retrofit.create(MovieDbEndpointInterface.class);
     }
 
     @Override

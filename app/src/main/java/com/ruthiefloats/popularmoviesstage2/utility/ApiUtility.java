@@ -1,8 +1,9 @@
 package com.ruthiefloats.popularmoviesstage2.utility;
 
-import android.util.Log;
+import com.google.gson.Gson;
 
-import com.ruthiefloats.popularmoviesstage2.BuildConfig;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
  * A class for Api Strings and uri construction
@@ -10,22 +11,26 @@ import com.ruthiefloats.popularmoviesstage2.BuildConfig;
 public class ApiUtility {
     public static final String LOG_TAG = "ApiUtility";
 
+    public static MovieDbEndpointInterface getMovieDbEndpointInterface() {
+        Gson gson = new Gson();
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(MovieDbUtility.RETROFIT_BASE_URL)
+                .addConverterFactory(GsonConverterFactory.create(gson))
+                .build();
+        return retrofit.create(MovieDbEndpointInterface.class);
+    }
+
     public static class MovieDbUtility {
 
         /**
-         * Roots for the two MovieDB APIs used
+         * Strings for MovieDB roots used
          */
-        public static final String POPULAR_RESOURCE_ROOT = "/movie/popular";
-        public static final String TOP_RATED_RESOURCE_ROOT = "/movie/top_rated";
-        public static final String APPENDABLE_MOVIE_ROOT = "/movie/";
-        public static final String REVIEWS_APPENDIX = "&append_to_response=reviews,videos";
-        public static final String BASE_URL = "http://api.themoviedb.org/3";
-        public static final String RETROFIT_BASE_URL = "http://api.themoviedb.org/";
 
+        public static final String RETROFIT_REVIEWS_APPENDIX = "reviews,videos";
+        public static final String RETROFIT_BASE_URL = "http://api.themoviedb.org/";
+        public static final String RETROFIT_API_KEY_PREFIX = "api_key";
         private static final String PHOTOS_BASE_URL = "http://image.tmdb.org/t/p/";
         private static final String PHOTOS_SIZE_URL = "w185/";
-        public static final String API_KEY_PREFIX = "?api_key=";
-        public static final String RETROFIT_API_KEY_PREFIX = "api_key";
 
         /**
          * takes the poster URL provided by the API response and builds the entire valid URL
@@ -35,22 +40,6 @@ public class ApiUtility {
                     PHOTOS_SIZE_URL +
                     photoUrl;
             return completeUrl;
-        }
-
-        public static String buildUrl(String resourceRoot) {
-            return buildUrl(resourceRoot, "");
-        }
-
-        public static String buildUrl(String resourceRoot, String appendix) {
-
-            String fullUrl = (new StringBuilder(BASE_URL +
-                    resourceRoot +
-                    API_KEY_PREFIX +
-                    BuildConfig.DEVELOPER_API_KEY +
-                    appendix)).
-                    toString();
-            Log.i(LOG_TAG, "full Url: " + fullUrl);
-            return fullUrl;
         }
     }
 
@@ -70,5 +59,4 @@ public class ApiUtility {
             return YOUTUBE_TRAILER_PREFIX + trailerId;
         }
     }
-
 }
