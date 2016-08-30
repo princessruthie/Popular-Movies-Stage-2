@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,6 +12,7 @@ import android.widget.ImageButton;
 import android.widget.ListView;
 
 import com.ruthiefloats.popularmoviesstage2.R;
+import com.ruthiefloats.popularmoviesstage2.model.ObjectWithSingleMovieWithin;
 import com.ruthiefloats.popularmoviesstage2.utility.ApiUtility;
 import com.squareup.picasso.Picasso;
 
@@ -20,10 +22,10 @@ import java.util.List;
  * An Adapter for populating the RecyclerView of Trailers
  */
 public class TrailerAdapter extends RecyclerView.Adapter<TrailerAdapter.ViewHolder> {
-    private List<String> mTrailerIds;
+    private List<ObjectWithSingleMovieWithin.VideosBean.ResultsBean> mTrailerIds;
     private Context mContext;
 
-    public TrailerAdapter(Context context, List<String> trailers) {
+    public TrailerAdapter(Context context, List<ObjectWithSingleMovieWithin.VideosBean.ResultsBean> trailers) {
         mContext = context;
         mTrailerIds = trailers;
     }
@@ -41,7 +43,7 @@ public class TrailerAdapter extends RecyclerView.Adapter<TrailerAdapter.ViewHold
      * layout file.
      * <p/>
      * The new ViewHolder will be used to display items of the adapter using
-     * {@link #onBindViewHolder(ViewHolder, int, List)}. Since it will be re-used to display
+     * . Since it will be re-used to display
      * different items in the data set, it is a good idea to cache references to sub views of
      * the View to avoid unnecessary {@link View#findViewById(int)} calls.
      *
@@ -75,7 +77,7 @@ public class TrailerAdapter extends RecyclerView.Adapter<TrailerAdapter.ViewHold
      * on (e.g. in a click listener), use {@link ViewHolder#getAdapterPosition()} which will
      * have the updated adapter position.
      * <p/>
-     * Override {@link #onBindViewHolder(ViewHolder, int, List)} instead if Adapter can
+     * Override  instead if Adapter can
      * handle effcient partial bind.
      *
      * @param holder   The ViewHolder which should be updated to represent the contents of the
@@ -84,7 +86,7 @@ public class TrailerAdapter extends RecyclerView.Adapter<TrailerAdapter.ViewHold
      */
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        final String trailerIdString = mTrailerIds.get(position);
+        final String trailerIdString = mTrailerIds.get(position).getKey();
         ImageButton imageButton = holder.imageButton;
         Picasso.with(getContext())
 //                .load(youtubePrefix + trailerIdString + youtubePostfix)

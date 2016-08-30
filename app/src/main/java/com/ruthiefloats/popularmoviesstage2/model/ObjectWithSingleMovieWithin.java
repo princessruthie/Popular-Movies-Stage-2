@@ -373,17 +373,7 @@ public class ObjectWithSingleMovieWithin {
         }
     }
 
-    public static class VideosBean {
-        /**
-         * id : 571c8dc4c3a36842aa000190
-         * iso_639_1 : en
-         * iso_3166_1 : US
-         * key : 6as8ahAr1Uc
-         * name : Exclusive Sneak
-         * site : YouTube
-         * size : 1080
-         * type : Teaser
-         */
+    public class VideosBean {
 
         private List<ResultsBean> results;
 
@@ -395,7 +385,7 @@ public class ObjectWithSingleMovieWithin {
             this.results = results;
         }
 
-        public static class ResultsBean {
+        public class ResultsBean {
             private String id;
             private String iso_639_1;
             private String iso_3166_1;

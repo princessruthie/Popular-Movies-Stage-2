@@ -39,7 +39,6 @@ import com.ruthiefloats.popularmoviesstage2.model.Movie;
 import com.ruthiefloats.popularmoviesstage2.model.ObjectWithMoviesWithin;
 import com.ruthiefloats.popularmoviesstage2.model.ObjectWithSingleMovieWithin;
 import com.ruthiefloats.popularmoviesstage2.model.ObjectWithSingleMovieWithin.ReviewsBean.ResultsBean;
-import com.ruthiefloats.popularmoviesstage2.parser.MovieParser;
 import com.ruthiefloats.popularmoviesstage2.utility.ApiUtility;
 import com.ruthiefloats.popularmoviesstage2.utility.HttpManager;
 import com.squareup.picasso.Picasso;
@@ -52,7 +51,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.List;
 
-import static com.ruthiefloats.popularmoviesstage2.utility.ApiUtility.MovieDbUtility.buildUrl;
 import static com.ruthiefloats.popularmoviesstage2.utility.ApiUtility.MovieDbUtility.getCompletePhotoUrl;
 import static com.ruthiefloats.popularmoviesstage2.utility.ApiUtility.YoutubeUtility.getTrailerUrlFromTrailerId;
 
@@ -206,7 +204,6 @@ public class DetailFragment extends Fragment {
     /**
      * add Movie to favorite db
      */
-
     private void addMovie(byte[] byteArray) {
         /* Add Movie to ContentProvider */
         ContentValues values = new ContentValues();
@@ -276,47 +273,36 @@ public class DetailFragment extends Fragment {
         protected void onPostExecute(String result) {
             Gson gson = new Gson();
             ObjectWithSingleMovieWithin obj = gson.fromJson(result, ObjectWithSingleMovieWithin.class);
+
+            /*set the runtime textview */
+            TextView lengthTextView = (TextView) mView.findViewById(R.id.lengthTextView);
+            lengthTextView.setText(obj.getRuntime() + " mins");
+
+            /*set the reviews rv */
             numReviews = obj.getReviews().getTotal_results();
             Log.i(LOG_TAG, numReviews + "  reviews available");
-
             if (numReviews > 0) {
                 reviewList = obj.getReviews().getResults();
-//                reviewList = null;
             } else {
                 reviewList = null;
-//                reviewList = new ArrayList<>();
-//                reviewList.add("There aren't any reviews for this film.");
             }
-
-//            //check that there are reviews
-//            numReviews = MovieParser.getNumReviews(result);
-//            Log.i(LOG_TAG, numReviews + "  reviews available");
-//            if (numReviews > 0) {
-//                reviewList = MovieParser.parseReviews(result);
-//            } else {
-//                reviewList = new ArrayList<>();
-//                reviewList.add("There aren't any reviews for this film.");
-//            }
-
-            TextView lengthTextView = (TextView) mView.findViewById(R.id.lengthTextView);
-            lengthTextView.setText(MovieParser.parseRuntime(result) + " mins");
-
-            RecyclerView recyclerView = (RecyclerView) mView.findViewById(R.id.reviewRecyclerView);
-            ReviewsAdapter adapter = new ReviewsAdapter(getContext(), reviewList);
-            recyclerView.setAdapter(adapter);
-            recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-
-            List<String> trailerIds = MovieParser.getTrailers(result);
-            if (trailerIds.size() > 0) {
-                addShareMovieToOptionsMenu(trailerIds.get(0));
+            if (reviewList != null && reviewList.size() > 0) {
+                RecyclerView recyclerView = (RecyclerView) mView.findViewById(R.id.reviewRecyclerView);
+                ReviewsAdapter adapter = new ReviewsAdapter(getContext(), reviewList);
+                recyclerView.setAdapter(adapter);
+                recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
             }
-            int numTrailers = trailerIds.size();
-            Log.i(LOG_TAG, "Number of trailers: " + numTrailers);
-
-            RecyclerView trailerRecyclerView = (RecyclerView) mView.findViewById(R.id.trailerRecyclerView);
-            TrailerAdapter trailerAdapter = new TrailerAdapter(getContext(), trailerIds);
-            trailerRecyclerView.setAdapter(trailerAdapter);
-            trailerRecyclerView.setLayoutManager(new GridLayoutManager(getContext(), 2));
+            /*set the trailers rv */
+            List<ObjectWithSingleMovieWithin.VideosBean.ResultsBean> videos = obj.getVideos().getResults();
+            if (videos != null && videos.size() > 0) {
+                addShareMovieToOptionsMenu(videos.get(0).getKey());
+                int numTrailers = videos.size();
+                Log.i(LOG_TAG, "Number of trailers: " + numTrailers);
+                RecyclerView trailerRecyclerView = (RecyclerView) mView.findViewById(R.id.trailerRecyclerView);
+                TrailerAdapter trailerAdapter = new TrailerAdapter(getContext(), videos);
+                trailerRecyclerView.setAdapter(trailerAdapter);
+                trailerRecyclerView.setLayoutManager(new GridLayoutManager(getContext(), 2));
+            }
         }
     }
 
