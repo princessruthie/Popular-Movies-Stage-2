@@ -35,7 +35,6 @@ import com.google.gson.Gson;
 import com.ruthiefloats.popularmoviesstage2.adapter.ReviewsAdapter;
 import com.ruthiefloats.popularmoviesstage2.adapter.TrailerAdapter;
 import com.ruthiefloats.popularmoviesstage2.data.FavoritesContract;
-import com.ruthiefloats.popularmoviesstage2.model.Movie;
 import com.ruthiefloats.popularmoviesstage2.model.ObjectWithMoviesWithin;
 import com.ruthiefloats.popularmoviesstage2.model.ObjectWithSingleMovieWithin;
 import com.ruthiefloats.popularmoviesstage2.model.ObjectWithSingleMovieWithin.ReviewsBean.ResultsBean;
@@ -72,7 +71,7 @@ public class DetailFragment extends Fragment {
         // Required empty public constructor
     }
 
-    public static DetailFragment newInstance(Movie movie) {
+    public static DetailFragment newInstance(ObjectWithMoviesWithin.ResultsBean movie) {
         DetailFragment detailFragment = new DetailFragment();
         Bundle args = new Bundle();
         args.putParcelable(MainActivity.INSTANCE_STATE_TAG, movie);
