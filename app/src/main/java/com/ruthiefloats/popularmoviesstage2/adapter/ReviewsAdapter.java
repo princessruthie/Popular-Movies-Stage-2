@@ -2,23 +2,27 @@ package com.ruthiefloats.popularmoviesstage2.adapter;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.ruthiefloats.popularmoviesstage2.R;
+import com.ruthiefloats.popularmoviesstage2.model.ObjectWithSingleMovieWithin;
 
 import java.util.List;
 
 /**
- * An adapter to populate a RecyclerView from a List<String>
+ * TODO: add a class header comment.
  */
 public class ReviewsAdapter extends RecyclerView.Adapter<ReviewsAdapter.ViewHolder> {
-    private List<String> mReviews;
+    private static final String LOG_TAG = "RRBeanAdapter";
+    private List<ObjectWithSingleMovieWithin.ReviewsBean.ResultsBean> mReviews;
     private Context mContext;
 
-    public ReviewsAdapter(Context context, List<String> reviews){
+    public ReviewsAdapter(Context context, List<ObjectWithSingleMovieWithin.ReviewsBean.ResultsBean> reviews){
+        Log.i(LOG_TAG, "constructed");
         mContext = context;
         mReviews = reviews;
     }
@@ -39,7 +43,7 @@ public class ReviewsAdapter extends RecyclerView.Adapter<ReviewsAdapter.ViewHold
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        String reviewString = mReviews.get(position);
+        String reviewString = mReviews.get(position).getContent();
 
         TextView textView = holder.reviewTextView;
         textView.setText(reviewString);

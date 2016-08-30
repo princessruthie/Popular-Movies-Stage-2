@@ -31,11 +31,14 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
 import com.ruthiefloats.popularmoviesstage2.adapter.ReviewsAdapter;
 import com.ruthiefloats.popularmoviesstage2.adapter.TrailerAdapter;
 import com.ruthiefloats.popularmoviesstage2.data.FavoritesContract;
 import com.ruthiefloats.popularmoviesstage2.model.Movie;
 import com.ruthiefloats.popularmoviesstage2.model.ObjectWithMoviesWithin;
+import com.ruthiefloats.popularmoviesstage2.model.ObjectWithSingleMovieWithin;
+import com.ruthiefloats.popularmoviesstage2.model.ObjectWithSingleMovieWithin.ReviewsBean.ResultsBean;
 import com.ruthiefloats.popularmoviesstage2.parser.MovieParser;
 import com.ruthiefloats.popularmoviesstage2.utility.ApiUtility;
 import com.ruthiefloats.popularmoviesstage2.utility.HttpManager;
@@ -47,7 +50,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 import static com.ruthiefloats.popularmoviesstage2.utility.ApiUtility.MovieDbUtility.buildUrl;
@@ -60,7 +62,7 @@ import static com.ruthiefloats.popularmoviesstage2.utility.ApiUtility.YoutubeUti
 public class DetailFragment extends Fragment {
 
     private static final String LOG_TAG = "DetailFragment AsyncRes";
-    List<String> reviewList;
+    List<ResultsBean> reviewList;
     private ObjectWithMoviesWithin.ResultsBean currentMovie;
     private int numReviews;
     private View mView;
@@ -272,15 +274,29 @@ public class DetailFragment extends Fragment {
          */
         @Override
         protected void onPostExecute(String result) {
-            //check that there are reviews
-            numReviews = MovieParser.getNumReviews(result);
+            Gson gson = new Gson();
+            ObjectWithSingleMovieWithin obj = gson.fromJson(result, ObjectWithSingleMovieWithin.class);
+            numReviews = obj.getReviews().getTotal_results();
             Log.i(LOG_TAG, numReviews + "  reviews available");
+
             if (numReviews > 0) {
-                reviewList = MovieParser.parseReviews(result);
+                reviewList = obj.getReviews().getResults();
+//                reviewList = null;
             } else {
-                reviewList = new ArrayList<>();
-                reviewList.add("There aren't any reviews for this film.");
+                reviewList = null;
+//                reviewList = new ArrayList<>();
+//                reviewList.add("There aren't any reviews for this film.");
             }
+
+//            //check that there are reviews
+//            numReviews = MovieParser.getNumReviews(result);
+//            Log.i(LOG_TAG, numReviews + "  reviews available");
+//            if (numReviews > 0) {
+//                reviewList = MovieParser.parseReviews(result);
+//            } else {
+//                reviewList = new ArrayList<>();
+//                reviewList.add("There aren't any reviews for this film.");
+//            }
 
             TextView lengthTextView = (TextView) mView.findViewById(R.id.lengthTextView);
             lengthTextView.setText(MovieParser.parseRuntime(result) + " mins");

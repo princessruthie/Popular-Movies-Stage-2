@@ -16,7 +16,6 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
-import com.ruthiefloats.popularmoviesstage2.adapter.BeanAdapter;
 import com.ruthiefloats.popularmoviesstage2.adapter.PosterAdapter;
 import com.ruthiefloats.popularmoviesstage2.data.FavoritesContract;
 import com.ruthiefloats.popularmoviesstage2.model.ObjectWithMoviesWithin;
@@ -38,7 +37,6 @@ public class MasterFragment extends Fragment {
     public static final String BUNDLE_KEY_MOVIE_LIST = "movie list key";
     public View mView;
     private OnPosterSelectedListener mCallback;
-    private PosterAdapter posterAdapter;
     private List<ObjectWithMoviesWithin.ResultsBean> mMovieList;
     /*whether using data from the Favorites Provider */
     private boolean mFavorites;
@@ -155,10 +153,9 @@ public class MasterFragment extends Fragment {
 
     private void populateRecyclerView() {
         RecyclerView rv = (RecyclerView) mView.findViewById(R.id.posterRecyclerView);
-//        posterAdapter = new PosterAdapter(getContext(), mMovieList, mFavorites);
-        BeanAdapter beanAdapter = new BeanAdapter(getContext(), mMovieList, mFavorites);
+        PosterAdapter posterAdapter = new PosterAdapter(getContext(), mMovieList, mFavorites);
         rv.setLayoutManager(new GridLayoutManager(getContext(), 2));
-        rv.setAdapter(beanAdapter);
+        rv.setAdapter(posterAdapter);
     }
 
     public interface OnPosterSelectedListener {
