@@ -14,6 +14,7 @@ import android.widget.ListView;
 import com.ruthiefloats.popularmoviesstage2.MasterFragment;
 import com.ruthiefloats.popularmoviesstage2.R;
 import com.ruthiefloats.popularmoviesstage2.model.ObjectWithMoviesWithin;
+import com.ruthiefloats.popularmoviesstage2.utility.ApiUtility;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
@@ -27,8 +28,6 @@ import java.util.List;
  */
 public class PosterAdapter extends RecyclerView.Adapter<PosterAdapter.ViewHolder> {
 
-    private static final String PHOTOS_BASE_URL = "http://image.tmdb.org/t/p/";
-    private static final String PHOTOS_SIZE_URL = "w185/";
     private static final String LOG_TAG = "Poster Adapter";
     private List<ObjectWithMoviesWithin.ResultsBean> mMovieList;
     private Context mContext;
@@ -44,18 +43,10 @@ public class PosterAdapter extends RecyclerView.Adapter<PosterAdapter.ViewHolder
         this.showingFavorites = showingFavorites;
     }
 
-    public static String getCompletePhotoUrl(String photoUrl) {
-        String completeUrl = PHOTOS_BASE_URL +
-                PHOTOS_SIZE_URL +
-                photoUrl;
-        return completeUrl;
-    }
-
     @Override
     public PosterAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         Context context = parent.getContext();
         LayoutInflater inflater = LayoutInflater.from(context);
-
         View posterView = inflater.inflate(R.layout.item_poster, parent, false);
         PosterAdapter.ViewHolder viewHolder = new PosterAdapter.ViewHolder(posterView, context);
         return viewHolder;
@@ -99,11 +90,10 @@ public class PosterAdapter extends RecyclerView.Adapter<PosterAdapter.ViewHolder
             }
         } else {
             Picasso.with(mContext).
-                    load(getCompletePhotoUrl(mMovieList.get(position).getPoster_path()))
+                    load(ApiUtility.MovieDbUtility.getCompletePhotoUrl(mMovieList.get(position).getPoster_path()))
                     .error(R.drawable.poster_placeholder)
                     .into(imageView);
         }
-
     }
 
     /**
