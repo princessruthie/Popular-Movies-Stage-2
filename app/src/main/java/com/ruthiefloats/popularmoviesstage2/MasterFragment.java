@@ -2,7 +2,6 @@ package com.ruthiefloats.popularmoviesstage2;
 
 import android.content.Context;
 import android.database.Cursor;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.annotation.Nullable;
@@ -13,7 +12,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.ruthiefloats.popularmoviesstage2.adapter.PosterAdapter;
@@ -21,10 +19,16 @@ import com.ruthiefloats.popularmoviesstage2.data.FavoritesContract;
 import com.ruthiefloats.popularmoviesstage2.model.ObjectWithMoviesWithin;
 import com.ruthiefloats.popularmoviesstage2.utility.ApiUtility;
 import com.ruthiefloats.popularmoviesstage2.utility.HttpManager;
+import com.ruthiefloats.popularmoviesstage2.utility.MovieDbEndpointInterface;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 
 /**
@@ -51,8 +55,50 @@ public class MasterFragment extends Fragment {
         super.onCreate(savedInstanceState);
         Log.i(LOG_TAG, "onCreate");
         setRetainInstance(true);
+        getTopRatedData();
+    }
 
-        getData(ApiUtility.MovieDbUtility.POPULAR_RESOURCE_ROOT);
+    public void getTopRatedData() {
+        mFavorites = false;
+
+        if (HttpManager.checkConnection()) {
+            MovieDbEndpointInterface apiService = getMovieDbEndpointInterface();
+            Call<ObjectWithMoviesWithin> call = apiService.getTopRated(BuildConfig.DEVELOPER_API_KEY);
+            doTheWork(call);
+        }
+    }
+
+    public void getPopularData() {
+        mFavorites = false;
+        MovieDbEndpointInterface apiService = getMovieDbEndpointInterface();
+        Call<ObjectWithMoviesWithin> call = apiService.getPopular(BuildConfig.DEVELOPER_API_KEY);
+        doTheWork(call);
+    }
+
+    private void doTheWork(Call<ObjectWithMoviesWithin> call) {
+        call.enqueue(new Callback<ObjectWithMoviesWithin>() {
+            @Override
+            public void onResponse(Call<ObjectWithMoviesWithin> call, Response<ObjectWithMoviesWithin> response) {
+                ObjectWithMoviesWithin obj = response.body();
+                mMovieList = obj.getResults();
+                populateRecyclerView();
+                Log.i(LOG_TAG, "so retrofit did something");
+            }
+
+            @Override
+            public void onFailure(Call<ObjectWithMoviesWithin> call, Throwable t) {
+                Log.i(LOG_TAG, "so retrofit not so much");
+            }
+        });
+    }
+
+    private MovieDbEndpointInterface getMovieDbEndpointInterface() {
+        Gson gson = new Gson();
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(ApiUtility.MovieDbUtility.RETROFIT_BASE_URL)
+                .addConverterFactory(GsonConverterFactory.create(gson))
+                .build();
+        return retrofit.create(MovieDbEndpointInterface.class);
     }
 
     @Override
@@ -84,21 +130,6 @@ public class MasterFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
     }
 
-    /* When called builds a valid valid URL for The Movie DB API and starts a DownloadWeb
-     task.
-     Before attempting to fetch the URL, makes sure that there is a network connection.
-     */
-    public void getData(String resourceRoot) {
-        mFavorites = false;
-        String fullUrl = ApiUtility.MovieDbUtility.buildUrl(resourceRoot);
-        boolean hasConnection = HttpManager.checkConnection();
-        if (hasConnection) {
-            new DownloadWebpageTask().execute(fullUrl);
-        } else {
-            Toast.makeText(getContext(), "No network", Toast.LENGTH_SHORT);
-        }
-    }
-
     /*Calling getData without a resource root gets local data */
     public void getData() {
         mFavorites = true;
@@ -124,7 +155,7 @@ public class MasterFragment extends Fragment {
 
                 double vote_average = Double.valueOf(vote_average_string);
                 /*the poster will be set by the adapter, so pass null*/
-                // TODO: 8/29/16 reinstate this wasteful workaround
+                // TODO: 8/29/16 ultimately will switch to Realm and this won't be a thing
                 mMovieList.add(new ObjectWithMoviesWithin.ResultsBean(null, overview, release_date, id, title, vote_average));
             }
             cursor.close();
@@ -160,34 +191,5 @@ public class MasterFragment extends Fragment {
 
     public interface OnPosterSelectedListener {
         void onPosterSelected(ObjectWithMoviesWithin.ResultsBean currentMovie);
-    }
-
-    // Uses AsyncTask to create a task away from the main UI thread. This task takes a
-    // URL string and uses it to create an HttpUrlConnection. Once the connection
-    // has been established, the AsyncTask downloads the contents of the webpage as
-    // an InputStream. Finally, the InputStream is converted into a string, which is
-    // parsed into a List<Movie> and used to construct/set the recyclerview's adapter in
-    // the AsyncTask's onPostExecute method.
-    private class DownloadWebpageTask extends AsyncTask<String, Void, String> {
-        @Override
-        protected String doInBackground(String... urls) {
-
-            // params comes from the execute() call: params[0] is the url.
-            try {
-                return HttpManager.downloadUrl(urls[0]);
-            } catch (IOException e) {
-                return "Unable to retrieve web page. URL may be invalid.";
-            }
-        }
-
-        // onPostExecute sets the adapter
-        @Override
-        protected void onPostExecute(String result) {
-//            mMovieList = MovieParser.parseFeed(result);
-            Gson gson = new Gson();
-            ObjectWithMoviesWithin objectWithMoviesWithin = gson.fromJson(result, ObjectWithMoviesWithin.class);
-            mMovieList = objectWithMoviesWithin.getResults();
-            populateRecyclerView();
-        }
     }
 }

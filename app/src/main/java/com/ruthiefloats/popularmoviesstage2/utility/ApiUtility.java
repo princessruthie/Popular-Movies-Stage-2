@@ -20,9 +20,12 @@ public class ApiUtility {
         public static final String APPENDABLE_MOVIE_ROOT = "/movie/";
         public static final String REVIEWS_APPENDIX = "&append_to_response=reviews,videos";
         public static final String BASE_URL = "http://api.themoviedb.org/3";
+        public static final String RETROFIT_BASE_URL = "http://api.themoviedb.org/";
+
         private static final String PHOTOS_BASE_URL = "http://image.tmdb.org/t/p/";
         private static final String PHOTOS_SIZE_URL = "w185/";
         public static final String API_KEY_PREFIX = "?api_key=";
+        public static final String RETROFIT_API_KEY_PREFIX = "api_key";
 
         /**
          * takes the poster URL provided by the API response and builds the entire valid URL
