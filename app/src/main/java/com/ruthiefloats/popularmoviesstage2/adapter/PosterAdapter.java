@@ -13,7 +13,7 @@ import android.widget.ListView;
 
 import com.ruthiefloats.popularmoviesstage2.MasterFragment;
 import com.ruthiefloats.popularmoviesstage2.R;
-import com.ruthiefloats.popularmoviesstage2.model.ObjectWithMoviesWithin;
+import com.ruthiefloats.popularmoviesstage2.model.ObjectWithMovieResults;
 import com.ruthiefloats.popularmoviesstage2.utility.ApiUtility;
 import com.squareup.picasso.Picasso;
 
@@ -29,16 +29,16 @@ import java.util.List;
 public class PosterAdapter extends RecyclerView.Adapter<PosterAdapter.ViewHolder> {
 
     private static final String LOG_TAG = "Poster Adapter";
-    private List<ObjectWithMoviesWithin.ResultsBean> mMovieList;
+    private List<ObjectWithMovieResults.Movie> mMovieList;
     private Context mContext;
     private boolean showingFavorites;
 
-    public PosterAdapter(Context context, List<ObjectWithMoviesWithin.ResultsBean> movieList) {
+    public PosterAdapter(Context context, List<ObjectWithMovieResults.Movie> movieList) {
         mContext = context;
         mMovieList = movieList;
     }
 
-    public PosterAdapter(Context context, List<ObjectWithMoviesWithin.ResultsBean> movieList, boolean showingFavorites) {
+    public PosterAdapter(Context context, List<ObjectWithMovieResults.Movie> movieList, boolean showingFavorites) {
         this(context, movieList);
         this.showingFavorites = showingFavorites;
     }
@@ -123,7 +123,7 @@ public class PosterAdapter extends RecyclerView.Adapter<PosterAdapter.ViewHolder
         @Override
         public void onClick(View v) {
             int position = getLayoutPosition();
-            ObjectWithMoviesWithin.ResultsBean movie = mMovieList.get(position);
+            ObjectWithMovieResults.Movie movie = mMovieList.get(position);
             Log.i(LOG_TAG, "movie clicked was number " + position);
             onPosterSelectedListener.onPosterSelected(movie);
         }

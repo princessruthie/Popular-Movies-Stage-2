@@ -1,11 +1,13 @@
 package com.ruthiefloats.popularmoviesstage2.model;
 
+import com.google.gson.annotations.SerializedName;
+
 import java.util.List;
 
 /**
  * TODO: add a class header comment.
  */
-public class ObjectWithSingleMovieWithin {
+public class ObjectWithMovieDetails {
 
     private boolean adult;
     private String backdrop_path;
@@ -375,17 +377,17 @@ public class ObjectWithSingleMovieWithin {
 
     public class VideosBean {
 
-        private List<ResultsBean> results;
+        private List<Trailer> results;
 
-        public List<ResultsBean> getResults() {
+        public List<Trailer> getResults() {
             return results;
         }
 
-        public void setResults(List<ResultsBean> results) {
+        public void setResults(List<Trailer> results) {
             this.results = results;
         }
 
-        public class ResultsBean {
+        public class Trailer {
             private String id;
             private String iso_639_1;
             private String iso_3166_1;

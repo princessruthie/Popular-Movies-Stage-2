@@ -3,8 +3,7 @@ package com.ruthiefloats.popularmoviesstage2;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
-import com.ruthiefloats.popularmoviesstage2.model.Movie;
-import com.ruthiefloats.popularmoviesstage2.model.ObjectWithMoviesWithin;
+import com.ruthiefloats.popularmoviesstage2.model.ObjectWithMovieResults;
 
 /**
  * An Activity for displaying the details of a single Movie.
@@ -23,7 +22,7 @@ public class DetailActivity extends AppCompatActivity {
          */
         if (savedInstanceState == null) {
             DetailFragment fragment = DetailFragment
-                    .newInstance((ObjectWithMoviesWithin.ResultsBean) getIntent().getParcelableExtra(MainActivity.INSTANCE_STATE_TAG));
+                    .newInstance((ObjectWithMovieResults.Movie) getIntent().getParcelableExtra(MainActivity.INSTANCE_STATE_TAG));
             getSupportFragmentManager().beginTransaction()
                     .add(R.id.detail_container, fragment)
                     .commit();

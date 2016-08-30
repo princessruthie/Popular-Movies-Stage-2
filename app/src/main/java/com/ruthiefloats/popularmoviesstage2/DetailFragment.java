@@ -32,9 +32,9 @@ import android.widget.TextView;
 import com.ruthiefloats.popularmoviesstage2.adapter.ReviewsAdapter;
 import com.ruthiefloats.popularmoviesstage2.adapter.TrailerAdapter;
 import com.ruthiefloats.popularmoviesstage2.data.FavoritesContract;
-import com.ruthiefloats.popularmoviesstage2.model.ObjectWithMoviesWithin;
-import com.ruthiefloats.popularmoviesstage2.model.ObjectWithSingleMovieWithin;
-import com.ruthiefloats.popularmoviesstage2.model.ObjectWithSingleMovieWithin.ReviewsBean.ResultsBean;
+import com.ruthiefloats.popularmoviesstage2.model.ObjectWithMovieResults;
+import com.ruthiefloats.popularmoviesstage2.model.ObjectWithMovieDetails;
+import com.ruthiefloats.popularmoviesstage2.model.ObjectWithMovieDetails.ReviewsBean.ResultsBean;
 import com.ruthiefloats.popularmoviesstage2.utility.ApiUtility;
 import com.ruthiefloats.popularmoviesstage2.utility.MovieDbEndpointInterface;
 import com.squareup.picasso.Picasso;
@@ -60,7 +60,7 @@ public class DetailFragment extends Fragment {
 
     private static final String LOG_TAG = "DetailFragment AsyncRes";
     List<ResultsBean> reviewList;
-    private ObjectWithMoviesWithin.ResultsBean currentMovie;
+    private ObjectWithMovieResults.Movie currentMovie;
     private int numReviews;
     private View mView;
     /*Whether this movie in the favorite db */
@@ -71,7 +71,7 @@ public class DetailFragment extends Fragment {
         // Required empty public constructor
     }
 
-    public static DetailFragment newInstance(ObjectWithMoviesWithin.ResultsBean movie) {
+    public static DetailFragment newInstance(ObjectWithMovieResults.Movie movie) {
         DetailFragment detailFragment = new DetailFragment();
         Bundle args = new Bundle();
         args.putParcelable(MainActivity.INSTANCE_STATE_TAG, movie);
@@ -233,17 +233,17 @@ public class DetailFragment extends Fragment {
         mView = view;
 
         MovieDbEndpointInterface apiService = ApiUtility.getMovieDbEndpointInterface();
-        Call<ObjectWithSingleMovieWithin> call = apiService.getMovieDetails(currentMovie.getId(), BuildConfig.DEVELOPER_API_KEY, ApiUtility.MovieDbUtility.RETROFIT_REVIEWS_APPENDIX);
+        Call<ObjectWithMovieDetails> call = apiService.getMovieDetails(currentMovie.getId(), BuildConfig.DEVELOPER_API_KEY, ApiUtility.MovieDbUtility.RETROFIT_REVIEWS_APPENDIX);
 
-        call.enqueue(new Callback<ObjectWithSingleMovieWithin>() {
+        call.enqueue(new Callback<ObjectWithMovieDetails>() {
             @Override
-            public void onResponse(Call<ObjectWithSingleMovieWithin> call, Response<ObjectWithSingleMovieWithin> response) {
-                ObjectWithSingleMovieWithin obj = response.body();
+            public void onResponse(Call<ObjectWithMovieDetails> call, Response<ObjectWithMovieDetails> response) {
+                ObjectWithMovieDetails obj = response.body();
                 /*set the runtime textview */
                 TextView lengthTextView = (TextView) mView.findViewById(R.id.lengthTextView);
                 lengthTextView.setText(obj.getRuntime() + " mins");
 
-            /*set the reviews rv */
+                 /*set the reviews rv */
                 numReviews = obj.getReviews().getTotal_results();
                 Log.i(LOG_TAG, numReviews + "  reviews available");
                 if (numReviews > 0) {
@@ -257,8 +257,8 @@ public class DetailFragment extends Fragment {
                     recyclerView.setAdapter(adapter);
                     recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
                 }
-            /*set the trailers rv */
-                List<ObjectWithSingleMovieWithin.VideosBean.ResultsBean> videos = obj.getVideos().getResults();
+                /*set the trailers rv */
+                List<ObjectWithMovieDetails.VideosBean.Trailer> videos = obj.getVideos().getResults();
                 if (videos != null && videos.size() > 0) {
                     addShareMovieToOptionsMenu(videos.get(0).getKey());
                     int numTrailers = videos.size();
@@ -272,7 +272,7 @@ public class DetailFragment extends Fragment {
             }
 
             @Override
-            public void onFailure(Call<ObjectWithSingleMovieWithin> call, Throwable t) {
+            public void onFailure(Call<ObjectWithMovieDetails> call, Throwable t) {
                 Log.i(LOG_TAG, "so retrofit not so much");
             }
         });

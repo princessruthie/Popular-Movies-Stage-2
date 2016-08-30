@@ -8,8 +8,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
-import com.ruthiefloats.popularmoviesstage2.model.ObjectWithMoviesWithin;
-import com.ruthiefloats.popularmoviesstage2.utility.ApiUtility;
+import com.ruthiefloats.popularmoviesstage2.model.ObjectWithMovieResults;
 
 /**
  * The MainActivity by default populates with a list of the most popular movies.
@@ -83,7 +82,7 @@ public class MainActivity extends AppCompatActivity implements MasterFragment.On
     fragment or launch a detail activity.
      */
     @Override
-    public void onPosterSelected(ObjectWithMoviesWithin.ResultsBean currentMovie) {
+    public void onPosterSelected(ObjectWithMovieResults.Movie currentMovie) {
         Toast.makeText(this, "Movie selected is " + currentMovie.getTitle(), Toast.LENGTH_SHORT).show();
         if (mTwoPane) {
             /*

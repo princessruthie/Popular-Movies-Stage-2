@@ -9,7 +9,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.ruthiefloats.popularmoviesstage2.R;
-import com.ruthiefloats.popularmoviesstage2.model.ObjectWithSingleMovieWithin;
+import com.ruthiefloats.popularmoviesstage2.model.ObjectWithMovieDetails;
 
 import java.util.List;
 
@@ -18,10 +18,10 @@ import java.util.List;
  */
 public class ReviewsAdapter extends RecyclerView.Adapter<ReviewsAdapter.ViewHolder> {
     private static final String LOG_TAG = "RRBeanAdapter";
-    private List<ObjectWithSingleMovieWithin.ReviewsBean.ResultsBean> mReviews;
+    private List<ObjectWithMovieDetails.ReviewsBean.ResultsBean> mReviews;
     private Context mContext;
 
-    public ReviewsAdapter(Context context, List<ObjectWithSingleMovieWithin.ReviewsBean.ResultsBean> reviews){
+    public ReviewsAdapter(Context context, List<ObjectWithMovieDetails.ReviewsBean.ResultsBean> reviews){
         Log.i(LOG_TAG, "constructed");
         mContext = context;
         mReviews = reviews;

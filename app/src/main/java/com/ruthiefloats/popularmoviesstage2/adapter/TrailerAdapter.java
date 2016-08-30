@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,7 +11,7 @@ import android.widget.ImageButton;
 import android.widget.ListView;
 
 import com.ruthiefloats.popularmoviesstage2.R;
-import com.ruthiefloats.popularmoviesstage2.model.ObjectWithSingleMovieWithin;
+import com.ruthiefloats.popularmoviesstage2.model.ObjectWithMovieDetails;
 import com.ruthiefloats.popularmoviesstage2.utility.ApiUtility;
 import com.squareup.picasso.Picasso;
 
@@ -22,10 +21,10 @@ import java.util.List;
  * An Adapter for populating the RecyclerView of Trailers
  */
 public class TrailerAdapter extends RecyclerView.Adapter<TrailerAdapter.ViewHolder> {
-    private List<ObjectWithSingleMovieWithin.VideosBean.ResultsBean> mTrailerIds;
+    private List<ObjectWithMovieDetails.VideosBean.Trailer> mTrailerIds;
     private Context mContext;
 
-    public TrailerAdapter(Context context, List<ObjectWithSingleMovieWithin.VideosBean.ResultsBean> trailers) {
+    public TrailerAdapter(Context context, List<ObjectWithMovieDetails.VideosBean.Trailer> trailers) {
         mContext = context;
         mTrailerIds = trailers;
     }

@@ -15,7 +15,7 @@ import android.view.ViewGroup;
 
 import com.ruthiefloats.popularmoviesstage2.adapter.PosterAdapter;
 import com.ruthiefloats.popularmoviesstage2.data.FavoritesContract;
-import com.ruthiefloats.popularmoviesstage2.model.ObjectWithMoviesWithin;
+import com.ruthiefloats.popularmoviesstage2.model.ObjectWithMovieResults;
 import com.ruthiefloats.popularmoviesstage2.utility.ApiUtility;
 import com.ruthiefloats.popularmoviesstage2.utility.HttpManager;
 import com.ruthiefloats.popularmoviesstage2.utility.MovieDbEndpointInterface;
@@ -26,6 +26,8 @@ import java.util.List;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+
+import static com.ruthiefloats.popularmoviesstage2.model.ObjectWithMovieResults.Movie;
 
 
 /**
@@ -38,7 +40,7 @@ public class MasterFragment extends Fragment {
     public static final String BUNDLE_KEY_MOVIE_LIST = "movie list key";
     public View mView;
     private OnPosterSelectedListener mCallback;
-    private List<ObjectWithMoviesWithin.ResultsBean> mMovieList;
+    private List<Movie> mMovieList;
     /*whether using data from the Favorites Provider */
     private boolean mFavorites;
 
@@ -60,7 +62,7 @@ public class MasterFragment extends Fragment {
 
         if (HttpManager.checkConnection()) {
             MovieDbEndpointInterface apiService = ApiUtility.getMovieDbEndpointInterface();
-            Call<ObjectWithMoviesWithin> call = apiService.getTopRated(BuildConfig.DEVELOPER_API_KEY);
+            Call<ObjectWithMovieResults> call = apiService.getTopRated(BuildConfig.DEVELOPER_API_KEY);
             doTheWork(call);
         }
     }
@@ -68,22 +70,22 @@ public class MasterFragment extends Fragment {
     public void getPopularData() {
         mFavorites = false;
         MovieDbEndpointInterface apiService = ApiUtility.getMovieDbEndpointInterface();
-        Call<ObjectWithMoviesWithin> call = apiService.getPopular(BuildConfig.DEVELOPER_API_KEY);
+        Call<ObjectWithMovieResults> call = apiService.getPopular(BuildConfig.DEVELOPER_API_KEY);
         doTheWork(call);
     }
 
-    private void doTheWork(Call<ObjectWithMoviesWithin> call) {
-        call.enqueue(new Callback<ObjectWithMoviesWithin>() {
+    private void doTheWork(Call<ObjectWithMovieResults> call) {
+        call.enqueue(new Callback<ObjectWithMovieResults>() {
             @Override
-            public void onResponse(Call<ObjectWithMoviesWithin> call, Response<ObjectWithMoviesWithin> response) {
-                ObjectWithMoviesWithin obj = response.body();
-                mMovieList = obj.getResults();
+            public void onResponse(Call<ObjectWithMovieResults> call, Response<ObjectWithMovieResults> response) {
+                ObjectWithMovieResults obj = response.body();
+                mMovieList = obj.getMovieList();
                 populateRecyclerView();
                 Log.i(LOG_TAG, "so retrofit did something");
             }
 
             @Override
-            public void onFailure(Call<ObjectWithMoviesWithin> call, Throwable t) {
+            public void onFailure(Call<ObjectWithMovieResults> call, Throwable t) {
                 Log.i(LOG_TAG, "so retrofit not so much");
             }
         });
@@ -134,6 +136,7 @@ public class MasterFragment extends Fragment {
         /*use the results from the cursor to make a movie list and update ui */
         mMovieList = new ArrayList<>();
         if (cursor != null && cursor.getCount() != 0) {
+            // TODO: 8/30/16 magic numbers 
             while (cursor.moveToNext()) {
                 int id = cursor.getInt(0);
                 String title = cursor.getString(1);
@@ -144,7 +147,7 @@ public class MasterFragment extends Fragment {
                 double vote_average = Double.valueOf(vote_average_string);
                 /*the poster will be set by the adapter, so pass null*/
                 // TODO: 8/29/16 ultimately will switch to Realm and this won't be a thing
-                mMovieList.add(new ObjectWithMoviesWithin.ResultsBean(null, overview, release_date, id, title, vote_average));
+                mMovieList.add(new Movie(null, overview, release_date, id, title, vote_average));
             }
             cursor.close();
             populateRecyclerView();
@@ -178,6 +181,6 @@ public class MasterFragment extends Fragment {
     }
 
     public interface OnPosterSelectedListener {
-        void onPosterSelected(ObjectWithMoviesWithin.ResultsBean currentMovie);
+        void onPosterSelected(Movie currentMovie);
     }
 }
