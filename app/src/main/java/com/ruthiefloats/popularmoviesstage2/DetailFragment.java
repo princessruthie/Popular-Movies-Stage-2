@@ -35,6 +35,7 @@ import com.ruthiefloats.popularmoviesstage2.adapter.ReviewsAdapter;
 import com.ruthiefloats.popularmoviesstage2.adapter.TrailerAdapter;
 import com.ruthiefloats.popularmoviesstage2.data.FavoritesContract;
 import com.ruthiefloats.popularmoviesstage2.model.Movie;
+import com.ruthiefloats.popularmoviesstage2.model.ObjectWithMoviesWithin;
 import com.ruthiefloats.popularmoviesstage2.parser.MovieParser;
 import com.ruthiefloats.popularmoviesstage2.utility.ApiUtility;
 import com.ruthiefloats.popularmoviesstage2.utility.HttpManager;
@@ -60,7 +61,7 @@ public class DetailFragment extends Fragment {
 
     private static final String LOG_TAG = "DetailFragment AsyncRes";
     List<String> reviewList;
-    private Movie currentMovie;
+    private ObjectWithMoviesWithin.ResultsBean currentMovie;
     private int numReviews;
     private View mView;
     /*Whether this movie in the favorite db */

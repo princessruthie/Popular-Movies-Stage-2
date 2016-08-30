@@ -8,7 +8,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
-import com.ruthiefloats.popularmoviesstage2.model.Movie;
+import com.ruthiefloats.popularmoviesstage2.model.ObjectWithMoviesWithin;
 import com.ruthiefloats.popularmoviesstage2.utility.ApiUtility;
 
 /**
@@ -71,7 +71,7 @@ public class MainActivity extends AppCompatActivity implements MasterFragment.On
             fragment.getData(ApiUtility.MovieDbUtility.POPULAR_RESOURCE_ROOT);
         } else if (item.getItemId() == R.id.menu_sort_rating) {
             fragment.getData(ApiUtility.MovieDbUtility.TOP_RATED_RESOURCE_ROOT);
-        } else if (item.getItemId() == R.id.menu_show_favorites){
+        } else if (item.getItemId() == R.id.menu_show_favorites) {
             fragment.getData();
         }
         return false;
@@ -83,7 +83,7 @@ public class MainActivity extends AppCompatActivity implements MasterFragment.On
     fragment or launch a detail activity.
      */
     @Override
-    public void onPosterSelected(Movie currentMovie) {
+    public void onPosterSelected(ObjectWithMoviesWithin.ResultsBean currentMovie) {
         Toast.makeText(this, "Movie selected is " + currentMovie.getTitle(), Toast.LENGTH_SHORT).show();
         if (mTwoPane) {
             /*

@@ -15,10 +15,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
+import com.ruthiefloats.popularmoviesstage2.adapter.BeanAdapter;
 import com.ruthiefloats.popularmoviesstage2.adapter.PosterAdapter;
 import com.ruthiefloats.popularmoviesstage2.data.FavoritesContract;
-import com.ruthiefloats.popularmoviesstage2.model.Movie;
-import com.ruthiefloats.popularmoviesstage2.parser.MovieParser;
+import com.ruthiefloats.popularmoviesstage2.model.ObjectWithMoviesWithin;
 import com.ruthiefloats.popularmoviesstage2.utility.ApiUtility;
 import com.ruthiefloats.popularmoviesstage2.utility.HttpManager;
 
@@ -38,7 +39,7 @@ public class MasterFragment extends Fragment {
     public View mView;
     private OnPosterSelectedListener mCallback;
     private PosterAdapter posterAdapter;
-    private List<Movie> mMovieList;
+    private List<ObjectWithMoviesWithin.ResultsBean> mMovieList;
     /*whether using data from the Favorites Provider */
     private boolean mFavorites;
 
@@ -52,6 +53,7 @@ public class MasterFragment extends Fragment {
         super.onCreate(savedInstanceState);
         Log.i(LOG_TAG, "onCreate");
         setRetainInstance(true);
+
         getData(ApiUtility.MovieDbUtility.POPULAR_RESOURCE_ROOT);
     }
 
@@ -124,7 +126,8 @@ public class MasterFragment extends Fragment {
 
                 double vote_average = Double.valueOf(vote_average_string);
                 /*the poster will be set by the adapter, so pass null*/
-                mMovieList.add(new Movie(title, release_date, null, vote_average, overview, id));
+                // TODO: 8/29/16 reinstate this wasteful workaround
+                mMovieList.add(new ObjectWithMoviesWithin.ResultsBean(null, overview, release_date, id, title, vote_average));
             }
             cursor.close();
             populateRecyclerView();
@@ -152,13 +155,14 @@ public class MasterFragment extends Fragment {
 
     private void populateRecyclerView() {
         RecyclerView rv = (RecyclerView) mView.findViewById(R.id.posterRecyclerView);
-        posterAdapter = new PosterAdapter(getContext(), mMovieList, mFavorites);
+//        posterAdapter = new PosterAdapter(getContext(), mMovieList, mFavorites);
+        BeanAdapter beanAdapter = new BeanAdapter(getContext(), mMovieList, mFavorites);
         rv.setLayoutManager(new GridLayoutManager(getContext(), 2));
-        rv.setAdapter(posterAdapter);
+        rv.setAdapter(beanAdapter);
     }
 
     public interface OnPosterSelectedListener {
-        void onPosterSelected(Movie currentMovie);
+        void onPosterSelected(ObjectWithMoviesWithin.ResultsBean currentMovie);
     }
 
     // Uses AsyncTask to create a task away from the main UI thread. This task takes a
@@ -182,7 +186,10 @@ public class MasterFragment extends Fragment {
         // onPostExecute sets the adapter
         @Override
         protected void onPostExecute(String result) {
-            mMovieList = MovieParser.parseFeed(result);
+//            mMovieList = MovieParser.parseFeed(result);
+            Gson gson = new Gson();
+            ObjectWithMoviesWithin objectWithMoviesWithin = gson.fromJson(result, ObjectWithMoviesWithin.class);
+            mMovieList = objectWithMoviesWithin.getResults();
             populateRecyclerView();
         }
     }

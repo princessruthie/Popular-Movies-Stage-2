@@ -13,7 +13,7 @@ import android.widget.ListView;
 
 import com.ruthiefloats.popularmoviesstage2.MasterFragment;
 import com.ruthiefloats.popularmoviesstage2.R;
-import com.ruthiefloats.popularmoviesstage2.model.Movie;
+import com.ruthiefloats.popularmoviesstage2.model.ObjectWithMoviesWithin;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
@@ -25,21 +25,21 @@ import java.util.List;
  * An adapter to populate a RecyclerView, from a List<Movie>, with
  * poster images
  */
-public class PosterAdapter extends RecyclerView.Adapter<PosterAdapter.ViewHolder> {
+public class BeanAdapter extends RecyclerView.Adapter<BeanAdapter.ViewHolder> {
 
     private static final String PHOTOS_BASE_URL = "http://image.tmdb.org/t/p/";
     private static final String PHOTOS_SIZE_URL = "w185/";
     private static final String LOG_TAG = "Poster Adapter";
-    private List<Movie> mMovieList;
+    private List<ObjectWithMoviesWithin.ResultsBean> mMovieList;
     private Context mContext;
     private boolean showingFavorites;
 
-    public PosterAdapter(Context context, List<Movie> movieList) {
+    public BeanAdapter(Context context, List<ObjectWithMoviesWithin.ResultsBean> movieList) {
         mContext = context;
         mMovieList = movieList;
     }
 
-    public PosterAdapter(Context context, List<Movie> movieList, boolean showingFavorites) {
+    public BeanAdapter(Context context, List<ObjectWithMoviesWithin.ResultsBean> movieList, boolean showingFavorites) {
         this(context, movieList);
         this.showingFavorites = showingFavorites;
     }
@@ -52,12 +52,12 @@ public class PosterAdapter extends RecyclerView.Adapter<PosterAdapter.ViewHolder
     }
 
     @Override
-    public PosterAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public BeanAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         Context context = parent.getContext();
         LayoutInflater inflater = LayoutInflater.from(context);
 
         View posterView = inflater.inflate(R.layout.item_poster, parent, false);
-        PosterAdapter.ViewHolder viewHolder = new PosterAdapter.ViewHolder(posterView, context);
+        BeanAdapter.ViewHolder viewHolder = new BeanAdapter.ViewHolder(posterView, context);
         return viewHolder;
     }
 
@@ -133,9 +133,9 @@ public class PosterAdapter extends RecyclerView.Adapter<PosterAdapter.ViewHolder
         @Override
         public void onClick(View v) {
             int position = getLayoutPosition();
-            Movie movie = mMovieList.get(position);
+            ObjectWithMoviesWithin.ResultsBean movie = mMovieList.get(position);
             Log.i(LOG_TAG, "movie clicked was number " + position);
-//            onPosterSelectedListener.onPosterSelected(movie);
+            onPosterSelectedListener.onPosterSelected(movie);
         }
     }
 }
