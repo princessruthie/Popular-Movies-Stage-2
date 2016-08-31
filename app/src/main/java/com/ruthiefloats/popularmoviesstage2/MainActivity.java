@@ -4,8 +4,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.PersistableBundle;
 import android.support.v7.app.AppCompatActivity;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.ruthiefloats.popularmoviesstage2.model.ObjectWithMovieResults;
@@ -49,33 +47,6 @@ public class MainActivity extends AppCompatActivity implements MasterFragment.On
                     .commit();
         }
     }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.main, menu);
-        return true;
-    }
-
-    /**
-     * Depending on the option selected, get which set of data
-     *
-     * @param item The menu item selected
-     * @return always false
-     */
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        MasterFragment fragment = (MasterFragment) getSupportFragmentManager().
-                findFragmentByTag(MASTER_FRAGMENT_TAG);
-        if (item.getItemId() == R.id.menu_sort_popularity) {
-            fragment.getPopularData();
-        } else if (item.getItemId() == R.id.menu_sort_rating) {
-            fragment.getTopRatedData();
-        } else if (item.getItemId() == R.id.menu_show_favorites) {
-            fragment.getData();
-        }
-        return false;
-    }
-
 
     /*onPosterSelect method is required to implement the OnPosterSelectedListener
     interface.  Depending on whether in a tablet, either replace the detail

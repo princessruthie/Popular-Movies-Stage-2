@@ -10,6 +10,9 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -22,6 +25,7 @@ import com.ruthiefloats.popularmoviesstage2.utility.MovieDbEndpointInterface;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.zip.Inflater;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -52,9 +56,28 @@ public class MasterFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
         Log.i(LOG_TAG, "onCreate");
         setRetainInstance(true);
         getTopRatedData();
+    }
+
+    /**
+     * Depending on the option selected, get which set of data
+     *
+     * @param item The menu item selected
+     * @return always false
+     */
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.menu_sort_popularity) {
+            getPopularData();
+        } else if (item.getItemId() == R.id.menu_sort_rating) {
+            getTopRatedData();
+        } else if (item.getItemId() == R.id.menu_show_favorites) {
+            getData();
+        }
+        return false;
     }
 
     public void getTopRatedData() {
@@ -65,6 +88,12 @@ public class MasterFragment extends Fragment {
             Call<ObjectWithMovieResults> call = apiService.getTopRated();
             doTheWork(call);
         }
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.main, menu);
     }
 
     public void getPopularData() {
