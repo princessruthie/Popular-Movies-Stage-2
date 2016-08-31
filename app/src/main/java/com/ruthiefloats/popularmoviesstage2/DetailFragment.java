@@ -112,6 +112,7 @@ public class DetailFragment extends Fragment {
         if (cursor != null) {
             int cursorCount = cursor.getCount();
             isFavorite = cursorCount > 0 ? true : false;
+            cursor.close();
         }
     }
 
