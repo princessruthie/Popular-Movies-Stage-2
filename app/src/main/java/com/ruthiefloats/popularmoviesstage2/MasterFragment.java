@@ -62,7 +62,7 @@ public class MasterFragment extends Fragment {
 
         if (HttpManager.checkConnection()) {
             MovieDbEndpointInterface apiService = ApiUtility.getMovieDbEndpointInterface();
-            Call<ObjectWithMovieResults> call = apiService.getTopRated(BuildConfig.DEVELOPER_API_KEY);
+            Call<ObjectWithMovieResults> call = apiService.getTopRated();
             doTheWork(call);
         }
     }
@@ -70,7 +70,7 @@ public class MasterFragment extends Fragment {
     public void getPopularData() {
         mFavorites = false;
         MovieDbEndpointInterface apiService = ApiUtility.getMovieDbEndpointInterface();
-        Call<ObjectWithMovieResults> call = apiService.getPopular(BuildConfig.DEVELOPER_API_KEY);
+        Call<ObjectWithMovieResults> call = apiService.getPopular();
         doTheWork(call);
     }
 

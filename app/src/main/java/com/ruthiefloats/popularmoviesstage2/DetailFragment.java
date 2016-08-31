@@ -18,7 +18,6 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.ShareActionProvider;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -32,9 +31,9 @@ import android.widget.TextView;
 import com.ruthiefloats.popularmoviesstage2.adapter.ReviewsAdapter;
 import com.ruthiefloats.popularmoviesstage2.adapter.TrailerAdapter;
 import com.ruthiefloats.popularmoviesstage2.data.FavoritesContract;
-import com.ruthiefloats.popularmoviesstage2.model.ObjectWithMovieResults;
 import com.ruthiefloats.popularmoviesstage2.model.ObjectWithMovieDetails;
 import com.ruthiefloats.popularmoviesstage2.model.ObjectWithMovieDetails.ReviewsBean.ResultsBean;
+import com.ruthiefloats.popularmoviesstage2.model.ObjectWithMovieResults;
 import com.ruthiefloats.popularmoviesstage2.utility.ApiUtility;
 import com.ruthiefloats.popularmoviesstage2.utility.MovieDbEndpointInterface;
 import com.squareup.picasso.Picasso;
@@ -99,8 +98,11 @@ public class DetailFragment extends Fragment {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
         currentMovie = getArguments().getParcelable(MainActivity.INSTANCE_STATE_TAG);
-        /*check if the movie is in favorite db*/
+        setFavoriteStatus();
+    }
 
+    /*checks if the Movie is already in the db.  If so, sets isFavorite to true */
+    private void setFavoriteStatus() {
         Cursor cursor = getContext().getContentResolver().query(
                 FavoritesContract.Favorites.CONTENT_URI,
                 new String[]{FavoritesContract.Favorites.COLUMN_API_ID},
@@ -109,7 +111,6 @@ public class DetailFragment extends Fragment {
                 null);
         if (cursor != null) {
             int cursorCount = cursor.getCount();
-            Log.i(LOG_TAG, "Cursor has count of: " + cursorCount);
             isFavorite = cursorCount > 0 ? true : false;
         }
     }
@@ -135,7 +136,6 @@ public class DetailFragment extends Fragment {
             try {
                 String filename = String.valueOf(currentMovie.getId());
                 File photofile = new File(getContext().getFilesDir(), filename);
-                Log.i(LOG_TAG, "getting saved photo data");
                 Bitmap freshBitMap = BitmapFactory.decodeStream(new FileInputStream(photofile));
                 imageView.setImageBitmap(freshBitMap);
             } catch (FileNotFoundException e) {
@@ -155,11 +155,12 @@ public class DetailFragment extends Fragment {
         final Drawable nonFavoriteIcon = ContextCompat.getDrawable(context, R.drawable.ic_favorite_gray_24dp);
         //check if the current movie is a favorite
         favoriteButton.setImageDrawable(isFavorite ? favoriteIcon : nonFavoriteIcon);
+
         favoriteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 //toggle favorite boolean
-                toggleFavorite();
+                isFavorite = !isFavorite;
                 //toggle the drawable
                 favoriteButton.setImageDrawable(isFavorite ? favoriteIcon : nonFavoriteIcon);
                 //toggle db
@@ -178,30 +179,24 @@ public class DetailFragment extends Fragment {
         return rootView;
     }
 
-    private void toggleFavorite() {
-        isFavorite = !isFavorite;
-    }
 
     /**
-     * Remove Movie from favorites db
+     * Remove Movie from favorites db and delete image from file directory
      */
     private void removeMovie() {
         String currentMovieId = String.valueOf(currentMovie.getId());
         String whereClause = FavoritesContract.Favorites.COLUMN_API_ID + " = ?";
         String[] whereArgs = new String[]{currentMovieId};
         int rowsDeleted = getContext().getContentResolver().delete(FavoritesContract.Favorites.CONTENT_URI, whereClause, whereArgs);
-        Log.i(LOG_TAG, "Row(s) with app_id " + currentMovieId + " were deleted: " + rowsDeleted);
 
         File photofile = new File(getContext().getFilesDir(), currentMovieId);
-        Log.i(LOG_TAG, "getting saved photo data");
         if (photofile.exists()) {
-            Log.i(LOG_TAG, "Deleting Movie poster number " + currentMovieId);
             photofile.delete();
         }
     }
 
     /**
-     * add Movie to favorite db
+     * Add Movie to favorite db and write image to file
      */
     private void addMovie(byte[] byteArray) {
         /* Add Movie to ContentProvider */
@@ -211,18 +206,16 @@ public class DetailFragment extends Fragment {
         values.put(FavoritesContract.Favorites.COLUMN_RATING, currentMovie.getVote_average());
         values.put(FavoritesContract.Favorites.COLUMN_RELEASE_DATE, currentMovie.getRelease_date());
         values.put(FavoritesContract.Favorites.COLUMN_API_ID, currentMovie.getId());
-        Uri insertedMovieUri = getContext().getContentResolver().insert(FavoritesContract.Favorites.CONTENT_URI, values);
-        Log.i(LOG_TAG, "newly inserted movie uri: " + insertedMovieUri);
+        Uri insertedMovieUri = getContext().getContentResolver().
+                insert(FavoritesContract.Favorites.CONTENT_URI, values);
 
         /* Write the file to disk */
-        Log.i(LOG_TAG, "writing photo to disk...");
         String filename = String.valueOf(currentMovie.getId());
         FileOutputStream outputStream;
         try {
             outputStream = getContext().openFileOutput(filename, Context.MODE_PRIVATE);
             outputStream.write(byteArray);
             outputStream.close();
-            Log.i(LOG_TAG, "wrote to disk");
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -233,7 +226,7 @@ public class DetailFragment extends Fragment {
         mView = view;
 
         MovieDbEndpointInterface apiService = ApiUtility.getMovieDbEndpointInterface();
-        Call<ObjectWithMovieDetails> call = apiService.getMovieDetails(currentMovie.getId(), BuildConfig.DEVELOPER_API_KEY, ApiUtility.MovieDbUtility.RETROFIT_REVIEWS_APPENDIX);
+        Call<ObjectWithMovieDetails> call = apiService.getMovieDetails(currentMovie.getId());
 
         call.enqueue(new Callback<ObjectWithMovieDetails>() {
             @Override
@@ -245,7 +238,6 @@ public class DetailFragment extends Fragment {
 
                  /*set the reviews rv */
                 numReviews = obj.getReviews().getTotal_results();
-                Log.i(LOG_TAG, numReviews + "  reviews available");
                 if (numReviews > 0) {
                     reviewList = obj.getReviews().getResults();
                 } else {
@@ -261,25 +253,20 @@ public class DetailFragment extends Fragment {
                 List<ObjectWithMovieDetails.VideosBean.Trailer> videos = obj.getVideos().getResults();
                 if (videos != null && videos.size() > 0) {
                     addShareMovieToOptionsMenu(videos.get(0).getKey());
-                    int numTrailers = videos.size();
-                    Log.i(LOG_TAG, "Number of trailers: " + numTrailers);
                     RecyclerView trailerRecyclerView = (RecyclerView) mView.findViewById(R.id.trailerRecyclerView);
                     TrailerAdapter trailerAdapter = new TrailerAdapter(getContext(), videos);
                     trailerRecyclerView.setAdapter(trailerAdapter);
                     trailerRecyclerView.setLayoutManager(new GridLayoutManager(getContext(), 2));
                 }
-                Log.i(LOG_TAG, "so retrofit did something");
             }
 
             @Override
             public void onFailure(Call<ObjectWithMovieDetails> call, Throwable t) {
-                Log.i(LOG_TAG, "so retrofit not so much");
             }
         });
 
         super.onViewCreated(view, savedInstanceState);
     }
-
 
     private void addShareMovieToOptionsMenu(String trailerId) {
         firstTrailerUrl = getTrailerUrlFromTrailerId(trailerId);
