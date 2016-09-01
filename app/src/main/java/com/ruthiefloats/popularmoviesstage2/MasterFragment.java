@@ -82,7 +82,7 @@ public class MasterFragment extends Fragment {
         } else if (item.getItemId() == R.id.menu_sort_rating) {
             getTopRatedData();
         } else if (item.getItemId() == R.id.menu_show_favorites) {
-            getData();
+            getOfflineData();
         }
         return false;
     }
@@ -146,8 +146,8 @@ public class MasterFragment extends Fragment {
         doTheWork(call);
     }
 
-    /*Calling getData without a resource root gets local data */
-    public void getData() {
+    /*Calling getOfflineData gets local data */
+    public void getOfflineData() {
         mUsingOfflineData = true;
         Cursor cursor = getContext().getContentResolver().query(FavoritesContract.Favorites.CONTENT_URI,
                 new String[]{FavoritesContract.Favorites.COLUMN_API_ID,
@@ -160,25 +160,30 @@ public class MasterFragment extends Fragment {
                 null);
 
         /*use the results from the cursor to make a movie list and update ui */
+        // TODO: ultimately will switch to Realm and this won't be a thing
         mMovieList = new ArrayList<>();
         if (cursor != null && cursor.getCount() != 0) {
-            // TODO: 8/30/16 magic numbers
             while (cursor.moveToNext()) {
-                int id = cursor.getInt(0);
-                String title = cursor.getString(1);
-                String vote_average_string = cursor.getString(2);
-                String overview = cursor.getString(3);
-                String release_date = cursor.getString(4);
+                int idColumnIndex = cursor.getColumnIndex(FavoritesContract.Favorites.COLUMN_API_ID);
+                int titleColumnIndex = cursor.getColumnIndex(FavoritesContract.Favorites.COLUMN_TITLE);
+                int voteColumnIndex = cursor.getColumnIndex(FavoritesContract.Favorites.COLUMN_RATING);
+                int overviewColumnIndex = cursor.getColumnIndex(FavoritesContract.Favorites.COLUMN_SYNOPSIS);
+                int releaseDateColumnIndex = cursor.getColumnIndex(FavoritesContract.Favorites.COLUMN_RELEASE_DATE);
+
+                int id = cursor.getInt(idColumnIndex);
+                String title = cursor.getString(titleColumnIndex);
+                String vote_average_string = cursor.getString(voteColumnIndex);
+                String overview = cursor.getString(overviewColumnIndex);
+                String release_date = cursor.getString(releaseDateColumnIndex);
 
                 double vote_average = Double.valueOf(vote_average_string);
                 /*the poster will be set by the adapter, so pass null*/
-                // TODO: 8/29/16 ultimately will switch to Realm and this won't be a thing
                 mMovieList.add(new Movie(null, overview, release_date, id, title, vote_average));
             }
             cursor.close();
             populateRecyclerView();
         } else {
-            // TODO: 8/26/16 in event that user has no favorites, prompt them
+            // TODO: in event that user has no favorites, maybe prompt them
         }
     }
 
