@@ -32,7 +32,6 @@ import retrofit2.Response;
 
 import static com.ruthiefloats.popularmoviesstage2.model.ObjectWithMovieResults.Movie;
 
-
 /**
  * The master fragment in a master-detail flow.
  */
@@ -40,13 +39,13 @@ public class MasterFragment extends Fragment {
 
     public static final String BUNDLE_KEY_FAVORITES = "faves";
     public static final String BUNDLE_KEY_MOVIE_LIST = "movie list key";
+
     private static final String LOG_TAG = "MasterFragment";
-    public View mView;
+    private View mView;
     private OnPosterSelectedListener mCallback;
     private List<Movie> mMovieList;
-    /*whether using data from the Favorites Provider */
-    private boolean mFavorites;
-
+    /*whether using offline data from the Favorites Provider */
+    private boolean mUsingOfflineData;
 
     public MasterFragment() {
         // Required empty public constructor
@@ -88,7 +87,6 @@ public class MasterFragment extends Fragment {
         return false;
     }
 
-
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -119,7 +117,7 @@ public class MasterFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
         if (savedInstanceState != null) {
             mMovieList = savedInstanceState.getParcelableArrayList(BUNDLE_KEY_MOVIE_LIST);
-            mFavorites = savedInstanceState.getBoolean(BUNDLE_KEY_FAVORITES);
+            mUsingOfflineData = savedInstanceState.getBoolean(BUNDLE_KEY_FAVORITES);
             populateRecyclerView();
         }
     }
@@ -128,11 +126,11 @@ public class MasterFragment extends Fragment {
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putParcelableArrayList("movie list key", (ArrayList<? extends Parcelable>) mMovieList);
-        outState.putBoolean(BUNDLE_KEY_FAVORITES, mFavorites);
+        outState.putBoolean(BUNDLE_KEY_FAVORITES, mUsingOfflineData);
     }
 
     public void getTopRatedData() {
-        mFavorites = false;
+        mUsingOfflineData = false;
 
         if (HttpManager.checkConnection()) {
             MovieDbEndpointInterface apiService = ApiUtility.getMovieDbEndpointInterface();
@@ -142,7 +140,7 @@ public class MasterFragment extends Fragment {
     }
 
     public void getPopularData() {
-        mFavorites = false;
+        mUsingOfflineData = false;
         MovieDbEndpointInterface apiService = ApiUtility.getMovieDbEndpointInterface();
         Call<ObjectWithMovieResults> call = apiService.getPopular();
         doTheWork(call);
@@ -150,7 +148,7 @@ public class MasterFragment extends Fragment {
 
     /*Calling getData without a resource root gets local data */
     public void getData() {
-        mFavorites = true;
+        mUsingOfflineData = true;
         Cursor cursor = getContext().getContentResolver().query(FavoritesContract.Favorites.CONTENT_URI,
                 new String[]{FavoritesContract.Favorites.COLUMN_API_ID,
                         FavoritesContract.Favorites.COLUMN_TITLE,
@@ -203,7 +201,7 @@ public class MasterFragment extends Fragment {
 
     private void populateRecyclerView() {
         RecyclerView rv = (RecyclerView) mView.findViewById(R.id.posterRecyclerView);
-        PosterAdapter posterAdapter = new PosterAdapter(getContext(), mMovieList, mFavorites);
+        PosterAdapter posterAdapter = new PosterAdapter(getContext(), mMovieList, mUsingOfflineData);
         rv.setLayoutManager(new GridLayoutManager(getContext(), 2));
         rv.setAdapter(posterAdapter);
     }
