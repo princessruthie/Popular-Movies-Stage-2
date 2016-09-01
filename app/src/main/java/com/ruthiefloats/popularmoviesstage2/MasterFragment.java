@@ -25,7 +25,6 @@ import com.ruthiefloats.popularmoviesstage2.utility.MovieDbEndpointInterface;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.zip.Inflater;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -39,9 +38,9 @@ import static com.ruthiefloats.popularmoviesstage2.model.ObjectWithMovieResults.
  */
 public class MasterFragment extends Fragment {
 
-    private static final String LOG_TAG = "MasterFragment";
     public static final String BUNDLE_KEY_FAVORITES = "faves";
     public static final String BUNDLE_KEY_MOVIE_LIST = "movie list key";
+    private static final String LOG_TAG = "MasterFragment";
     public View mView;
     private OnPosterSelectedListener mCallback;
     private List<Movie> mMovieList;
@@ -54,12 +53,21 @@ public class MasterFragment extends Fragment {
     }
 
     @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setHasOptionsMenu(true);
-        Log.i(LOG_TAG, "onCreate");
-        setRetainInstance(true);
-        getTopRatedData();
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        try {
+            mCallback = (OnPosterSelectedListener) context;
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new ClassCastException(context.toString()
+                    + " must implement OnHeadlineSelectedListener");
+        }
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.main, menu);
     }
 
     /**
@@ -80,44 +88,14 @@ public class MasterFragment extends Fragment {
         return false;
     }
 
-    public void getTopRatedData() {
-        mFavorites = false;
-
-        if (HttpManager.checkConnection()) {
-            MovieDbEndpointInterface apiService = ApiUtility.getMovieDbEndpointInterface();
-            Call<ObjectWithMovieResults> call = apiService.getTopRated();
-            doTheWork(call);
-        }
-    }
 
     @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.main, menu);
-    }
-
-    public void getPopularData() {
-        mFavorites = false;
-        MovieDbEndpointInterface apiService = ApiUtility.getMovieDbEndpointInterface();
-        Call<ObjectWithMovieResults> call = apiService.getPopular();
-        doTheWork(call);
-    }
-
-    private void doTheWork(Call<ObjectWithMovieResults> call) {
-        call.enqueue(new Callback<ObjectWithMovieResults>() {
-            @Override
-            public void onResponse(Call<ObjectWithMovieResults> call, Response<ObjectWithMovieResults> response) {
-                ObjectWithMovieResults obj = response.body();
-                mMovieList = obj.getMovieList();
-                populateRecyclerView();
-                Log.i(LOG_TAG, "so retrofit did something");
-            }
-
-            @Override
-            public void onFailure(Call<ObjectWithMovieResults> call, Throwable t) {
-                Log.i(LOG_TAG, "so retrofit not so much");
-            }
-        });
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
+        Log.i(LOG_TAG, "onCreate");
+        setRetainInstance(true);
+        getTopRatedData();
     }
 
     @Override
@@ -131,22 +109,43 @@ public class MasterFragment extends Fragment {
         return rootView;
     }
 
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+    }
 
     @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        try {
-            mCallback = (OnPosterSelectedListener) context;
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new ClassCastException(context.toString()
-                    + " must implement OnHeadlineSelectedListener");
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        if (savedInstanceState != null) {
+            mMovieList = savedInstanceState.getParcelableArrayList(BUNDLE_KEY_MOVIE_LIST);
+            mFavorites = savedInstanceState.getBoolean(BUNDLE_KEY_FAVORITES);
+            populateRecyclerView();
         }
     }
 
     @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putParcelableArrayList("movie list key", (ArrayList<? extends Parcelable>) mMovieList);
+        outState.putBoolean(BUNDLE_KEY_FAVORITES, mFavorites);
+    }
+
+    public void getTopRatedData() {
+        mFavorites = false;
+
+        if (HttpManager.checkConnection()) {
+            MovieDbEndpointInterface apiService = ApiUtility.getMovieDbEndpointInterface();
+            Call<ObjectWithMovieResults> call = apiService.getTopRated();
+            doTheWork(call);
+        }
+    }
+
+    public void getPopularData() {
+        mFavorites = false;
+        MovieDbEndpointInterface apiService = ApiUtility.getMovieDbEndpointInterface();
+        Call<ObjectWithMovieResults> call = apiService.getPopular();
+        doTheWork(call);
     }
 
     /*Calling getData without a resource root gets local data */
@@ -165,7 +164,7 @@ public class MasterFragment extends Fragment {
         /*use the results from the cursor to make a movie list and update ui */
         mMovieList = new ArrayList<>();
         if (cursor != null && cursor.getCount() != 0) {
-            // TODO: 8/30/16 magic numbers 
+            // TODO: 8/30/16 magic numbers
             while (cursor.moveToNext()) {
                 int id = cursor.getInt(0);
                 String title = cursor.getString(1);
@@ -185,21 +184,21 @@ public class MasterFragment extends Fragment {
         }
     }
 
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putParcelableArrayList("movie list key", (ArrayList<? extends Parcelable>) mMovieList);
-        outState.putBoolean(BUNDLE_KEY_FAVORITES, mFavorites);
-    }
+    private void doTheWork(Call<ObjectWithMovieResults> call) {
+        call.enqueue(new Callback<ObjectWithMovieResults>() {
+            @Override
+            public void onResponse(Call<ObjectWithMovieResults> call, Response<ObjectWithMovieResults> response) {
+                ObjectWithMovieResults obj = response.body();
+                mMovieList = obj.getMovieList();
+                populateRecyclerView();
+                Log.i(LOG_TAG, "so retrofit did something");
+            }
 
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        if (savedInstanceState != null) {
-            mMovieList = savedInstanceState.getParcelableArrayList(BUNDLE_KEY_MOVIE_LIST);
-            mFavorites = savedInstanceState.getBoolean(BUNDLE_KEY_FAVORITES);
-            populateRecyclerView();
-        }
+            @Override
+            public void onFailure(Call<ObjectWithMovieResults> call, Throwable t) {
+                Log.i(LOG_TAG, "so retrofit not so much");
+            }
+        });
     }
 
     private void populateRecyclerView() {
