@@ -14,14 +14,14 @@ import com.ruthiefloats.popularmoviesstage2.model.ObjectWithMovieDetails;
 import java.util.List;
 
 /**
- * TODO: add a class header comment.
+ * An adapter to put Reviews into a RecyclerView
  */
 public class ReviewsAdapter extends RecyclerView.Adapter<ReviewsAdapter.ViewHolder> {
-    private static final String LOG_TAG = "RRBeanAdapter";
-    private List<ObjectWithMovieDetails.ReviewsBean.ResultsBean> mReviews;
+    private static final String LOG_TAG = "ReviewsAdapter";
+    private List<ObjectWithMovieDetails.Response.Reviews> mReviews;
     private Context mContext;
 
-    public ReviewsAdapter(Context context, List<ObjectWithMovieDetails.ReviewsBean.ResultsBean> reviews){
+    public ReviewsAdapter(Context context, List<ObjectWithMovieDetails.Response.Reviews> reviews){
         Log.i(LOG_TAG, "constructed");
         mContext = context;
         mReviews = reviews;

@@ -9,7 +9,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * TODO: add a class header comment.
+ * An object to model the results from theMovieDb response from the main
+ * endpoints like 3/movie/top_rated
  */
 public class ObjectWithMovieResults {
 

@@ -32,7 +32,7 @@ import com.ruthiefloats.popularmoviesstage2.adapter.ReviewsAdapter;
 import com.ruthiefloats.popularmoviesstage2.adapter.TrailerAdapter;
 import com.ruthiefloats.popularmoviesstage2.data.FavoritesContract;
 import com.ruthiefloats.popularmoviesstage2.model.ObjectWithMovieDetails;
-import com.ruthiefloats.popularmoviesstage2.model.ObjectWithMovieDetails.ReviewsBean.ResultsBean;
+import com.ruthiefloats.popularmoviesstage2.model.ObjectWithMovieDetails.Response.Reviews;
 import com.ruthiefloats.popularmoviesstage2.model.ObjectWithMovieResults;
 import com.ruthiefloats.popularmoviesstage2.utility.ApiUtility;
 import com.ruthiefloats.popularmoviesstage2.utility.MovieDbEndpointInterface;
@@ -58,7 +58,7 @@ import static com.ruthiefloats.popularmoviesstage2.utility.ApiUtility.YoutubeUti
 public class DetailFragment extends Fragment {
 
     private static final String LOG_TAG = "DetailFragment AsyncRes";
-    List<ResultsBean> reviewList;
+    List<Reviews> reviewList;
     private ObjectWithMovieResults.Movie currentMovie;
     private int numReviews;
     private View mView;

@@ -1,11 +1,10 @@
 package com.ruthiefloats.popularmoviesstage2.model;
 
-import com.google.gson.annotations.SerializedName;
-
 import java.util.List;
 
 /**
- * TODO: add a class header comment.
+ * An object to model the results from theMovieDb response from the
+ * 3/movie/{id} endpoint
  */
 public class ObjectWithMovieDetails {
 
@@ -30,7 +29,7 @@ public class ObjectWithMovieDetails {
     private boolean video;
     private double vote_average;
     private int vote_count;
-    private ReviewsBean reviews;
+    private Response reviews;
     private VideosBean videos;
     private List<GenresBean> genres;
     private List<ProductionCompaniesBean> production_companies;
@@ -205,11 +204,11 @@ public class ObjectWithMovieDetails {
         this.vote_count = vote_count;
     }
 
-    public ReviewsBean getReviews() {
+    public Response getReviews() {
         return reviews;
     }
 
-    public void setReviews(ReviewsBean reviews) {
+    public void setReviews(Response reviews) {
         this.reviews = reviews;
     }
 
@@ -296,12 +295,12 @@ public class ObjectWithMovieDetails {
     /*
     the object holding a list of Results-- the actual review objects
      */
-    public class ReviewsBean {
+    public class Response {
         private int page;
         private int total_pages;
         private int total_results;
 
-        private List<ResultsBean> results;
+        private List<Reviews> results;
 
         public int getPage() {
             return page;
@@ -327,15 +326,15 @@ public class ObjectWithMovieDetails {
             this.total_results = total_results;
         }
 
-        public List<ResultsBean> getResults() {
+        public List<Reviews> getResults() {
             return results;
         }
 
-        public void setResults(List<ResultsBean> results) {
+        public void setResults(List<Reviews> results) {
             this.results = results;
         }
 
-        public class ResultsBean {
+        public class Reviews {
             private String id;
             private String author;
             private String content;
