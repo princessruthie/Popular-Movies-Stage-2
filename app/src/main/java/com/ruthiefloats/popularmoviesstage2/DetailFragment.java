@@ -58,7 +58,7 @@ import static com.ruthiefloats.popularmoviesstage2.utility.ApiUtility.YoutubeUti
 public class DetailFragment extends Fragment {
 
     private static final String LOG_TAG = "DetailFragment AsyncRes";
-    List<Reviews> reviewList;
+    private List<Reviews> reviewList;
     private ObjectWithMovieResults.Movie currentMovie;
     private int numReviews;
     private View mView;
@@ -99,21 +99,6 @@ public class DetailFragment extends Fragment {
         setHasOptionsMenu(true);
         currentMovie = getArguments().getParcelable(MainActivity.INSTANCE_STATE_TAG);
         setFavoriteStatus();
-    }
-
-    /*checks if the Movie is already in the db.  If so, sets isFavorite to true */
-    private void setFavoriteStatus() {
-        Cursor cursor = getContext().getContentResolver().query(
-                FavoritesContract.Favorites.CONTENT_URI,
-                new String[]{FavoritesContract.Favorites.COLUMN_API_ID},
-                FavoritesContract.Favorites.COLUMN_API_ID + " = ? ",
-                new String[]{String.valueOf(currentMovie.getId())},
-                null);
-        if (cursor != null) {
-            int cursorCount = cursor.getCount();
-            isFavorite = cursorCount > 0 ? true : false;
-            cursor.close();
-        }
     }
 
     @Override
@@ -180,48 +165,6 @@ public class DetailFragment extends Fragment {
         return rootView;
     }
 
-
-    /**
-     * Remove Movie from favorites db and delete image from file directory
-     */
-    private void removeMovie() {
-        String currentMovieId = String.valueOf(currentMovie.getId());
-        String whereClause = FavoritesContract.Favorites.COLUMN_API_ID + " = ?";
-        String[] whereArgs = new String[]{currentMovieId};
-        int rowsDeleted = getContext().getContentResolver().delete(FavoritesContract.Favorites.CONTENT_URI, whereClause, whereArgs);
-
-        File photofile = new File(getContext().getFilesDir(), currentMovieId);
-        if (photofile.exists()) {
-            photofile.delete();
-        }
-    }
-
-    /**
-     * Add Movie to favorite db and write image to file
-     */
-    private void addMovie(byte[] byteArray) {
-        /* Add Movie to ContentProvider */
-        ContentValues values = new ContentValues();
-        values.put(FavoritesContract.Favorites.COLUMN_TITLE, currentMovie.getTitle());
-        values.put(FavoritesContract.Favorites.COLUMN_SYNOPSIS, currentMovie.getOverview());
-        values.put(FavoritesContract.Favorites.COLUMN_RATING, currentMovie.getVote_average());
-        values.put(FavoritesContract.Favorites.COLUMN_RELEASE_DATE, currentMovie.getRelease_date());
-        values.put(FavoritesContract.Favorites.COLUMN_API_ID, currentMovie.getId());
-        Uri insertedMovieUri = getContext().getContentResolver().
-                insert(FavoritesContract.Favorites.CONTENT_URI, values);
-
-        /* Write the file to disk */
-        String filename = String.valueOf(currentMovie.getId());
-        FileOutputStream outputStream;
-        try {
-            outputStream = getContext().openFileOutput(filename, Context.MODE_PRIVATE);
-            outputStream.write(byteArray);
-            outputStream.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         mView = view;
@@ -269,8 +212,64 @@ public class DetailFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
     }
 
+    /*checks if the Movie is already in the db.  If so, sets isFavorite to true */
+    private void setFavoriteStatus() {
+        Cursor cursor = getContext().getContentResolver().query(
+                FavoritesContract.Favorites.CONTENT_URI,
+                new String[]{FavoritesContract.Favorites.COLUMN_API_ID},
+                FavoritesContract.Favorites.COLUMN_API_ID + " = ? ",
+                new String[]{String.valueOf(currentMovie.getId())},
+                null);
+        if (cursor != null) {
+            int cursorCount = cursor.getCount();
+            isFavorite = cursorCount > 0 ? true : false;
+            cursor.close();
+        }
+    }
+
     private void addShareMovieToOptionsMenu(String trailerId) {
         firstTrailerUrl = getTrailerUrlFromTrailerId(trailerId);
         getActivity().invalidateOptionsMenu();
+    }
+
+    /**
+     * Remove Movie from favorites db and delete image from file directory
+     */
+    private void removeMovie() {
+        String currentMovieId = String.valueOf(currentMovie.getId());
+        String whereClause = FavoritesContract.Favorites.COLUMN_API_ID + " = ?";
+        String[] whereArgs = new String[]{currentMovieId};
+        int rowsDeleted = getContext().getContentResolver().delete(FavoritesContract.Favorites.CONTENT_URI, whereClause, whereArgs);
+
+        File photofile = new File(getContext().getFilesDir(), currentMovieId);
+        if (photofile.exists()) {
+            photofile.delete();
+        }
+    }
+
+    /**
+     * Add Movie to favorite db and write image to file
+     */
+    private void addMovie(byte[] byteArray) {
+        /* Add Movie to ContentProvider */
+        ContentValues values = new ContentValues();
+        values.put(FavoritesContract.Favorites.COLUMN_TITLE, currentMovie.getTitle());
+        values.put(FavoritesContract.Favorites.COLUMN_SYNOPSIS, currentMovie.getOverview());
+        values.put(FavoritesContract.Favorites.COLUMN_RATING, currentMovie.getVote_average());
+        values.put(FavoritesContract.Favorites.COLUMN_RELEASE_DATE, currentMovie.getRelease_date());
+        values.put(FavoritesContract.Favorites.COLUMN_API_ID, currentMovie.getId());
+        Uri insertedMovieUri = getContext().getContentResolver().
+                insert(FavoritesContract.Favorites.CONTENT_URI, values);
+
+        /* Write the file to disk */
+        String filename = String.valueOf(currentMovie.getId());
+        FileOutputStream outputStream;
+        try {
+            outputStream = getContext().openFileOutput(filename, Context.MODE_PRIVATE);
+            outputStream.write(byteArray);
+            outputStream.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
