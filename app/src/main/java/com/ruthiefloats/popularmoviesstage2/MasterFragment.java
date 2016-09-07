@@ -16,6 +16,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.ruthiefloats.popularmoviesstage2.adapter.EndlessScrollListener;
 import com.ruthiefloats.popularmoviesstage2.adapter.PosterAdapter;
 import com.ruthiefloats.popularmoviesstage2.data.FavoritesContract;
 import com.ruthiefloats.popularmoviesstage2.model.ObjectWithMovieResults;
@@ -46,6 +47,13 @@ public class MasterFragment extends Fragment {
     private List<Movie> mMovieList;
     /*whether using offline data from the Favorites Provider */
     private boolean mUsingOfflineData;
+    private int pageNumber;
+    /*An int to hold status: which set of movies are currently being viewed */
+    private int currentMovieSet;
+    /*Constant ints to indicate status */
+    private static final int POPULAR_SET = 100;
+    private static final int TOP_RATED_SET = 101;
+    private static final int OFFLINE_SET = 102;
 
     public MasterFragment() {
         // Required empty public constructor
@@ -131,23 +139,28 @@ public class MasterFragment extends Fragment {
 
     public void getTopRatedData() {
         mUsingOfflineData = false;
+        pageNumber = 1;
+        currentMovieSet = TOP_RATED_SET;
 
         if (HttpManager.checkConnection()) {
             MovieDbEndpointInterface apiService = ApiUtility.getMovieDbEndpointInterface();
             Call<ObjectWithMovieResults> call = apiService.getTopRated();
-            doTheWork(call);
+            fetchInitialMovies(call);
         }
     }
 
     public void getPopularData() {
+        currentMovieSet = POPULAR_SET;
+        pageNumber = 1;
         mUsingOfflineData = false;
         MovieDbEndpointInterface apiService = ApiUtility.getMovieDbEndpointInterface();
         Call<ObjectWithMovieResults> call = apiService.getPopular();
-        doTheWork(call);
+        fetchInitialMovies(call);
     }
 
     /*Calling getOfflineData gets local data */
     public void getOfflineData() {
+        currentMovieSet = OFFLINE_SET;
         mUsingOfflineData = true;
         Cursor cursor = getContext().getContentResolver().query(FavoritesContract.Favorites.CONTENT_URI,
                 new String[]{FavoritesContract.Favorites.COLUMN_API_ID,
@@ -187,7 +200,8 @@ public class MasterFragment extends Fragment {
         }
     }
 
-    private void doTheWork(Call<ObjectWithMovieResults> call) {
+    /*Use Call<> to set mMovies then populate the recyclerview */
+    private void fetchInitialMovies(Call<ObjectWithMovieResults> call) {
         call.enqueue(new Callback<ObjectWithMovieResults>() {
             @Override
             public void onResponse(Call<ObjectWithMovieResults> call, Response<ObjectWithMovieResults> response) {
@@ -204,11 +218,69 @@ public class MasterFragment extends Fragment {
         });
     }
 
+    /**
+     * Get RecyclerView, set LayoutManager, set Adapter and add scroll listener
+     */
     private void populateRecyclerView() {
         RecyclerView rv = (RecyclerView) mView.findViewById(R.id.posterRecyclerView);
-        PosterAdapter posterAdapter = new PosterAdapter(getContext(), mMovieList, mUsingOfflineData);
-        rv.setLayoutManager(new GridLayoutManager(getContext(), 2));
+        final PosterAdapter posterAdapter = new PosterAdapter(getContext(), mMovieList, mUsingOfflineData);
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(), 2);
+        rv.addOnScrollListener(new EndlessScrollListener(gridLayoutManager) {
+            @Override
+            public void onLoadMore(int page, int totalItemsCount) {
+                fetchMoreMovies(posterAdapter);
+            }
+        });
+        rv.setLayoutManager(gridLayoutManager);
         rv.setAdapter(posterAdapter);
+    }
+
+    /*
+    Get additional movies and add them to the List and notify the adapter
+     */
+    private void fetchMoreMovies(final PosterAdapter posterAdapter) {
+        MovieDbEndpointInterface apiService = ApiUtility.getMovieDbEndpointInterface();
+
+        Call<ObjectWithMovieResults> call;
+        switch (currentMovieSet) {
+            case POPULAR_SET:
+                call = apiService.getMorePopular(++pageNumber);
+                break;
+            case TOP_RATED_SET:
+                call = apiService.getMoreTopRated(++pageNumber);
+                break;
+            default:
+                call = null;
+                // TODO: 9/7/16 so still don't know how to sensibly get batches of data from db.
+                // could just limit queries to like 20 movies and then do a fetchMoreMovies
+                break;
+        }
+        if (call != null) {
+            updateMovieList(posterAdapter, call);
+        }
+    }
+
+    /*
+    Enqueue a Call<> and use Response to add Movies to the List and notify Adapter
+     */
+    private void updateMovieList(final PosterAdapter posterAdapter, Call<ObjectWithMovieResults> call) {
+        call.enqueue(new Callback<ObjectWithMovieResults>() {
+            @Override
+            public void onResponse(Call<ObjectWithMovieResults> call, Response<ObjectWithMovieResults> response) {
+                ObjectWithMovieResults obj = response.body();
+                List<Movie> moreMovieList;
+                moreMovieList = obj.getMovieList();
+                int curSize = posterAdapter.getItemCount();
+                mMovieList.addAll(moreMovieList);
+                posterAdapter.notifyItemRangeChanged(curSize, mMovieList.size() - 1);
+                Log.i(LOG_TAG, "retrofit got extra data");
+            }
+
+            @Override
+            public void onFailure(Call<ObjectWithMovieResults> call, Throwable t) {
+                Log.i(LOG_TAG, "so retrofit not so much");
+            }
+        });
     }
 
     public interface OnPosterSelectedListener {
