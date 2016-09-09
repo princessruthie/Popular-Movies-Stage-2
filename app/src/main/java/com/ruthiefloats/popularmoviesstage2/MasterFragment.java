@@ -137,7 +137,7 @@ public class MasterFragment extends Fragment {
         outState.putBoolean(BUNDLE_KEY_FAVORITES, mUsingOfflineData);
     }
 
-    public void getTopRatedData() {
+    private void getTopRatedData() {
         mUsingOfflineData = false;
         pageNumber = 1;
         currentMovieSet = TOP_RATED_SET;
@@ -149,7 +149,7 @@ public class MasterFragment extends Fragment {
         }
     }
 
-    public void getPopularData() {
+    private void getPopularData() {
         currentMovieSet = POPULAR_SET;
         pageNumber = 1;
         mUsingOfflineData = false;
@@ -159,7 +159,7 @@ public class MasterFragment extends Fragment {
     }
 
     /*Calling getOfflineData gets local data */
-    public void getOfflineData() {
+    private void getOfflineData() {
         currentMovieSet = OFFLINE_SET;
         mUsingOfflineData = true;
         Cursor cursor = getContext().getContentResolver().query(FavoritesContract.Favorites.CONTENT_URI,
