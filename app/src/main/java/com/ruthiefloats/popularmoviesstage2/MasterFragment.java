@@ -223,6 +223,7 @@ public class MasterFragment extends Fragment {
      */
     private void populateRecyclerView() {
         RecyclerView rv = (RecyclerView) mView.findViewById(R.id.posterRecyclerView);
+        if (mMovieList != null){
         final PosterAdapter posterAdapter = new PosterAdapter(getContext(), mMovieList, mUsingOfflineData);
         GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(), 2);
         rv.addOnScrollListener(new EndlessScrollListener(gridLayoutManager) {
@@ -233,6 +234,7 @@ public class MasterFragment extends Fragment {
         });
         rv.setLayoutManager(gridLayoutManager);
         rv.setAdapter(posterAdapter);
+        }
     }
 
     /*
