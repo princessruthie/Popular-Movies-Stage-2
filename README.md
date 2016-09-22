@@ -17,6 +17,6 @@ Udacity Project 2: Current progress uses Retrofit and a generated POJO.  A Conte
 
 To use this repository:
 * Clone the repo.  
-* Get your own developer API from TMDb.  
+* Get your own developer API key from TMDb.  
 * Add the following line to your gradle.properties file, substituting your own key for ABC123.  (You may have to create the file):  MyMovieDBApiKey="ABC123"
 
